@@ -1,0 +1,14 @@
+{
+  "name": "zstd-napi",
+  "version": "0.0.1",
+  "description": "zstd bindings with N-API",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-gyp configure && node-gyp build"
+  },
+  "author": "Andrew Drake <adrake@adrake.org>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "node-gyp": "^6.1.0"
+  }
+}
