@@ -3,6 +3,7 @@
     {
       'target_name': 'binding',
       'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc'],
+      'dependencies': ['deps/zstd.gyp:libzstd'],
       'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
       'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED'],
       'cflags!': ['-fno-exceptions'],
@@ -16,11 +17,6 @@
         'VCCLCompilerTool': {'ExceptionHandling': 1},
       },
       'conditions': [
-        ['OS=="linux"', {
-          'ldflags': [
-            '-lzstd',
-          ],
-        }],
         ['OS=="mac"', {
           'cflags+': ['-fvisibility=hidden'],
           'xcode_settings': {
