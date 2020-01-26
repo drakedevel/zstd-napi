@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'binding',
-      'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc'],
+      'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc', 'src/dctx.cc'],
       'dependencies': ['deps/zstd.gyp:libzstd'],
       'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
       'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED'],
