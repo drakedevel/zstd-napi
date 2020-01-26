@@ -1,5 +1,6 @@
 #include "dctx.h"
 
+#include "ddict.h"
 #include "zstd_util.h"
 
 using namespace Napi;
@@ -11,6 +12,8 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
       DefineClass(env, "DCtx",
                   {
                       InstanceMethod("decompress", &DCtx::wrapDecompress),
+                      InstanceMethod("decompressUsingDDict",
+                                     &DCtx::wrapDecompressUsingDDict),
                   });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
@@ -36,5 +39,19 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_decompressDCtx(dctx, dstBuf.Data(), dstBuf.ByteLength(),
                                       srcBuf.Data(), srcBuf.ByteLength());
+  return convertZstdResult(env, result);
+}
+
+Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 3)
+    throw TypeError::New(env, "Wrong arguments");
+  Buffer<char> dstBuf = info[0].As<Buffer<char>>();
+  Buffer<char> srcBuf = info[1].As<Buffer<char>>();
+  DDict* ddictObj = DDict::Unwrap(info[2].As<Object>());
+
+  size_t result = ZSTD_decompress_usingDDict(
+      dctx, dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
+      srcBuf.ByteLength(), ddictObj->ddict);
   return convertZstdResult(env, result);
 }

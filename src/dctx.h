@@ -16,6 +16,7 @@ class DCtx : public Napi::ObjectWrap<DCtx> {
   ZSTD_DCtx* dctx;
 
   Napi::Value wrapDecompress(const Napi::CallbackInfo& info);
+  Napi::Value wrapDecompressUsingDDict(const Napi::CallbackInfo& info);
 };
 
 #endif
