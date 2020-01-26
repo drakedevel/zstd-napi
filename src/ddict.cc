@@ -5,7 +5,11 @@ using namespace Napi;
 Napi::FunctionReference DDict::constructor;
 
 Napi::Object DDict::Init(Napi::Env env, Napi::Object exports) {
-  Function func = DefineClass(env, "DDict", {});
+  Function func =
+      DefineClass(env, "DDict",
+                  {
+                      InstanceMethod("getDictID", &DDict::wrapGetDictID),
+                  });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
   exports.Set("DDict", func);
@@ -24,4 +28,8 @@ DDict::DDict(const Napi::CallbackInfo& info) : Napi::ObjectWrap<DDict>(info) {
 DDict::~DDict() {
   ZSTD_freeDDict(ddict);
   ddict = nullptr;
+}
+
+Napi::Value DDict::wrapGetDictID(const Napi::CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_getDictID_fromDDict(ddict));
 }

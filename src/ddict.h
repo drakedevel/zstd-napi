@@ -15,6 +15,8 @@ class DDict : public Napi::ObjectWrap<DDict> {
   friend class DCtx;
   static Napi::FunctionReference constructor;
   ZSTD_DDict* ddict;
+
+  Napi::Value wrapGetDictID(const Napi::CallbackInfo& info);
 };
 
 #endif
