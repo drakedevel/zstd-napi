@@ -1,9 +1,18 @@
-#define NAPI_VERSION 5
-#include <node_api.h>
+#include <napi.h>
 
-napi_value Init(napi_env env, napi_value exports)
-{
-    return exports;
+#include <cstdio>
+
+#include "cctx.h"
+#include "cdict.h"
+#include "zstd.h"
+
+using namespace Napi;
+
+Object ModuleInit(Env env, Object exports) {
+  CCtx::Init(env, exports);
+  CDict::Init(env, exports);
+
+  return exports;
 }
 
-NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, ModuleInit)
