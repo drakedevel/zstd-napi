@@ -20,8 +20,9 @@ Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
   return exports;
 }
 
-CCtx::CCtx(const Napi::CallbackInfo& info) : Napi::ObjectWrap<CCtx>(info) {
+CCtx::CCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<CCtx>(info) {
   cctx = ZSTD_createCCtx();
+  adjustMemory(info.Env());
 }
 
 CCtx::~CCtx() {
@@ -39,6 +40,7 @@ Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_compressCCtx(cctx, outBuf.Data(), outBuf.ByteLength(),
                                     inBuf.Data(), inBuf.ByteLength(), level);
+  adjustMemory(env);
   return convertZstdResult(env, result);
 }
 
@@ -53,5 +55,6 @@ Napi::Value CCtx::wrapCompressUsingCDict(const Napi::CallbackInfo& info) {
   size_t result = ZSTD_compress_usingCDict(cctx, outBuf.Data(),
                                            outBuf.ByteLength(), inBuf.Data(),
                                            inBuf.ByteLength(), cdictObj->cdict);
+  adjustMemory(env);
   return convertZstdResult(env, result);
 }

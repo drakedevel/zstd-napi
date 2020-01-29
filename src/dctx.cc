@@ -21,8 +21,9 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
   return exports;
 }
 
-DCtx::DCtx(const Napi::CallbackInfo& info) : Napi::ObjectWrap<DCtx>(info) {
+DCtx::DCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<DCtx>(info) {
   dctx = ZSTD_createDCtx();
+  adjustMemory(info.Env());
 }
 
 DCtx::~DCtx() {
@@ -39,6 +40,7 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_decompressDCtx(dctx, dstBuf.Data(), dstBuf.ByteLength(),
                                       srcBuf.Data(), srcBuf.ByteLength());
+  adjustMemory(info.Env());
   return convertZstdResult(env, result);
 }
 
@@ -53,5 +55,6 @@ Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
   size_t result = ZSTD_decompress_usingDDict(
       dctx, dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
       srcBuf.ByteLength(), ddictObj->ddict);
+  adjustMemory(info.Env());
   return convertZstdResult(env, result);
 }
