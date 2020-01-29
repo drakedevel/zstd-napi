@@ -6,6 +6,7 @@
 #include "cdict.h"
 #include "dctx.h"
 #include "ddict.h"
+#include "enums.h"
 #include "zstd_util.h"
 
 using namespace Napi;
@@ -87,6 +88,8 @@ Object ModuleInit(Env env, Object exports) {
   CDict::Init(env, exports);
   DCtx::Init(env, exports);
   DDict::Init(env, exports);
+
+  createEnums(env, exports);
 
   exports.DefineProperties({
       PropertyDescriptor::Function(env, exports, "versionNumber",
