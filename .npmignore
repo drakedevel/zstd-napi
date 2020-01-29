@@ -1,0 +1,13 @@
+# Whitelist files from zstd submodule
+/deps/zstd/**
+!/deps/zstd/lib/*.h
+!/deps/zstd/lib/common/*
+!/deps/zstd/lib/compress/*
+!/deps/zstd/lib/decompress/*
+
+# Exclude build artifacts and other config
+/.*
+/build/
+/local/
+/prebuilds/
+/zstd-napi-*.tgz
