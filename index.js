@@ -17,7 +17,7 @@ const outBuf = Buffer.alloc(binding.compressBound(inBuf.length));
 const cdict = new binding.CDict(fs.readFileSync('dummy-data-4k.bin'), 3);
 
 const startT = performance.now();
-const len = ctx.compressUsingCDict(inBuf, outBuf, cdict);
+const len = ctx.compressUsingCDict(outBuf, inBuf, cdict);
 const endT = performance.now();
 if (len > 0) {
   fs.writeFileSync('out.bin', outBuf.slice(0, len));
