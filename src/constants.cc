@@ -1,8 +1,17 @@
-#include "enums.h"
+#include "constants.h"
 
 #include "zstd.h"
 
 using namespace Napi;
+
+void createConstants(Env env, Object exports) {
+#define C(v) exports[#v] = Number::New(env, ZSTD_##v)
+  C(MAGICNUMBER);
+  C(MAGIC_DICTIONARY);
+  C(MAGIC_SKIPPABLE_START);
+  C(MAGIC_SKIPPABLE_MASK);
+#undef C
+}
 
 void createEnums(Env env, Object exports) {
 #define ADD_ENUM_MEMBER(obj, pfx, name)          \

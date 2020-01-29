@@ -4,9 +4,9 @@
 
 #include "cctx.h"
 #include "cdict.h"
+#include "constants.h"
 #include "dctx.h"
 #include "ddict.h"
-#include "enums.h"
 #include "zstd_util.h"
 
 using namespace Napi;
@@ -89,6 +89,7 @@ Object ModuleInit(Env env, Object exports) {
   DCtx::Init(env, exports);
   DDict::Init(env, exports);
 
+  createConstants(env, exports);
   createEnums(env, exports);
 
   exports.DefineProperties({
