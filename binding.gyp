@@ -1,4 +1,7 @@
 {
+  'variables': {
+    'napi_build_version': 3
+  },
   'targets': [
     {
       'target_name': 'binding',

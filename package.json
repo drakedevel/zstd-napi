@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
-    "install": "prebuild-install || node-gyp rebuild",
+    "install": "prebuild-install -r napi || node-gyp rebuild",
     "prebuild": "prebuild -r napi --all"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
