@@ -24,7 +24,7 @@ Value wrapGetFrameContentSize(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> frameBuf = info[0].As<Buffer<char>>();
+  Uint8Array frameBuf = info[0].As<Uint8Array>();
 
   unsigned long long size =
       ZSTD_getFrameContentSize(frameBuf.Data(), frameBuf.ByteLength());
@@ -39,7 +39,7 @@ Value wrapFindFrameCompressedSize(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> frameBuf = info[0].As<Buffer<char>>();
+  Uint8Array frameBuf = info[0].As<Uint8Array>();
 
   return convertZstdResult(env, ZSTD_findFrameCompressedSize(
                                     frameBuf.Data(), frameBuf.ByteLength()));
@@ -68,7 +68,7 @@ Value wrapGetDictIDFromDict(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dictBuf = info[0].As<Buffer<char>>();
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromDict(dictBuf.Data(), dictBuf.ByteLength()));
 }
@@ -77,7 +77,7 @@ Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> frameBuf = info[0].As<Buffer<char>>();
+  Uint8Array frameBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
 }

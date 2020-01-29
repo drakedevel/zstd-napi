@@ -34,8 +34,8 @@ Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() != 3)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dstBuf = info[0].As<Buffer<char>>();
-  Buffer<char> srcBuf = info[1].As<Buffer<char>>();
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
   int32_t level = info[2].As<Number>().Int32Value();
 
   size_t result = ZSTD_compressCCtx(cctx, dstBuf.Data(), dstBuf.ByteLength(),
@@ -48,8 +48,8 @@ Napi::Value CCtx::wrapCompressUsingCDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() != 3)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dstBuf = info[0].As<Buffer<char>>();
-  Buffer<char> srcBuf = info[1].As<Buffer<char>>();
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
   CDict* cdictObj = CDict::Unwrap(info[2].As<Object>());
 
   size_t result = ZSTD_compress_usingCDict(

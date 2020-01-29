@@ -35,8 +35,8 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() != 2)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dstBuf = info[0].As<Buffer<char>>();
-  Buffer<char> srcBuf = info[1].As<Buffer<char>>();
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
 
   size_t result = ZSTD_decompressDCtx(dctx, dstBuf.Data(), dstBuf.ByteLength(),
                                       srcBuf.Data(), srcBuf.ByteLength());
@@ -48,8 +48,8 @@ Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() != 3)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dstBuf = info[0].As<Buffer<char>>();
-  Buffer<char> srcBuf = info[1].As<Buffer<char>>();
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
   DDict* ddictObj = DDict::Unwrap(info[2].As<Object>());
 
   size_t result = ZSTD_decompress_usingDDict(

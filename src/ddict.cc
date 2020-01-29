@@ -20,7 +20,7 @@ DDict::DDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<DDict>(info) {
   Napi::Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  Buffer<char> dictBuf = info[0].As<Buffer<char>>();
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
 
   ddict = ZSTD_createDDict(dictBuf.Data(), dictBuf.ByteLength());
   adjustMemory(env);
