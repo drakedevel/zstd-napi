@@ -2,9 +2,14 @@
   "name": "zstd-napi",
   "version": "0.0.1",
   "description": "zstd bindings with N-API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drakedevel/zstd-napi.git"
+  },
   "main": "index.js",
   "scripts": {
-    "build": "node-gyp configure && node-gyp build"
+    "build": "node-gyp configure && node-gyp build",
+    "install": "prebuild-install || node-gyp rebuild"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
@@ -12,7 +17,8 @@
     "prebuild": "^10.0.0"
   },
   "dependencies": {
-    "node-addon-api": "^2.0.0"
+    "node-addon-api": "^2.0.0",
+    "prebuild-install": "^5.3.3"
   },
   "binary": {
     "napi_versions": [
