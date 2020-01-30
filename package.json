@@ -9,8 +9,8 @@
   "main": "index.js",
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
-    "install": "prebuild-install -r napi || node-gyp rebuild",
-    "prebuild": "prebuild -r napi --all"
+    "build-prebuild": "prebuild -r napi --all",
+    "install": "prebuild-install -r napi || node-gyp rebuild"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",

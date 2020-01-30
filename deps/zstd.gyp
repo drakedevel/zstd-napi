@@ -33,7 +33,15 @@
       'include_dirs': ['zstd/lib', 'zstd/lib/common'],
       'direct_dependent_settings': {
         'include_dirs': ['zstd/lib'],
-      }
+      },
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',
+            'MACOSX_DEPLOYMENT_TARGET': '10.7',
+          },
+        }],
+      ],
     },
   ]
 }
