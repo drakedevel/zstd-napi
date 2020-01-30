@@ -14,7 +14,7 @@ class ObjectWrapHelper : public Napi::ObjectWrap<T> {
   void adjustMemory(Napi::Env env);
 
  private:
-  int64_t lastSize;
+  int64_t lastSize = 0;
 
   virtual int64_t getCurrentSize() = 0;
 };
