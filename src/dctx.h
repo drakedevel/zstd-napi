@@ -20,6 +20,8 @@ class DCtx : public ObjectWrapHelper<DCtx> {
 
   Napi::Value wrapDecompress(const Napi::CallbackInfo& info);
   Napi::Value wrapDecompressUsingDDict(const Napi::CallbackInfo& info);
+  void wrapSetParameter(const Napi::CallbackInfo& info);
+  void wrapReset(const Napi::CallbackInfo& info);
 };
 
 #endif

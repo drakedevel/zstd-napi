@@ -64,6 +64,36 @@ Value wrapMaxCLevel(const CallbackInfo& info) {
   return Number::New(info.Env(), ZSTD_maxCLevel());
 }
 
+// Advanced compression
+static inline Value convertParamBounds(Env env, const ZSTD_bounds& bounds) {
+  checkZstdError(env, bounds.error);
+  Object result = Object::New(env);
+  result["lowerBound"] = bounds.lowerBound;
+  result["upperBound"] = bounds.upperBound;
+  return result;
+}
+
+Value wrapCParamGetBounds(const CallbackInfo& info) {
+  Env env = info.Env();
+  if (info.Length() != 1)
+    throw TypeError::New(env, "Wrong arguments");
+  ZSTD_cParameter param =
+      static_cast<ZSTD_cParameter>(info[0].ToNumber().Int32Value());
+
+  return convertParamBounds(env, ZSTD_cParam_getBounds(param));
+}
+
+// Advanced decompression
+Value wrapDParamGetBounds(const CallbackInfo& info) {
+  Env env = info.Env();
+  if (info.Length() != 1)
+    throw TypeError::New(env, "Wrong arguments");
+  ZSTD_dParameter param =
+      static_cast<ZSTD_dParameter>(info[0].ToNumber().Int32Value());
+
+  return convertParamBounds(env, ZSTD_dParam_getBounds(param));
+}
+
 // Dictionary helper functions
 Value wrapGetDictIDFromDict(const CallbackInfo& info) {
   Env env = info.Env();
@@ -114,6 +144,10 @@ Object ModuleInit(Env env, Object exports) {
                                    wrapCompressBound),
       PropertyDescriptor::Function(env, exports, "minCLevel", wrapMinCLevel),
       PropertyDescriptor::Function(env, exports, "maxCLevel", wrapMaxCLevel),
+      PropertyDescriptor::Function(env, exports, "cParamGetBounds",
+                                   wrapCParamGetBounds),
+      PropertyDescriptor::Function(env, exports, "dParamGetBounds",
+                                   wrapDParamGetBounds),
       PropertyDescriptor::Function(env, exports, "getDictIDFromDict",
                                    wrapGetDictIDFromDict),
       PropertyDescriptor::Function(env, exports, "getDictIDFromFrame",

@@ -5,9 +5,13 @@
 
 #include "zstd.h"
 
-static Napi::Number convertZstdResult(Napi::Env env, size_t ret) {
+static inline void checkZstdError(Napi::Env env, size_t ret) {
   if (ZSTD_isError(ret))
     throw Napi::Error::New(env, ZSTD_getErrorName(ret));
+}
+
+static inline Napi::Number convertZstdResult(Napi::Env env, size_t ret) {
+  checkZstdError(env, ret);
   return Napi::Number::New(env, ret);
 }
 

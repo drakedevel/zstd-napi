@@ -14,6 +14,8 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
                       InstanceMethod("decompress", &DCtx::wrapDecompress),
                       InstanceMethod("decompressUsingDDict",
                                      &DCtx::wrapDecompressUsingDDict),
+                      InstanceMethod("setParameter", &DCtx::wrapSetParameter),
+                      InstanceMethod("reset", &DCtx::wrapReset),
                   });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
@@ -57,4 +59,29 @@ Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
       srcBuf.ByteLength(), ddictObj->ddict);
   adjustMemory(info.Env());
   return convertZstdResult(env, result);
+}
+
+void DCtx::wrapSetParameter(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 2)
+    throw TypeError::New(env, "Wrong arguments");
+  ZSTD_dParameter param =
+      static_cast<ZSTD_dParameter>(info[0].ToNumber().Int32Value());
+  int value = info[1].ToNumber();
+
+  size_t result = ZSTD_DCtx_setParameter(dctx, param, value);
+  adjustMemory(env);
+  checkZstdError(env, result);
+}
+
+void DCtx::wrapReset(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 1)
+    throw TypeError::New(env, "Wrong arguments");
+  ZSTD_ResetDirective reset =
+      static_cast<ZSTD_ResetDirective>(info[0].ToNumber().Int32Value());
+
+  size_t result = ZSTD_DCtx_reset(dctx, reset);
+  adjustMemory(env);
+  checkZstdError(env, result);
 }

@@ -20,6 +20,10 @@ class CCtx : public ObjectWrapHelper<CCtx> {
 
   Napi::Value wrapCompress(const Napi::CallbackInfo& info);
   Napi::Value wrapCompressUsingCDict(const Napi::CallbackInfo& info);
+  void wrapSetParameter(const Napi::CallbackInfo& info);
+  void wrapSetPledgedSrcSize(const Napi::CallbackInfo& info);
+  void wrapReset(const Napi::CallbackInfo& info);
+  Napi::Value wrapCompress2(const Napi::CallbackInfo& info);
 };
 
 #endif
