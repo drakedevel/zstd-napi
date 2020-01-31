@@ -42,7 +42,7 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_decompressDCtx(dctx, dstBuf.Data(), dstBuf.ByteLength(),
                                       srcBuf.Data(), srcBuf.ByteLength());
-  adjustMemory(info.Env());
+  adjustMemory(env);
   return convertZstdResult(env, result);
 }
 
@@ -57,7 +57,7 @@ Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
   size_t result = ZSTD_decompress_usingDDict(
       dctx, dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
       srcBuf.ByteLength(), ddictObj->ddict);
-  adjustMemory(info.Env());
+  adjustMemory(env);
   return convertZstdResult(env, result);
 }
 
