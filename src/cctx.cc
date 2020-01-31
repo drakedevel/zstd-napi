@@ -40,7 +40,7 @@ Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
     throw TypeError::New(env, "Wrong arguments");
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
-  int32_t level = info[2].As<Number>();
+  int32_t level = info[2].ToNumber();
 
   size_t result = ZSTD_compressCCtx(cctx, dstBuf.Data(), dstBuf.ByteLength(),
                                     srcBuf.Data(), srcBuf.ByteLength(), level);

@@ -51,7 +51,7 @@ Value wrapCompressBound(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
     throw TypeError::New(env, "Wrong arguments");
-  int64_t size = info[0].ToNumber().As<Number>();
+  int64_t size = info[0].ToNumber();
 
   return Number::New(env, ZSTD_compressBound(size));
 }
