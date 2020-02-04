@@ -2,11 +2,30 @@ name: build-on-push
 on: push
 
 jobs:
-  build:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          git submodule sync --recursive
+          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - name: Build prebuilds
+        uses: ./.github/actions/build
+        env:
+          JOBS: 3
+      - name: Upload prebuilds
+        uses: actions/upload-artifact@v1
+        with:
+          name: prebuilds
+          path: prebuilds
+
+  build-other:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules
@@ -19,6 +38,8 @@ jobs:
           node-version: '12.x'
       - run: npm install
       - run: npm run build-prebuild
+        env:
+          JOBS: 3
       - name: Upload prebuilds
         uses: actions/upload-artifact@v1
         with:

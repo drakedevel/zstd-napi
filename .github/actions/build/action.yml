@@ -1,0 +1,5 @@
+name: Build prebuilds
+description: Build binaries for N-API module
+runs:
+  using: docker
+  image: Dockerfile
