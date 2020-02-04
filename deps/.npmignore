@@ -1,0 +1,7 @@
+/**
+!/zstd/COPYING
+!/zstd/LICENSE
+!/zstd/lib/*.h
+!/zstd/lib/common/*
+!/zstd/lib/compress/*
+!/zstd/lib/decompress/*

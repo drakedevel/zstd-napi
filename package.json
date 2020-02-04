@@ -6,7 +6,8 @@
     "type": "git",
     "url": "https://github.com/drakedevel/zstd-napi.git"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
     "build-prebuild": "prebuild -r napi --all",
@@ -15,7 +16,11 @@
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "prebuild": "^10.0.0"
+    "@types/jest": "^25.1.1",
+    "jest": "^25.1.0",
+    "prebuild": "^10.0.0",
+    "ts-jest": "^25.1.0",
+    "typescript": "^3.7.5"
   },
   "dependencies": {
     "node-addon-api": "^2.0.0",
@@ -26,5 +31,11 @@
       3,
       5
     ]
-  }
+  },
+  "files": [
+    "binding.d.ts",
+    "binding.js",
+    "deps",
+    "dist"
+  ]
 }
