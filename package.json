@@ -8,20 +8,25 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "node-gyp configure && node-gyp build",
-    "build-prebuild": "prebuild -r napi --all",
-    "install": "prebuild-install -r napi || node-gyp rebuild"
+    "build": "node-pre-gyp install --build-from-source",
+    "build-prebuild": "node-pre-gyp rebuild && node-pre-gyp package",
+    "install": "node-pre-gyp install --fallback-to-build"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "prebuild": "^10.0.0"
+    "node-pre-gyp-github": "^1.4.3"
   },
   "dependencies": {
     "node-addon-api": "^2.0.0",
-    "prebuild-install": "^5.3.3"
+    "node-pre-gyp": "^0.14.0"
   },
   "binary": {
+    "module_name": "binding",
+    "module_path": "./addon/napi-v{napi_build_version}/",
+    "host": "https://github.com/drakedevel/zstd-napi/releases/download/",
+    "remote_path": "v{version}",
+    "package_name": "{module_name}-v{version}-napi-v{napi_build_version}-{platform}-{arch}-{libc}.tar.gz",
     "napi_versions": [
       3,
       5
