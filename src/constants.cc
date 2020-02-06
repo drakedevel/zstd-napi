@@ -14,9 +14,9 @@ void createConstants(Env env, Object exports) {
 }
 
 void createEnums(Env env, Object exports) {
-#define ADD_ENUM_MEMBER(obj, pfx, name)          \
+#define ADD_ENUM_MEMBER(obj, pfx, name, jname)   \
   do {                                           \
-    String vName = String::New(env, #name);      \
+    String vName = String::New(env, #jname);     \
     Number vValue = Number::New(env, pfx##name); \
     (obj)[vName] = vValue;                       \
     (obj)[vValue] = vName;                       \
@@ -24,7 +24,7 @@ void createEnums(Env env, Object exports) {
 
   // ZSTD_strategy
   Object strategy = Object::New(env);
-#define E(name) ADD_ENUM_MEMBER(strategy, ZSTD_, name)
+#define E(name) ADD_ENUM_MEMBER(strategy, ZSTD_, name, name)
   E(fast);
   E(dfast);
   E(greedy);
@@ -38,7 +38,7 @@ void createEnums(Env env, Object exports) {
 
   // ZSTD_cParameter
   Object cParameter = Object::New(env);
-#define E(name) ADD_ENUM_MEMBER(cParameter, ZSTD_c_, name)
+#define E(name) ADD_ENUM_MEMBER(cParameter, ZSTD_c_, name, name)
   E(compressionLevel);
   E(windowLog);
   E(hashLog);
@@ -63,23 +63,23 @@ void createEnums(Env env, Object exports) {
 
   // ZSTD_ResetDirective
   Object resetDirective = Object::New(env);
-#define E(name) ADD_ENUM_MEMBER(resetDirective, ZSTD_reset_, name)
-  E(session_only);
-  E(parameters);
-  E(session_and_parameters);
+#define E(name, jname) ADD_ENUM_MEMBER(resetDirective, ZSTD_reset_, name, jname)
+  E(session_only, sessionOnly);
+  E(parameters, parameters);
+  E(session_and_parameters, sessionAndParameters);
 #undef E
   exports["ResetDirective"] = resetDirective;
 
   // ZSTD_dParameter
   Object dParameter = Object::New(env);
-#define E(name) ADD_ENUM_MEMBER(dParameter, ZSTD_d_, name)
+#define E(name) ADD_ENUM_MEMBER(dParameter, ZSTD_d_, name, name)
   E(windowLogMax);
 #undef E
   exports["DParameter"] = dParameter;
 
   // ZSTD_EndDirective
   Object endDirective = Object::New(env);
-#define E(name) ADD_ENUM_MEMBER(endDirective, ZSTD_e_, name)
+#define E(name) ADD_ENUM_MEMBER(endDirective, ZSTD_e_, name, name)
   E(continue);
   E(flush);
   E(end);
