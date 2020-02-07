@@ -54,11 +54,11 @@ export class CCtx {
   setParameter(param: CParameter, value: number): void;
   setPledgedSrcSize(size: number): void;
   reset(reset: ResetDirective): void;
-  compress2(dstBuf: Uint8Array, srcBuf: Uint8Array): void;
+  compress2(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
 }
 
 export class CDict {
-  constructor(dictBuf: Uint8Array);
+  constructor(dictBuf: Uint8Array, level: number);
 }
 
 export class DCtx {

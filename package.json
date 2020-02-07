@@ -23,6 +23,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/node": "*",
     "node-addon-api": "^2.0.0",
     "prebuild-install": "^5.3.3"
   },
