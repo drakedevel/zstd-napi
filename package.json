@@ -11,7 +11,9 @@
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
     "build-prebuild": "prebuild -r napi --all",
-    "install": "prebuild-install -r napi || node-gyp rebuild"
+    "install": "prebuild-install -r napi || node-gyp rebuild",
+    "test": "jest",
+    "test-lcov": "jest --coverage --coverageReporters=lcovonly"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",

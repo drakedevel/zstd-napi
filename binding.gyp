@@ -1,6 +1,12 @@
 {
   'variables': {
-    'napi_build_version': 3
+    'enable_gcov': 0,
+    'napi_build_version': 3,
+    'conditions': [
+      ['OS!="win"', {
+        'enable_gcov': '<!(echo $ZSTD_NAPI_ENABLE_GCOV)',
+      }],
+    ],
   },
   'targets': [
     {
@@ -28,6 +34,10 @@
           'msvs_settings': {
             'VCCLCompilerTool': {'ExceptionHandling': 1},
           },
+        }],
+        ['enable_gcov==1', {
+          'cflags+': ['--coverage'],
+          'ldflags+': ['--coverage'],
         }],
       ],
     },

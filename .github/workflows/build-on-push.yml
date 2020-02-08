@@ -45,3 +45,32 @@ jobs:
         with:
           name: prebuilds
           path: prebuilds
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          git submodule sync --recursive
+          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: sudo apt-get -y install lcov
+      - run: npm install
+        env:
+          JOBS: 3
+          ZSTD_NAPI_ENABLE_GCOV: 1
+      - run: npm run test-lcov
+      - name: Combine coverage data
+        run: |
+          lcov -c -d . -o binding-lcov-raw.info --rc lcov_branch_coverage=1
+          lcov -e binding-lcov-raw.info "$(pwd)/src/*" -o binding-lcov.info
+          lcov -a binding-lcov.info -a coverage/lcov.info -o combined-lcov.info
+      - name: Submit coverage data to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./combined-lcov.info
