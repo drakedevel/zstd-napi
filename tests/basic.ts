@@ -6,6 +6,10 @@ import * as binding from '../binding';
 const minDict = fs.readFileSync(path.join(__dirname, 'data', 'minimal.dct'));
 const minDictId = 598886516;
 
+function hex(data: string): Buffer {
+  return Buffer.from(data, 'hex');
+}
+
 // Minimal frame compressed with the minDict dictionary
 const minDictFrame = hex('28b52ffd237448b22300010000');
 
@@ -21,19 +25,21 @@ const abcDictFrame = hex('28b52ffd237448b2231e650000306162633132330100014b11');
 const abcStreamFrame = hex('28b52ffd0058650000306162633132330100014b11');
 const abcFrameContent = Buffer.from('abc123abc123abc123abc123abc123');
 
-function hex(data: string) {
-  return Buffer.from(data, 'hex');
-}
-
-function testCompress(input: Buffer, expected: Buffer,
-                      f: (dest: Buffer, src: Buffer) => number) {
+function expectCompress(
+  input: Buffer,
+  expected: Buffer,
+  f: (dest: Buffer, src: Buffer) => number,
+): void {
   const output = Buffer.alloc(binding.compressBound(input.length));
   const len = f(output, input);
   expect(output.slice(0, len).equals(expected)).toBe(true);
 }
 
-function testDecompress(input: Buffer, expected: Buffer,
-                        f: (dest: Buffer, src: Buffer) => number) {
+function expectDecompress(
+  input: Buffer,
+  expected: Buffer,
+  f: (dest: Buffer, src: Buffer) => number,
+): void {
   const output = Buffer.alloc(expected.length);
   const len = f(output, input);
   expect(output.slice(0, len).equals(expected)).toBe(true);
@@ -47,19 +53,22 @@ describe('CCtx', () => {
   });
 
   test('#compress works', () => {
-    testCompress(abcFrameContent, abcFrame,
-                 (dest, src) => cctx.compress(dest, src, 3));
+    expectCompress(abcFrameContent, abcFrame, (dest, src) =>
+      cctx.compress(dest, src, 3),
+    );
   });
 
   test('#compressUsingDict works', () => {
-    testCompress(abcFrameContent, abcDictFrame,
-                 (dest, src) => cctx.compressUsingDict(dest, src, minDict, 3));
+    expectCompress(abcFrameContent, abcDictFrame, (dest, src) =>
+      cctx.compressUsingDict(dest, src, minDict, 3),
+    );
   });
 
   test('#compressUsingCDict works', () => {
     const cdict = new binding.CDict(minDict, 3);
-    testCompress(abcFrameContent, abcDictFrame,
-                 (dest, src) => cctx.compressUsingCDict(dest, src, cdict));
+    expectCompress(abcFrameContent, abcDictFrame, (dest, src) =>
+      cctx.compressUsingCDict(dest, src, cdict),
+    );
   });
 
   test('#setPledgedSrcSize works', () => {
@@ -75,19 +84,26 @@ describe('CCtx', () => {
   test('#compress2 works', () => {
     cctx.setParameter(binding.CParameter.contentSizeFlag, 0);
     cctx.setParameter(binding.CParameter.windowLog, 10);
-    testCompress(Buffer.alloc(0), minStreamFrame,
-                 (dst, src) => cctx.compress2(dst, src));
+    expectCompress(Buffer.alloc(0), minStreamFrame, (dst, src) =>
+      cctx.compress2(dst, src),
+    );
   });
 
   test('#compressStream2 works', () => {
     const output = Buffer.alloc(abcStreamFrame.length);
     let [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
-      output, abcFrameContent, binding.EndDirective.continue);
+      output,
+      abcFrameContent,
+      binding.EndDirective.continue,
+    );
     expect(toFlush).toBe(0);
     expect(dstProduced).toBe(0);
     expect(srcConsumed).toBe(abcFrameContent.length);
     [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
-      output, Buffer.alloc(0), binding.EndDirective.end);
+      output,
+      Buffer.alloc(0),
+      binding.EndDirective.end,
+    );
     expect(toFlush).toBe(0);
     expect(dstProduced).toBe(output.length);
     expect(srcConsumed).toBe(0);
@@ -96,8 +112,9 @@ describe('CCtx', () => {
 
   test('#loadDictionary works', () => {
     cctx.loadDictionary(minDict);
-    testCompress(abcFrameContent, abcDictFrame,
-                 (dst, src) => cctx.compress2(dst, src));
+    expectCompress(abcFrameContent, abcDictFrame, (dst, src) =>
+      cctx.compress2(dst, src),
+    );
   });
 });
 
@@ -109,19 +126,24 @@ describe('DCtx', () => {
   });
 
   test('#decompress works', () => {
-    testDecompress(abcFrame, abcFrameContent,
-                   output => dctx.decompress(output, abcFrame));
+    expectDecompress(abcFrame, abcFrameContent, output =>
+      dctx.decompress(output, abcFrame),
+    );
   });
 
   test('#decompressStream works', () => {
     const output = Buffer.alloc(abcFrameContent.length);
     let [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
-      output, abcStreamFrame.slice(0, 12));
+      output,
+      abcStreamFrame.slice(0, 12),
+    );
     expect(inputHint).toBe(abcStreamFrame.length - 12);
     expect(dstProduced).toBe(0);
     expect(srcConsumed).toBe(12);
     [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
-      output, abcStreamFrame.slice(srcConsumed));
+      output,
+      abcStreamFrame.slice(srcConsumed),
+    );
     expect(inputHint).toBe(0);
     expect(dstProduced).toBe(abcFrameContent.length);
     expect(srcConsumed).toBe(abcStreamFrame.length - 12);
@@ -129,14 +151,16 @@ describe('DCtx', () => {
   });
 
   test('#decompressUsingDict works', () => {
-    testDecompress(abcDictFrame, abcFrameContent,
-                   output => dctx.decompressUsingDict(output, abcDictFrame, minDict));
+    expectDecompress(abcDictFrame, abcFrameContent, output =>
+      dctx.decompressUsingDict(output, abcDictFrame, minDict),
+    );
   });
 
   test('#decompressUsingDDict works', () => {
     const ddict = new binding.DDict(minDict);
-    testDecompress(abcDictFrame, abcFrameContent,
-                   output => dctx.decompressUsingDDict(output, abcDictFrame, ddict));
+    expectDecompress(abcDictFrame, abcFrameContent, output =>
+      dctx.decompressUsingDDict(output, abcDictFrame, ddict),
+    );
   });
 
   test('#setParameter works', () => {
@@ -151,8 +175,9 @@ describe('DCtx', () => {
 
   test('#loadDictionary works', () => {
     dctx.loadDictionary(minDict);
-    testDecompress(abcDictFrame, abcFrameContent,
-                   (dst, src) => dctx.decompress(dst, src));
+    expectDecompress(abcDictFrame, abcFrameContent, (dst, src) =>
+      dctx.decompress(dst, src),
+    );
   });
 });
 
@@ -172,11 +197,15 @@ test('versionNumber works', () => {
 });
 
 test('compress works', () => {
-  testCompress(abcFrameContent, abcFrame, (dest, src) => binding.compress(dest, src, 3));
+  expectCompress(abcFrameContent, abcFrame, (dest, src) =>
+    binding.compress(dest, src, 3),
+  );
 });
 
 test('decompress works', () => {
-  testDecompress(abcFrame, abcFrameContent, (dest, src) => binding.decompress(dest, src));
+  expectDecompress(abcFrame, abcFrameContent, (dest, src) =>
+    binding.decompress(dest, src),
+  );
 });
 
 describe('getFrameContentSize', () => {
@@ -184,12 +213,14 @@ describe('getFrameContentSize', () => {
     expect(binding.getFrameContentSize(minEmptyFrame)).toBe(0);
   });
   test('returns null when size is unknown', () => {
-    expect(binding.getFrameContentSize(minStreamFrame)).toBe(null);
+    expect(binding.getFrameContentSize(minStreamFrame)).toBeNull();
   });
 });
 
 test('findFrameCompressedSize works', () => {
-  expect(binding.findFrameCompressedSize(minEmptyFrame)).toBe(minEmptyFrame.length);
+  expect(binding.findFrameCompressedSize(minEmptyFrame)).toBe(
+    minEmptyFrame.length,
+  );
 });
 
 test('compressBound works', () => {
@@ -204,7 +235,7 @@ test('maxCLevel works', () => {
   expect(binding.maxCLevel()).toBeGreaterThan(0);
 });
 
-function expectBounds(bounds: binding.Bounds) {
+function expectBounds(bounds: binding.Bounds): void {
   expect(bounds).toMatchObject({
     lowerBound: expect.any(Number),
     upperBound: expect.any(Number),
@@ -213,7 +244,7 @@ function expectBounds(bounds: binding.Bounds) {
 }
 
 test('cParamGetBounds works', () => {
-  for (const [k, v] of Object.entries(binding.CParameter)) {
+  for (const v of Object.values(binding.CParameter)) {
     if (typeof v === 'number') {
       expectBounds(binding.cParamGetBounds(v));
     }
@@ -221,7 +252,7 @@ test('cParamGetBounds works', () => {
 });
 
 test('dParamGetBounds works', () => {
-  for (const [k, v] of Object.entries(binding.DParameter)) {
+  for (const v of Object.values(binding.DParameter)) {
     if (typeof v === 'number') {
       expectBounds(binding.dParamGetBounds(v));
     }

@@ -6,8 +6,5 @@
     "strict": true,
     "target": "ES2017"
   },
-  "include": [
-    "binding.d.ts",
-    "lib/**/*.ts"
-  ]
+  "include": ["binding.d.ts", "lib/**/*.ts"]
 }

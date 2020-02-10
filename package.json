@@ -11,7 +11,10 @@
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
     "build-prebuild": "prebuild -r napi --all",
+    "clang-format": "clang-format -i src/*",
     "install": "prebuild-install -r napi || node-gyp rebuild",
+    "lint": "eslint --ext .js,.ts .",
+    "prettier": "prettier -l --write '**/*.{js,json,ts,yml}'",
     "test": "jest",
     "test-lcov": "jest --coverage --coverageReporters=lcovonly"
   },
@@ -19,8 +22,14 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^25.1.1",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-jest": "^23.7.0",
     "jest": "^25.1.0",
     "prebuild": "^10.0.0",
+    "prettier": "^1.19.1",
     "ts-jest": "^25.1.0",
     "typescript": "^3.7.5"
   },

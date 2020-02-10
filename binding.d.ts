@@ -59,13 +59,26 @@ type StreamResult = [number, number, number];
 
 export class CCtx {
   compress(dstBuf: Uint8Array, srcBuf: Uint8Array, level: number): number;
-  compressUsingDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dictBuf: Uint8Array, level: number): number;
-  compressUsingCDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dict: CDict): number;
+  compressUsingDict(
+    dstBuf: Uint8Array,
+    srcBuf: Uint8Array,
+    dictBuf: Uint8Array,
+    level: number,
+  ): number;
+  compressUsingCDict(
+    dstBuf: Uint8Array,
+    srcBuf: Uint8Array,
+    dict: CDict,
+  ): number;
   setParameter(param: CParameter, value: number): void;
   setPledgedSrcSize(size: number): void;
   reset(reset: ResetDirective): void;
   compress2(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
-  compressStream2(dstBuf: Uint8Array, srcBuf: Uint8Array, endOp: EndDirective): StreamResult;
+  compressStream2(
+    dstBuf: Uint8Array,
+    srcBuf: Uint8Array,
+    endOp: EndDirective,
+  ): StreamResult;
   loadDictionary(dictBuf: Uint8Array): void;
 }
 
@@ -76,8 +89,16 @@ export class CDict {
 export class DCtx {
   decompress(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
   decompressStream(dstBuf: Uint8Array, srcBuf: Uint8Array): StreamResult;
-  decompressUsingDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dictBuf: Uint8Array): number;
-  decompressUsingDDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dict: DDict): number;
+  decompressUsingDict(
+    dstBuf: Uint8Array,
+    srcBuf: Uint8Array,
+    dictBuf: Uint8Array,
+  ): number;
+  decompressUsingDDict(
+    dstBuf: Uint8Array,
+    srcBuf: Uint8Array,
+    dict: DDict,
+  ): number;
   setParameter(param: DParameter, value: number): void;
   reset(reset: ResetDirective): void;
   loadDictionary(dictBuf: Uint8Array): void;
@@ -95,7 +116,11 @@ export interface Bounds {
 
 export function versionNumber(): number;
 export function versionString(): string;
-export function compress(dstBuf: Uint8Array, srcBuf: Uint8Array, level: number): number;
+export function compress(
+  dstBuf: Uint8Array,
+  srcBuf: Uint8Array,
+  level: number,
+): number;
 export function decompress(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
 export function getFrameContentSize(frameBuf: Uint8Array): number | null;
 export function findFrameCompressedSize(frameBuf: Uint8Array): number;
