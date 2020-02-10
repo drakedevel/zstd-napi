@@ -51,7 +51,6 @@ export class CCtx {
   compress(dstBuf: Uint8Array, srcBuf: Uint8Array, level: number): number;
   compressUsingDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dictBuf: Uint8Array, level: number): number;
   compressUsingCDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dict: CDict): number;
-  setParameter(param: CParameter.strategy, value: Strategy): void;
   setParameter(param: CParameter, value: number): void;
   setPledgedSrcSize(size: number): void;
   reset(reset: ResetDirective): void;
