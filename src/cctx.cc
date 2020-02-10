@@ -12,6 +12,7 @@ Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
       env, "CCtx",
       {
           InstanceMethod("compress", &CCtx::wrapCompress),
+          InstanceMethod("compressUsingDict", &CCtx::wrapCompressUsingDict),
           InstanceMethod("compressUsingCDict", &CCtx::wrapCompressUsingCDict),
           InstanceMethod("setParameter", &CCtx::wrapSetParameter),
           InstanceMethod("setPledgedSrcSize", &CCtx::wrapSetPledgedSrcSize),
@@ -44,6 +45,22 @@ Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_compressCCtx(cctx, dstBuf.Data(), dstBuf.ByteLength(),
                                     srcBuf.Data(), srcBuf.ByteLength(), level);
+  adjustMemory(env);
+  return convertZstdResult(env, result);
+}
+
+Napi::Value CCtx::wrapCompressUsingDict(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 4)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+  Uint8Array dictBuf = info[2].As<Uint8Array>();
+  int32_t level = info[3].ToNumber();
+
+  size_t result = ZSTD_compress_usingDict(
+      cctx, dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
+      srcBuf.ByteLength(), dictBuf.Data(), dictBuf.ByteLength(), level);
   adjustMemory(env);
   return convertZstdResult(env, result);
 }

@@ -19,6 +19,7 @@ class CCtx : public ObjectWrapHelper<CCtx> {
   int64_t getCurrentSize() override { return ZSTD_sizeof_CCtx(cctx); }
 
   Napi::Value wrapCompress(const Napi::CallbackInfo& info);
+  Napi::Value wrapCompressUsingDict(const Napi::CallbackInfo& info);
   Napi::Value wrapCompressUsingCDict(const Napi::CallbackInfo& info);
   void wrapSetParameter(const Napi::CallbackInfo& info);
   void wrapSetPledgedSrcSize(const Napi::CallbackInfo& info);

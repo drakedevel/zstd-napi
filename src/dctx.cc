@@ -8,15 +8,16 @@ using namespace Napi;
 Napi::FunctionReference DCtx::constructor;
 
 Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
-  Function func =
-      DefineClass(env, "DCtx",
-                  {
-                      InstanceMethod("decompress", &DCtx::wrapDecompress),
-                      InstanceMethod("decompressUsingDDict",
-                                     &DCtx::wrapDecompressUsingDDict),
-                      InstanceMethod("setParameter", &DCtx::wrapSetParameter),
-                      InstanceMethod("reset", &DCtx::wrapReset),
-                  });
+  Function func = DefineClass(
+      env, "DCtx",
+      {
+          InstanceMethod("decompress", &DCtx::wrapDecompress),
+          InstanceMethod("decompressUsingDict", &DCtx::wrapDecompressUsingDict),
+          InstanceMethod("decompressUsingDDict",
+                         &DCtx::wrapDecompressUsingDDict),
+          InstanceMethod("setParameter", &DCtx::wrapSetParameter),
+          InstanceMethod("reset", &DCtx::wrapReset),
+      });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
   exports.Set("DCtx", func);
@@ -42,6 +43,21 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
 
   size_t result = ZSTD_decompressDCtx(dctx, dstBuf.Data(), dstBuf.ByteLength(),
                                       srcBuf.Data(), srcBuf.ByteLength());
+  adjustMemory(env);
+  return convertZstdResult(env, result);
+}
+
+Napi::Value DCtx::wrapDecompressUsingDict(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 3)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+  Uint8Array dictBuf = info[2].As<Uint8Array>();
+
+  size_t result = ZSTD_decompress_usingDict(
+      dctx, dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
+      srcBuf.ByteLength(), dictBuf.Data(), dictBuf.ByteLength());
   adjustMemory(env);
   return convertZstdResult(env, result);
 }

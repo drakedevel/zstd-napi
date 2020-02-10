@@ -50,6 +50,11 @@ describe('CCtx', () => {
                  (dest, src) => cctx.compress(dest, src, 3));
   });
 
+  test('#compressUsingDict works', () => {
+    testCompress(abcFrameContent, abcDictFrame,
+                 (dest, src) => cctx.compressUsingDict(dest, src, minDict, 3));
+  });
+
   test('#compressUsingCDict works', () => {
     const cdict = new binding.CDict(minDict, 3);
     testCompress(abcFrameContent, abcDictFrame,
@@ -86,6 +91,11 @@ describe('DCtx', () => {
                    output => dctx.decompress(output, abcFrame));
   });
 
+  test('#decompressUsingDict works', () => {
+    testDecompress(abcDictFrame, abcFrameContent,
+                   output => dctx.decompressUsingDict(output, abcDictFrame, minDict));
+  });
+
   test('#decompressUsingDDict works', () => {
     const ddict = new binding.DDict(minDict);
     testDecompress(abcDictFrame, abcFrameContent,
@@ -116,6 +126,14 @@ test('versionString works', () => {
 
 test('versionNumber works', () => {
   expect(binding.versionNumber()).toBe(10404);
+});
+
+test('compress works', () => {
+  testCompress(abcFrameContent, abcFrame, (dest, src) => binding.compress(dest, src, 3));
+});
+
+test('decompress works', () => {
+  testDecompress(abcFrame, abcFrameContent, (dest, src) => binding.decompress(dest, src));
 });
 
 describe('getFrameContentSize', () => {

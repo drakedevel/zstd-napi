@@ -21,6 +21,31 @@ Value wrapVersionString(const CallbackInfo& info) {
 }
 
 // Simple API
+Value wrapCompress(const CallbackInfo& info) {
+  Env env = info.Env();
+  if (info.Length() != 3)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+  int32_t level = info[2].ToNumber();
+
+  size_t result = ZSTD_compress(dstBuf.Data(), dstBuf.ByteLength(),
+                                srcBuf.Data(), srcBuf.ByteLength(), level);
+  return convertZstdResult(env, result);
+}
+
+Value wrapDecompress(const CallbackInfo& info) {
+  Env env = info.Env();
+  if (info.Length() != 2)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+
+  size_t result = ZSTD_decompress(dstBuf.Data(), dstBuf.ByteLength(),
+                                  srcBuf.Data(), srcBuf.ByteLength());
+  return convertZstdResult(env, result);
+}
+
 Value wrapGetFrameContentSize(const CallbackInfo& info) {
   Env env = info.Env();
   if (info.Length() != 1)
@@ -136,6 +161,8 @@ Object ModuleInit(Env env, Object exports) {
                                    wrapVersionNumber),
       PropertyDescriptor::Function(env, exports, "versionString",
                                    wrapVersionString),
+      PropertyDescriptor::Function(env, exports, "compress", wrapCompress),
+      PropertyDescriptor::Function(env, exports, "decompress", wrapDecompress),
       PropertyDescriptor::Function(env, exports, "getFrameContentSize",
                                    wrapGetFrameContentSize),
       PropertyDescriptor::Function(env, exports, "findFrameCompressedSize",
