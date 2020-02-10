@@ -25,6 +25,7 @@ class CCtx : public ObjectWrapHelper<CCtx> {
   void wrapSetPledgedSrcSize(const Napi::CallbackInfo& info);
   void wrapReset(const Napi::CallbackInfo& info);
   Napi::Value wrapCompress2(const Napi::CallbackInfo& info);
+  void wrapLoadDictionary(const Napi::CallbackInfo& info);
 };
 
 #endif

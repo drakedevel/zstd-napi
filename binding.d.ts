@@ -55,6 +55,7 @@ export class CCtx {
   setPledgedSrcSize(size: number): void;
   reset(reset: ResetDirective): void;
   compress2(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
+  loadDictionary(dictBuf: Uint8Array): void;
 }
 
 export class CDict {
@@ -67,6 +68,7 @@ export class DCtx {
   decompressUsingDDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dict: DDict): number;
   setParameter(param: DParameter, value: number): void;
   reset(reset: ResetDirective): void;
+  loadDictionary(dictBuf: Uint8Array): void;
 }
 
 export class DDict {

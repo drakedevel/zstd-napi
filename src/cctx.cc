@@ -18,6 +18,7 @@ Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("setPledgedSrcSize", &CCtx::wrapSetPledgedSrcSize),
           InstanceMethod("reset", &CCtx::wrapReset),
           InstanceMethod("compress2", &CCtx::wrapCompress2),
+          InstanceMethod("loadDictionary", &CCtx::wrapLoadDictionary),
       });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
@@ -127,4 +128,16 @@ Napi::Value CCtx::wrapCompress2(const Napi::CallbackInfo& info) {
                                  srcBuf.Data(), srcBuf.ByteLength());
   adjustMemory(env);
   return convertZstdResult(env, result);
+}
+
+void CCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 1)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
+
+  size_t result =
+      ZSTD_CCtx_loadDictionary(cctx, dictBuf.Data(), dictBuf.ByteLength());
+  adjustMemory(env);
+  checkZstdError(env, result);
 }

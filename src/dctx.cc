@@ -17,6 +17,7 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
                          &DCtx::wrapDecompressUsingDDict),
           InstanceMethod("setParameter", &DCtx::wrapSetParameter),
           InstanceMethod("reset", &DCtx::wrapReset),
+          InstanceMethod("loadDictionary", &DCtx::wrapLoadDictionary),
       });
   constructor = Persistent(func);
   constructor.SuppressDestruct();
@@ -98,6 +99,18 @@ void DCtx::wrapReset(const Napi::CallbackInfo& info) {
       static_cast<ZSTD_ResetDirective>(info[0].ToNumber().Int32Value());
 
   size_t result = ZSTD_DCtx_reset(dctx, reset);
+  adjustMemory(env);
+  checkZstdError(env, result);
+}
+
+void DCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 1)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
+
+  size_t result =
+      ZSTD_DCtx_loadDictionary(dctx, dictBuf.Data(), dictBuf.ByteLength());
   adjustMemory(env);
   checkZstdError(env, result);
 }

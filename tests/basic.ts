@@ -77,6 +77,12 @@ describe('CCtx', () => {
     testCompress(Buffer.alloc(0), minStreamFrame,
                  (dst, src) => cctx.compress2(dst, src));
   });
+
+  test('#loadDictionary works', () => {
+    cctx.loadDictionary(minDict);
+    testCompress(abcFrameContent, abcDictFrame,
+                 (dst, src) => cctx.compress2(dst, src));
+  });
 });
 
 describe('DCtx', () => {
@@ -110,6 +116,12 @@ describe('DCtx', () => {
   test('#reset works', () => {
     // TODO: Find some way to distinguish this from a no-op
     dctx.reset(binding.ResetDirective.sessionAndParameters);
+  });
+
+  test('#loadDictionary works', () => {
+    dctx.loadDictionary(minDict);
+    testDecompress(abcDictFrame, abcFrameContent,
+                   (dst, src) => dctx.decompress(dst, src));
   });
 });
 
