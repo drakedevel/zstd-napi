@@ -1,3 +1,8 @@
+export const MAGICNUMBER: number;
+export const MAGIC_DICTIONARY: number;
+export const MAGIC_SKIPPABLE_START: number;
+export const MAGIC_SKIPPABLE_MASK: number;
+
 export enum CParameter {
   compressionLevel,
   windowLog,
