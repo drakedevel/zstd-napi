@@ -197,6 +197,22 @@ test('dParamGetBounds works', () => {
   }
 });
 
+test('cStreamInSize works', () => {
+  expect(binding.cStreamInSize()).toBeGreaterThan(0);
+});
+
+test('cStreamOutSize works', () => {
+  expect(binding.cStreamOutSize()).toBeGreaterThan(0);
+});
+
+test('dStreamInSize works', () => {
+  expect(binding.dStreamInSize()).toBeGreaterThan(0);
+});
+
+test('dStreamOutSize works', () => {
+  expect(binding.dStreamOutSize()).toBeGreaterThan(0);
+});
+
 test('getDictIDFromDict works', () => {
   expect(binding.getDictIDFromDict(minDict)).toBe(minDictId);
 });

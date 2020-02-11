@@ -119,6 +119,24 @@ Value wrapDParamGetBounds(const CallbackInfo& info) {
   return convertParamBounds(env, ZSTD_dParam_getBounds(param));
 }
 
+// Streaming compression
+Value wrapCStreamInSize(const CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_CStreamInSize());
+}
+
+Value wrapCStreamOutSize(const CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_CStreamOutSize());
+}
+
+// Streaming decompression
+Value wrapDStreamInSize(const CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_DStreamInSize());
+}
+
+Value wrapDStreamOutSize(const CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_DStreamOutSize());
+}
+
 // Dictionary helper functions
 Value wrapGetDictIDFromDict(const CallbackInfo& info) {
   Env env = info.Env();
@@ -175,6 +193,14 @@ Object ModuleInit(Env env, Object exports) {
                                    wrapCParamGetBounds),
       PropertyDescriptor::Function(env, exports, "dParamGetBounds",
                                    wrapDParamGetBounds),
+      PropertyDescriptor::Function(env, exports, "cStreamInSize",
+                                   wrapCStreamInSize),
+      PropertyDescriptor::Function(env, exports, "cStreamOutSize",
+                                   wrapCStreamOutSize),
+      PropertyDescriptor::Function(env, exports, "dStreamInSize",
+                                   wrapDStreamInSize),
+      PropertyDescriptor::Function(env, exports, "dStreamOutSize",
+                                   wrapDStreamOutSize),
       PropertyDescriptor::Function(env, exports, "getDictIDFromDict",
                                    wrapGetDictIDFromDict),
       PropertyDescriptor::Function(env, exports, "getDictIDFromFrame",
