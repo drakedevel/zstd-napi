@@ -18,6 +18,7 @@ Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("setPledgedSrcSize", &CCtx::wrapSetPledgedSrcSize),
           InstanceMethod("reset", &CCtx::wrapReset),
           InstanceMethod("compress2", &CCtx::wrapCompress2),
+          InstanceMethod("compressStream2", &CCtx::wrapCompressStream2),
           InstanceMethod("loadDictionary", &CCtx::wrapLoadDictionary),
       });
   constructor = Persistent(func);
@@ -128,6 +129,36 @@ Napi::Value CCtx::wrapCompress2(const Napi::CallbackInfo& info) {
                                  srcBuf.Data(), srcBuf.ByteLength());
   adjustMemory(env);
   return convertZstdResult(env, result);
+}
+
+Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 3)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+  ZSTD_EndDirective endOp =
+      static_cast<ZSTD_EndDirective>(info[2].ToNumber().Int32Value());
+
+  ZSTD_outBuffer zstdOut = {
+      .dst = dstBuf.Data(),
+      .size = dstBuf.ByteLength(),
+      .pos = 0,
+  };
+  ZSTD_inBuffer zstdIn = {
+      .src = srcBuf.Data(),
+      .size = srcBuf.ByteLength(),
+      .pos = 0,
+  };
+  size_t ret = ZSTD_compressStream2(cctx, &zstdOut, &zstdIn, endOp);
+  adjustMemory(env);
+  Number toFlush = convertZstdResult(env, ret);
+
+  Object result = Object::New(env);
+  result["toFlush"] = toFlush;
+  result["dstProduced"] = zstdOut.pos;
+  result["srcConsumed"] = zstdIn.pos;
+  return result;
 }
 
 void CCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
