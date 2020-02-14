@@ -140,16 +140,14 @@ Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
   ZSTD_EndDirective endOp =
       static_cast<ZSTD_EndDirective>(info[2].ToNumber().Int32Value());
 
-  ZSTD_outBuffer zstdOut = {
-      .dst = dstBuf.Data(),
-      .size = dstBuf.ByteLength(),
-      .pos = 0,
-  };
-  ZSTD_inBuffer zstdIn = {
-      .src = srcBuf.Data(),
-      .size = srcBuf.ByteLength(),
-      .pos = 0,
-  };
+  ZSTD_outBuffer zstdOut;
+  zstdOut.dst = dstBuf.Data();
+  zstdOut.size = dstBuf.ByteLength();
+  zstdOut.pos = 0;
+  ZSTD_inBuffer zstdIn;
+  zstdIn.src = srcBuf.Data();
+  zstdIn.size = srcBuf.ByteLength();
+  zstdIn.pos = 0;
   size_t ret = ZSTD_compressStream2(cctx, &zstdOut, &zstdIn, endOp);
   adjustMemory(env);
   Number toFlush = convertZstdResult(env, ret);
