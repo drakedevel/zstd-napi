@@ -154,10 +154,12 @@ Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
   adjustMemory(env);
   Number toFlush = convertZstdResult(env, ret);
 
-  Object result = Object::New(env);
-  result["toFlush"] = toFlush;
-  result["dstProduced"] = zstdOut.pos;
-  result["srcConsumed"] = zstdIn.pos;
+  // NB: An array is slightly faster than constructing an object here, since
+  // N-API doesn't expose the relevant V8 features to speed that up.
+  Array result = Array::New(env, 3);
+  result[uint32_t(0)] = toFlush;
+  result[1] = zstdOut.pos;
+  result[2] = zstdIn.pos;
   return result;
 }
 
