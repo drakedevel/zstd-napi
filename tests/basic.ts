@@ -80,18 +80,18 @@ describe('CCtx', () => {
   });
 
   test('#compressStream2 works', () => {
-    const outBuf = Buffer.alloc(abcStreamFrame.length);
+    const output = Buffer.alloc(abcStreamFrame.length);
     let [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
-      outBuf, abcFrameContent, binding.EndDirective.continue);
+      output, abcFrameContent, binding.EndDirective.continue);
     expect(toFlush).toBe(0);
     expect(dstProduced).toBe(0);
     expect(srcConsumed).toBe(abcFrameContent.length);
     [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
-      outBuf, Buffer.alloc(0), binding.EndDirective.end);
+      output, Buffer.alloc(0), binding.EndDirective.end);
     expect(toFlush).toBe(0);
-    expect(dstProduced).toBe(outBuf.length);
+    expect(dstProduced).toBe(output.length);
     expect(srcConsumed).toBe(0);
-    expect(outBuf.equals(abcStreamFrame)).toBe(true);
+    expect(output.equals(abcStreamFrame)).toBe(true);
   });
 
   test('#loadDictionary works', () => {
@@ -111,6 +111,21 @@ describe('DCtx', () => {
   test('#decompress works', () => {
     testDecompress(abcFrame, abcFrameContent,
                    output => dctx.decompress(output, abcFrame));
+  });
+
+  test('#decompressStream works', () => {
+    const output = Buffer.alloc(abcFrameContent.length);
+    let [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
+      output, abcStreamFrame.slice(0, 12));
+    expect(inputHint).toBe(abcStreamFrame.length - 12);
+    expect(dstProduced).toBe(0);
+    expect(srcConsumed).toBe(12);
+    [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
+      output, abcStreamFrame.slice(srcConsumed));
+    expect(inputHint).toBe(0);
+    expect(dstProduced).toBe(abcFrameContent.length);
+    expect(srcConsumed).toBe(abcStreamFrame.length - 12);
+    expect(output.equals(abcFrameContent)).toBe(true);
   });
 
   test('#decompressUsingDict works', () => {

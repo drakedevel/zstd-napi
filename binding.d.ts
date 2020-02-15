@@ -75,6 +75,7 @@ export class CDict {
 
 export class DCtx {
   decompress(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
+  decompressStream(dstBuf: Uint8Array, srcBuf: Uint8Array): StreamResult;
   decompressUsingDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dictBuf: Uint8Array): number;
   decompressUsingDDict(dstBuf: Uint8Array, srcBuf: Uint8Array, dict: DDict): number;
   setParameter(param: DParameter, value: number): void;

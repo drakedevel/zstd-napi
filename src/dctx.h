@@ -19,6 +19,7 @@ class DCtx : public ObjectWrapHelper<DCtx> {
   int64_t getCurrentSize() { return ZSTD_sizeof_DCtx(dctx); }
 
   Napi::Value wrapDecompress(const Napi::CallbackInfo& info);
+  Napi::Value wrapDecompressStream(const Napi::CallbackInfo& info);
   Napi::Value wrapDecompressUsingDict(const Napi::CallbackInfo& info);
   Napi::Value wrapDecompressUsingDDict(const Napi::CallbackInfo& info);
   void wrapSetParameter(const Napi::CallbackInfo& info);

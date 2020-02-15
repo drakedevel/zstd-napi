@@ -12,6 +12,7 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
       env, "DCtx",
       {
           InstanceMethod("decompress", &DCtx::wrapDecompress),
+          InstanceMethod("decompressStream", &DCtx::wrapDecompressStream),
           InstanceMethod("decompressUsingDict", &DCtx::wrapDecompressUsingDict),
           InstanceMethod("decompressUsingDDict",
                          &DCtx::wrapDecompressUsingDDict),
@@ -46,6 +47,20 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
                                       srcBuf.Data(), srcBuf.ByteLength());
   adjustMemory(env);
   return convertZstdResult(env, result);
+}
+
+Napi::Value DCtx::wrapDecompressStream(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() != 2)
+    throw TypeError::New(env, "Wrong arguments");
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
+
+  ZSTD_outBuffer zstdOut = makeZstdOutBuffer(dstBuf);
+  ZSTD_inBuffer zstdIn = makeZstdInBuffer(srcBuf);
+  size_t ret = ZSTD_decompressStream(dctx, &zstdOut, &zstdIn);
+  adjustMemory(env);
+  return makeStreamResult(env, ret, zstdOut, zstdIn);
 }
 
 Napi::Value DCtx::wrapDecompressUsingDict(const Napi::CallbackInfo& info) {

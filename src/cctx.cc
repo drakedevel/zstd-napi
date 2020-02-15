@@ -140,25 +140,11 @@ Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
   ZSTD_EndDirective endOp =
       static_cast<ZSTD_EndDirective>(info[2].ToNumber().Int32Value());
 
-  ZSTD_outBuffer zstdOut;
-  zstdOut.dst = dstBuf.Data();
-  zstdOut.size = dstBuf.ByteLength();
-  zstdOut.pos = 0;
-  ZSTD_inBuffer zstdIn;
-  zstdIn.src = srcBuf.Data();
-  zstdIn.size = srcBuf.ByteLength();
-  zstdIn.pos = 0;
+  ZSTD_outBuffer zstdOut = makeZstdOutBuffer(dstBuf);
+  ZSTD_inBuffer zstdIn = makeZstdInBuffer(srcBuf);
   size_t ret = ZSTD_compressStream2(cctx, &zstdOut, &zstdIn, endOp);
   adjustMemory(env);
-  Number toFlush = convertZstdResult(env, ret);
-
-  // NB: An array is slightly faster than constructing an object here, since
-  // N-API doesn't expose the relevant V8 features to speed that up.
-  Array result = Array::New(env, 3);
-  result[uint32_t(0)] = toFlush;
-  result[1] = zstdOut.pos;
-  result[2] = zstdIn.pos;
-  return result;
+  return makeStreamResult(env, ret, zstdOut, zstdIn);
 }
 
 void CCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
