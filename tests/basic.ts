@@ -18,6 +18,7 @@ const minStreamFrame = hex('28b52ffd0000010000');
 // Frame with content 'abc123' repeated five times
 const abcFrame = hex('28b52ffd201e650000306162633132330100014b11');
 const abcDictFrame = hex('28b52ffd237448b2231e650000306162633132330100014b11');
+const abcStreamFrame = hex('28b52ffd0058650000306162633132330100014b11');
 const abcFrameContent = Buffer.from('abc123abc123abc123abc123abc123');
 
 function hex(data: string) {
@@ -76,6 +77,21 @@ describe('CCtx', () => {
     cctx.setParameter(binding.CParameter.windowLog, 10);
     testCompress(Buffer.alloc(0), minStreamFrame,
                  (dst, src) => cctx.compress2(dst, src));
+  });
+
+  test('#compressStream2 works', () => {
+    const outBuf = Buffer.alloc(abcStreamFrame.length);
+    let [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
+      outBuf, abcFrameContent, binding.EndDirective.continue);
+    expect(toFlush).toBe(0);
+    expect(dstProduced).toBe(0);
+    expect(srcConsumed).toBe(abcFrameContent.length);
+    [toFlush, dstProduced, srcConsumed] = cctx.compressStream2(
+      outBuf, Buffer.alloc(0), binding.EndDirective.end);
+    expect(toFlush).toBe(0);
+    expect(dstProduced).toBe(outBuf.length);
+    expect(srcConsumed).toBe(0);
+    expect(outBuf.equals(abcStreamFrame)).toBe(true);
   });
 
   test('#loadDictionary works', () => {
