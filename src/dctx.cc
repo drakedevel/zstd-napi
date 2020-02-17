@@ -5,9 +5,7 @@
 
 using namespace Napi;
 
-Napi::FunctionReference DCtx::constructor;
-
-Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
+void DCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "DCtx",
       {
@@ -20,10 +18,7 @@ Napi::Object DCtx::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("reset", &DCtx::wrapReset),
           InstanceMethod("loadDictionary", &DCtx::wrapLoadDictionary),
       });
-  constructor = Persistent(func);
-  constructor.SuppressDestruct();
   exports.Set("DCtx", func);
-  return exports;
 }
 
 DCtx::DCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<DCtx>(info) {

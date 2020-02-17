@@ -8,13 +8,12 @@
 
 class DDict : public ObjectWrapHelper<DDict> {
  public:
-  static Napi::Object Init(Napi::Env env, Napi::Object exports);
+  static void Init(Napi::Env env, Napi::Object exports);
   DDict(const Napi::CallbackInfo& info);
   virtual ~DDict();
 
  private:
   friend class DCtx;
-  static Napi::FunctionReference constructor;
   ZSTD_DDict* ddict;
 
   int64_t getCurrentSize() { return ZSTD_sizeof_DDict(ddict); }

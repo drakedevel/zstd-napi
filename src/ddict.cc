@@ -2,18 +2,13 @@
 
 using namespace Napi;
 
-Napi::FunctionReference DDict::constructor;
-
-Napi::Object DDict::Init(Napi::Env env, Napi::Object exports) {
+void DDict::Init(Napi::Env env, Napi::Object exports) {
   Function func =
       DefineClass(env, "DDict",
                   {
                       InstanceMethod("getDictID", &DDict::wrapGetDictID),
                   });
-  constructor = Persistent(func);
-  constructor.SuppressDestruct();
   exports.Set("DDict", func);
-  return exports;
 }
 
 DDict::DDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<DDict>(info) {

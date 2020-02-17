@@ -2,14 +2,9 @@
 
 using namespace Napi;
 
-Napi::FunctionReference CDict::constructor;
-
-Napi::Object CDict::Init(Napi::Env env, Napi::Object exports) {
+void CDict::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(env, "CDict", {});
-  constructor = Persistent(func);
-  constructor.SuppressDestruct();
   exports.Set("CDict", func);
-  return exports;
 }
 
 CDict::CDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<CDict>(info) {

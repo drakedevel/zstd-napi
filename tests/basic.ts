@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Worker } from 'worker_threads';
 import * as binding from '../binding';
 
 // Minimal dictionary (generated with zstd --train on random hex)
@@ -281,4 +282,17 @@ test('getDictIDFromDict works', () => {
 
 test('wrapGetDictIDFromFrame works', () => {
   expect(binding.getDictIDFromFrame(minDictFrame)).toBe(minDictId);
+});
+
+test('loading from multiple threads works', async () => {
+  async function runInWorker(): Promise<number> {
+    return new Promise((resolve, reject) =>
+      new Worker('require("./binding")', { eval: true })
+        .on('error', reject)
+        .on('exit', resolve),
+    );
+  }
+
+  expect(await runInWorker()).toBe(0);
+  expect(await runInWorker()).toBe(0);
 });

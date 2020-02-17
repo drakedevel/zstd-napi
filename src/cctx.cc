@@ -5,9 +5,7 @@
 
 using namespace Napi;
 
-Napi::FunctionReference CCtx::constructor;
-
-Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
+void CCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "CCtx",
       {
@@ -21,10 +19,7 @@ Napi::Object CCtx::Init(Napi::Env env, Napi::Object exports) {
           InstanceMethod("compressStream2", &CCtx::wrapCompressStream2),
           InstanceMethod("loadDictionary", &CCtx::wrapLoadDictionary),
       });
-  constructor = Persistent(func);
-  constructor.SuppressDestruct();
   exports.Set("CCtx", func);
-  return exports;
 }
 
 CCtx::CCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<CCtx>(info) {

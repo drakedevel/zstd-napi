@@ -156,16 +156,7 @@ Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
 }
 
-static bool alreadyInitialized;
-
 Object ModuleInit(Env env, Object exports) {
-  // Our constructor references aren't thread-safe at the moment.
-  // See for more context:
-  // https://github.com/nodejs/node-addon-api/issues/654
-  if (alreadyInitialized)
-    throw Error::New(env, "Module can't be initialized multiple times");
-  alreadyInitialized = true;
-
   CCtx::Init(env, exports);
   CDict::Init(env, exports);
   DCtx::Init(env, exports);
