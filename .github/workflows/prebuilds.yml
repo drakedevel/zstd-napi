@@ -1,4 +1,4 @@
-name: build-on-push
+name: prebuilds
 on: push
 
 jobs:
@@ -7,7 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules
-        shell: bash
         run: |
           git submodule sync --recursive
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
@@ -36,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - run: npm install
+      - run: npm install --ignore-scripts
       - run: npm run build-prebuild
         env:
           JOBS: 3
@@ -45,26 +44,3 @@ jobs:
         with:
           name: prebuilds
           path: prebuilds
-
-  test-coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        shell: bash
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - run: npm install
-        env:
-          JOBS: 3
-          ZSTD_NAPI_ENABLE_GCOV: 1
-      - run: npm run test-coverage
-      - name: Submit coverage data to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          yml: .codecov.yml
