@@ -58,19 +58,13 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - run: sudo apt-get -y install lcov
       - run: npm install
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
-      - run: npm run test-lcov
-      - name: Combine coverage data
-        run: |
-          lcov -c -d . -o binding-lcov-raw.info --rc lcov_branch_coverage=1
-          lcov -e binding-lcov-raw.info "$(pwd)/src/*" -o binding-lcov.info
-          lcov -a binding-lcov.info -a coverage/lcov.info -o combined-lcov.info
-      - name: Submit coverage data to Coveralls
-        uses: coverallsapp/github-action@master
+      - run: npm run test-coverage
+      - name: Submit coverage data to Codecov
+        uses: codecov/codecov-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./combined-lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          yml: .codecov.yml

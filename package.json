@@ -16,7 +16,7 @@
     "lint": "eslint --ext .js,.ts .",
     "prettier": "prettier -l --write '**/*.{js,json,ts,yml}'",
     "test": "jest",
-    "test-lcov": "jest --coverage --coverageReporters=lcovonly"
+    "test-coverage": "jest --coverage --coverageReporters=json"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
