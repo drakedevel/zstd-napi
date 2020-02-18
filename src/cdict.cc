@@ -1,7 +1,5 @@
 #include "cdict.h"
 
-#include "util.h"
-
 using namespace Napi;
 
 void CDict::Init(Napi::Env env, Napi::Object exports) {
@@ -17,14 +15,9 @@ CDict::CDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<CDict>(info) {
   Uint8Array dictBuf = info[0].As<Uint8Array>();
   int32_t level = info[1].ToNumber();
 
-  cdict = ZSTD_createCDict(dictBuf.Data(), dictBuf.ByteLength(), level);
+  cdict.reset(ZSTD_createCDict(dictBuf.Data(), dictBuf.ByteLength(), level));
   if (!cdict)
     throw Error::New(env, "Failed to create CDict");
   adjustMemory(env);
   WRAP_CONSTRUCTOR_END;
-}
-
-CDict::~CDict() {
-  ZSTD_freeCDict(cdict);
-  cdict = nullptr;
 }

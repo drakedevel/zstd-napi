@@ -4,18 +4,18 @@
 #include <napi.h>
 
 #include "object_wrap_helper.h"
+#include "util.h"
 #include "zstd.h"
 
 class CCtx : public ObjectWrapHelper<CCtx> {
  public:
   static void Init(Napi::Env env, Napi::Object exports);
   CCtx(const Napi::CallbackInfo& info);
-  virtual ~CCtx();
 
  private:
-  ZSTD_CCtx* cctx = nullptr;
+  zstd_unique_ptr<ZSTD_CCtx, ZSTD_freeCCtx> cctx;
 
-  int64_t getCurrentSize() override { return ZSTD_sizeof_CCtx(cctx); }
+  int64_t getCurrentSize() override { return ZSTD_sizeof_CCtx(cctx.get()); }
 
   Napi::Value wrapCompress(const Napi::CallbackInfo& info);
   Napi::Value wrapCompressUsingDict(const Napi::CallbackInfo& info);

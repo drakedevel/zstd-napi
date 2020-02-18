@@ -3,6 +3,8 @@
 
 #include <napi.h>
 
+#include <memory>
+
 #include "zstd.h"
 
 // Without fixes for node-addon-api #599 and #660, it's unsafe to throw Error
@@ -59,5 +61,9 @@ static inline Napi::Value makeStreamResult(Napi::Env env,
   result[2] = inBuf.pos;
   return result;
 }
+
+template <typename T, size_t (*fn)(T*)>
+using zstd_unique_ptr =
+    std::unique_ptr<T, std::integral_constant<decltype(fn), fn>>;
 
 #endif
