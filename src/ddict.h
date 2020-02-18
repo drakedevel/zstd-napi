@@ -14,7 +14,7 @@ class DDict : public ObjectWrapHelper<DDict> {
 
  private:
   friend class DCtx;
-  ZSTD_DDict* ddict;
+  ZSTD_DDict* ddict = nullptr;
 
   int64_t getCurrentSize() { return ZSTD_sizeof_DDict(ddict); }
 

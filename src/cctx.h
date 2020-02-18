@@ -13,7 +13,7 @@ class CCtx : public ObjectWrapHelper<CCtx> {
   virtual ~CCtx();
 
  private:
-  ZSTD_CCtx* cctx;
+  ZSTD_CCtx* cctx = nullptr;
 
   int64_t getCurrentSize() override { return ZSTD_sizeof_CCtx(cctx); }
 

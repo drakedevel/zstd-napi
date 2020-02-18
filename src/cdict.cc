@@ -1,5 +1,7 @@
 #include "cdict.h"
 
+#include "util.h"
+
 using namespace Napi;
 
 void CDict::Init(Napi::Env env, Napi::Object exports) {
@@ -8,6 +10,7 @@ void CDict::Init(Napi::Env env, Napi::Object exports) {
 }
 
 CDict::CDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<CDict>(info) {
+  WRAP_CONSTRUCTOR_BEGIN;
   Napi::Env env = info.Env();
   if (info.Length() != 2)
     throw TypeError::New(env, "Wrong arguments");
@@ -16,6 +19,7 @@ CDict::CDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<CDict>(info) {
 
   cdict = ZSTD_createCDict(dictBuf.Data(), dictBuf.ByteLength(), level);
   adjustMemory(env);
+  WRAP_CONSTRUCTOR_END;
 }
 
 CDict::~CDict() {

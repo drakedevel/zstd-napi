@@ -1,7 +1,7 @@
 #include "dctx.h"
 
 #include "ddict.h"
-#include "zstd_util.h"
+#include "util.h"
 
 using namespace Napi;
 
@@ -22,8 +22,10 @@ void DCtx::Init(Napi::Env env, Napi::Object exports) {
 }
 
 DCtx::DCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<DCtx>(info) {
+  WRAP_CONSTRUCTOR_BEGIN;
   dctx = ZSTD_createDCtx();
   adjustMemory(info.Env());
+  WRAP_CONSTRUCTOR_END;
 }
 
 DCtx::~DCtx() {

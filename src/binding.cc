@@ -7,7 +7,7 @@
 #include "constants.h"
 #include "dctx.h"
 #include "ddict.h"
-#include "zstd_util.h"
+#include "util.h"
 
 using namespace Napi;
 

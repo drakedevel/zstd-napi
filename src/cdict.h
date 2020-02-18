@@ -14,7 +14,7 @@ class CDict : public ObjectWrapHelper<CDict> {
 
  private:
   friend class CCtx;
-  ZSTD_CDict* cdict;
+  ZSTD_CDict* cdict = nullptr;
 
   int64_t getCurrentSize() { return ZSTD_sizeof_CDict(cdict); }
 };

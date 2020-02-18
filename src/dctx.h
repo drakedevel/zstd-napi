@@ -13,7 +13,7 @@ class DCtx : public ObjectWrapHelper<DCtx> {
   virtual ~DCtx();
 
  private:
-  ZSTD_DCtx* dctx;
+  ZSTD_DCtx* dctx = nullptr;
 
   int64_t getCurrentSize() { return ZSTD_sizeof_DCtx(dctx); }
 
