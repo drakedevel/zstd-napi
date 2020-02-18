@@ -119,6 +119,14 @@ describe('CCtx', () => {
   });
 });
 
+describe('CDict', () => {
+  test('constructor errors on corrupt dictionary', () => {
+    expect(() => {
+      new binding.CDict(minDict.slice(0, 32), 3);
+    }).toThrow('Failed to create CDict');
+  });
+});
+
 describe('DCtx', () => {
   let dctx: binding.DCtx;
 
@@ -183,6 +191,12 @@ describe('DCtx', () => {
 });
 
 describe('DDict', () => {
+  test('constructor errors on corrupt dictionary', () => {
+    expect(() => {
+      new binding.DDict(minDict.slice(0, 32));
+    }).toThrow('Failed to create DDict');
+  });
+
   test('#getDictID works', () => {
     const ddict = new binding.DDict(minDict);
     expect(ddict.getDictID()).toBe(minDictId);

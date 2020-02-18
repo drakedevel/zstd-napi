@@ -21,6 +21,8 @@ DDict::DDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<DDict>(info) {
   Uint8Array dictBuf = info[0].As<Uint8Array>();
 
   ddict = ZSTD_createDDict(dictBuf.Data(), dictBuf.ByteLength());
+  if (!ddict)
+    throw Error::New(env, "Failed to create DDict");
   adjustMemory(env);
   WRAP_CONSTRUCTOR_END;
 }

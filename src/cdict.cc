@@ -18,6 +18,8 @@ CDict::CDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<CDict>(info) {
   int32_t level = info[1].ToNumber();
 
   cdict = ZSTD_createCDict(dictBuf.Data(), dictBuf.ByteLength(), level);
+  if (!cdict)
+    throw Error::New(env, "Failed to create CDict");
   adjustMemory(env);
   WRAP_CONSTRUCTOR_END;
 }
