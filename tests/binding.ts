@@ -230,6 +230,11 @@ describe('getFrameContentSize', () => {
   test('returns null when size is unknown', () => {
     expect(binding.getFrameContentSize(minStreamFrame)).toBeNull();
   });
+  test('throws error when frame is corrupt', () => {
+    expect(() => {
+      binding.getFrameContentSize(minEmptyFrame.slice(0, 4));
+    }).toThrowErrorMatchingInlineSnapshot(`"Could not parse Zstandard header"`);
+  });
 });
 
 test('findFrameCompressedSize works', () => {
