@@ -3,6 +3,7 @@
 
 #include <napi.h>
 
+#include <cstdio>
 #include <memory>
 
 #include "zstd.h"
@@ -22,6 +23,15 @@
     e.ThrowAsJavaScriptException(); \
     return;                         \
   }
+
+static inline void checkArgCount(const Napi::CallbackInfo& info, size_t count) {
+  if (info.Length() != count) {
+    char errMsg[128];
+    snprintf(errMsg, sizeof(errMsg), "Expected %zd arguments, got %zd", count,
+             info.Length());
+    throw Napi::TypeError::New(info.Env(), errMsg);
+  }
+}
 
 static inline void checkZstdError(Napi::Env env, size_t ret) {
   if (ZSTD_isError(ret))

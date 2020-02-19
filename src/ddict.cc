@@ -14,8 +14,7 @@ void DDict::Init(Napi::Env env, Napi::Object exports) {
 DDict::DDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<DDict>(info) {
   WRAP_CONSTRUCTOR_BEGIN;
   Napi::Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array dictBuf = info[0].As<Uint8Array>();
 
   ddict.reset(ZSTD_createDDict(dictBuf.Data(), dictBuf.ByteLength()));

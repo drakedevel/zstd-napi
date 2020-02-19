@@ -30,8 +30,7 @@ CCtx::CCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<CCtx>(info) {
 
 Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 3)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 3);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   int32_t level = info[2].ToNumber();
@@ -45,8 +44,7 @@ Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
 
 Napi::Value CCtx::wrapCompressUsingDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 4)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 4);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   Uint8Array dictBuf = info[2].As<Uint8Array>();
@@ -61,8 +59,7 @@ Napi::Value CCtx::wrapCompressUsingDict(const Napi::CallbackInfo& info) {
 
 Napi::Value CCtx::wrapCompressUsingCDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 3)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 3);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   CDict* cdictObj = CDict::Unwrap(info[2].As<Object>());
@@ -76,8 +73,7 @@ Napi::Value CCtx::wrapCompressUsingCDict(const Napi::CallbackInfo& info) {
 
 void CCtx::wrapSetParameter(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 2)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 2);
   ZSTD_cParameter param =
       static_cast<ZSTD_cParameter>(info[0].ToNumber().Int32Value());
   int value = info[1].ToNumber();
@@ -89,8 +85,7 @@ void CCtx::wrapSetParameter(const Napi::CallbackInfo& info) {
 
 void CCtx::wrapSetPledgedSrcSize(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   unsigned long long srcSize = info[0].ToNumber().Int64Value();
 
   size_t result = ZSTD_CCtx_setPledgedSrcSize(cctx.get(), srcSize);
@@ -100,8 +95,7 @@ void CCtx::wrapSetPledgedSrcSize(const Napi::CallbackInfo& info) {
 
 void CCtx::wrapReset(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   ZSTD_ResetDirective reset =
       static_cast<ZSTD_ResetDirective>(info[0].ToNumber().Int32Value());
 
@@ -112,8 +106,7 @@ void CCtx::wrapReset(const Napi::CallbackInfo& info) {
 
 Napi::Value CCtx::wrapCompress2(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 2)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 2);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
 
@@ -125,8 +118,7 @@ Napi::Value CCtx::wrapCompress2(const Napi::CallbackInfo& info) {
 
 Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 3)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 3);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   ZSTD_EndDirective endOp =
@@ -141,8 +133,7 @@ Napi::Value CCtx::wrapCompressStream2(const Napi::CallbackInfo& info) {
 
 void CCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array dictBuf = info[0].As<Uint8Array>();
 
   size_t result = ZSTD_CCtx_loadDictionary(cctx.get(), dictBuf.Data(),

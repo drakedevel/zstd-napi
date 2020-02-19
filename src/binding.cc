@@ -23,8 +23,7 @@ Value wrapVersionString(const CallbackInfo& info) {
 // Simple API
 Value wrapCompress(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 3)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 3);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   int32_t level = info[2].ToNumber();
@@ -36,8 +35,7 @@ Value wrapCompress(const CallbackInfo& info) {
 
 Value wrapDecompress(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 2)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 2);
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
 
@@ -48,8 +46,7 @@ Value wrapDecompress(const CallbackInfo& info) {
 
 Value wrapGetFrameContentSize(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array frameBuf = info[0].As<Uint8Array>();
 
   unsigned long long size =
@@ -63,8 +60,7 @@ Value wrapGetFrameContentSize(const CallbackInfo& info) {
 
 Value wrapFindFrameCompressedSize(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array frameBuf = info[0].As<Uint8Array>();
 
   return convertZstdResult(env, ZSTD_findFrameCompressedSize(
@@ -74,8 +70,7 @@ Value wrapFindFrameCompressedSize(const CallbackInfo& info) {
 // Helper functions
 Value wrapCompressBound(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   int64_t size = info[0].ToNumber();
 
   return Number::New(env, ZSTD_compressBound(size));
@@ -100,8 +95,7 @@ static inline Value convertParamBounds(Env env, const ZSTD_bounds& bounds) {
 
 Value wrapCParamGetBounds(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   ZSTD_cParameter param =
       static_cast<ZSTD_cParameter>(info[0].ToNumber().Int32Value());
 
@@ -111,8 +105,7 @@ Value wrapCParamGetBounds(const CallbackInfo& info) {
 // Advanced decompression
 Value wrapDParamGetBounds(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   ZSTD_dParameter param =
       static_cast<ZSTD_dParameter>(info[0].ToNumber().Int32Value());
 
@@ -140,8 +133,7 @@ Value wrapDStreamOutSize(const CallbackInfo& info) {
 // Dictionary helper functions
 Value wrapGetDictIDFromDict(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array dictBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromDict(dictBuf.Data(), dictBuf.ByteLength()));
@@ -149,8 +141,7 @@ Value wrapGetDictIDFromDict(const CallbackInfo& info) {
 
 Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
   Env env = info.Env();
-  if (info.Length() != 1)
-    throw TypeError::New(env, "Wrong arguments");
+  checkArgCount(info, 1);
   Uint8Array frameBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
