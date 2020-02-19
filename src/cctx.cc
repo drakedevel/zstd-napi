@@ -22,10 +22,8 @@ void CCtx::Init(Napi::Env env, Napi::Object exports) {
 }
 
 CCtx::CCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<CCtx>(info) {
-  WRAP_CONSTRUCTOR_BEGIN;
   cctx.reset(ZSTD_createCCtx());
   adjustMemory(info.Env());
-  WRAP_CONSTRUCTOR_END;
 }
 
 Napi::Value CCtx::wrapCompress(const Napi::CallbackInfo& info) {
