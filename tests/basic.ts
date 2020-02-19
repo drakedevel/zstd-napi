@@ -310,3 +310,16 @@ test('loading from multiple threads works', async () => {
   expect(await runInWorker()).toBe(0);
   expect(await runInWorker()).toBe(0);
 });
+
+test('passing wrong argument count throws error', () => {
+  expect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (binding.compressBound as any)();
+  }).toThrowErrorMatchingInlineSnapshot(`"Expected 1 arguments, got 0"`);
+});
+
+test('libzstd errors are propagated', () => {
+  expect(() => {
+    binding.compress(Buffer.alloc(0), Buffer.alloc(0), 3);
+  }).toThrowErrorMatchingInlineSnapshot(`"Destination buffer is too small"`);
+});
