@@ -1,3 +1,5 @@
+import { Transform, TransformCallback } from 'stream';
+
 import * as binding from '../binding';
 
 export type StrategyName = keyof typeof binding.Strategy;
@@ -119,6 +121,13 @@ export class Compressor {
     return result;
   }
 
+  loadDictionary(data: Buffer): void {
+    // TODO: Compression parameters get locked in on next compress operation,
+    // and are cleared by setParameters. There should be some checks to ensure
+    // users have a safe usage pattern.
+    this.cctx.loadDictionary(data);
+  }
+
   setParameters(parameters: Partial<CompressParameters>): void {
     this.cctx.reset(binding.ResetDirective.parameters);
     this.updateParameters(parameters);
@@ -126,5 +135,55 @@ export class Compressor {
 
   updateParameters(parameters: Partial<CompressParameters>): void {
     updateCCtxParameters(this.cctx, parameters);
+  }
+}
+
+const BUF_SIZE = binding.cStreamOutSize();
+
+export class CompressStream extends Transform {
+  private cctx = new binding.CCtx();
+  private buffer = Buffer.allocUnsafe(BUF_SIZE);
+
+  setParameters(parameters: Partial<CompressParameters>): void {
+    // FIXME: Not safe for streaming
+    this.cctx.reset(binding.ResetDirective.parameters);
+    updateCCtxParameters(this.cctx, parameters);
+  }
+
+  _transform(chunk: any, encoding: string, done: TransformCallback): void {
+    let chunkBuf: Buffer;
+    if (typeof chunk === 'string')
+      chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
+    else if (chunk instanceof Buffer) chunkBuf = chunk;
+    else throw new TypeError('Expected string or Buffer chunk');
+
+    while (chunkBuf.length > 0) {
+      const [, produced, consumed] = this.cctx.compressStream2(
+        this.buffer,
+        chunkBuf,
+        binding.EndDirective.continue,
+      );
+      if (produced > 0) {
+        this.push(this.buffer.slice(0, produced));
+        this.buffer = Buffer.allocUnsafe(BUF_SIZE);
+      }
+      chunkBuf = chunkBuf.slice(consumed);
+    }
+
+    return done();
+  }
+
+  _flush(done: TransformCallback): void {
+    const emptyBuf = Buffer.alloc(0);
+    for (;;) {
+      const [ret, produced] = this.cctx.compressStream2(
+        this.buffer,
+        emptyBuf,
+        binding.EndDirective.end,
+      );
+      this.push(Buffer.from(this.buffer.slice(0, produced)));
+      if (ret === 0) break;
+    }
+    return done();
   }
 }
