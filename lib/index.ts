@@ -174,7 +174,7 @@ export class CompressStream extends Transform {
       );
       if (produced > 0) {
         this.push(this.buffer.slice(0, produced));
-        this.buffer = Buffer.allocUnsafe(BUF_SIZE);
+        this.buffer = Buffer.allocUnsafe(Math.max(BUF_SIZE, ret));
       }
       chunkBuf = chunkBuf.slice(consumed);
       if (chunkBuf.length == 0 && (!flushing || ret == 0)) return;
