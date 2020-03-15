@@ -182,26 +182,33 @@ export class CompressStream extends Transform {
   }
 
   _transform(chunk: unknown, encoding: string, done: TransformCallback): void {
-    let chunkBuf: Buffer;
-    if (typeof chunk === 'string')
-      chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
-    else if (chunk instanceof Buffer) chunkBuf = chunk;
-    else throw new TypeError('Expected string or Buffer chunk');
+    try {
+      let chunkBuf: Buffer;
+      if (typeof chunk === 'string')
+        chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
+      else if (chunk instanceof Buffer) chunkBuf = chunk;
+      else throw new TypeError('Expected string or Buffer chunk');
 
-    // Handle flushes indicated by special dummy buffers
-    let endType = binding.EndDirective.continue;
-    if (Object.is(chunkBuf, dummyFlushBuffer))
-      endType = binding.EndDirective.flush;
-    else if (Object.is(chunkBuf, dummyEndBuffer))
-      endType = binding.EndDirective.end;
+      // Handle flushes indicated by special dummy buffers
+      let endType = binding.EndDirective.continue;
+      if (Object.is(chunkBuf, dummyFlushBuffer))
+        endType = binding.EndDirective.flush;
+      else if (Object.is(chunkBuf, dummyEndBuffer))
+        endType = binding.EndDirective.end;
 
-    this.doCompress(chunkBuf, endType);
-
+      this.doCompress(chunkBuf, endType);
+    } catch (err) {
+      return done(err);
+    }
     return done();
   }
 
   _flush(done: TransformCallback): void {
-    this.doCompress(dummyEndBuffer, binding.EndDirective.end);
+    try {
+      this.doCompress(dummyEndBuffer, binding.EndDirective.end);
+    } catch (err) {
+      return done(err);
+    }
     return done();
   }
 }
