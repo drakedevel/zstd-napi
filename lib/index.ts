@@ -140,50 +140,68 @@ export class Compressor {
 
 const BUF_SIZE = binding.cStreamOutSize();
 
+const dummyFlushBuffer = Buffer.alloc(0);
+const dummyEndBuffer = Buffer.alloc(0);
+
 export class CompressStream extends Transform {
   private cctx = new binding.CCtx();
   private buffer = Buffer.allocUnsafe(BUF_SIZE);
 
-  setParameters(parameters: Partial<CompressParameters>): void {
-    // FIXME: Not safe for streaming
-    this.cctx.reset(binding.ResetDirective.parameters);
+  // TODO: Allow user to specify a dictionary
+  constructor(parameters: Partial<CompressParameters> = {}) {
+    super();
     updateCCtxParameters(this.cctx, parameters);
   }
 
-  _transform(chunk: any, encoding: string, done: TransformCallback): void {
-    let chunkBuf: Buffer;
-    if (typeof chunk === 'string')
-      chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
-    else if (chunk instanceof Buffer) chunkBuf = chunk;
-    else throw new TypeError('Expected string or Buffer chunk');
+  // TODO: Provide API to allow changing parameters mid-frame in MT mode
+  // TODO: Provide API to allow changing parameters between frames
 
-    while (chunkBuf.length > 0) {
-      const [, produced, consumed] = this.cctx.compressStream2(
+  endFrame(callback?: (error?: Error | null) => void): void {
+    this.write(dummyEndBuffer, '', callback);
+  }
+
+  flush(callback?: (error?: Error | null) => void): void {
+    this.write(dummyFlushBuffer, '', callback);
+  }
+
+  private doCompress(chunkBuf: Buffer, endType: binding.EndDirective): void {
+    const flushing = endType !== binding.EndDirective.continue;
+    for (;;) {
+      const [ret, produced, consumed] = this.cctx.compressStream2(
         this.buffer,
         chunkBuf,
-        binding.EndDirective.continue,
+        endType,
       );
       if (produced > 0) {
         this.push(this.buffer.slice(0, produced));
         this.buffer = Buffer.allocUnsafe(BUF_SIZE);
       }
       chunkBuf = chunkBuf.slice(consumed);
+      if (chunkBuf.length == 0 && (!flushing || ret == 0)) return;
     }
+  }
+
+  _transform(chunk: unknown, encoding: string, done: TransformCallback): void {
+    let chunkBuf: Buffer;
+    if (typeof chunk === 'string')
+      chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
+    else if (chunk instanceof Buffer) chunkBuf = chunk;
+    else throw new TypeError('Expected string or Buffer chunk');
+
+    // Handle flushes indicated by special dummy buffers
+    let endType = binding.EndDirective.continue;
+    if (Object.is(chunkBuf, dummyFlushBuffer))
+      endType = binding.EndDirective.flush;
+    else if (Object.is(chunkBuf, dummyEndBuffer))
+      endType = binding.EndDirective.end;
+
+    this.doCompress(chunkBuf, endType);
 
     return done();
   }
 
   _flush(done: TransformCallback): void {
-    const emptyBuf = Buffer.alloc(0);
-    for (;;) {
-      const [ret, produced] = this.cctx.compressStream2(
-        this.buffer,
-        emptyBuf,
-        binding.EndDirective.end,
-      );
-      this.push(Buffer.from(this.buffer.slice(0, produced)));
-      if (ret === 0) break;
-    }
+    this.doCompress(dummyEndBuffer, binding.EndDirective.end);
     return done();
   }
 }
