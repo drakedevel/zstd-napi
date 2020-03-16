@@ -1,7 +1,7 @@
 /* eslint jest/no-test-callback: 0 */
 import { randomBytes } from 'crypto';
 import * as binding from '../binding';
-import { CompressStream } from '../lib';
+import { Compressor, CompressStream } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> = jest.genMockFromModule(
   '../binding',
@@ -13,6 +13,59 @@ function expectDecompress(input: Buffer, expected: Buffer): void {
   const len = binding.decompress(output, input);
   expect(output.slice(0, len).equals(expected)).toBe(true);
 }
+
+describe('Compressor', () => {
+  test('#compress compresses data', () => {
+    const compressor = new Compressor();
+    const input = Buffer.from('hello');
+    const output = compressor.compress(input);
+    expectDecompress(output, input);
+  });
+
+  test('#compress scratch buffer can be re-used', () => {
+    const compressor = new Compressor();
+    expect(compressor['scratchBuf']).toBeNull();
+
+    // Verify opportunistic buffer-saving
+    const input1 = Buffer.from('hello');
+    const output1 = compressor.compress(input1);
+    expectDecompress(output1, input1);
+    expect(compressor['scratchBuf']).not.toBeNull();
+    const scratch1 = compressor['scratchBuf'];
+
+    // Verify scratch buffer re-use
+    const output2 = compressor.compress(input1);
+    expectDecompress(output2, input1);
+    expect(compressor['scratchBuf']).toBe(scratch1);
+
+    // Verify scratch buffer is preserved if not used
+    const input3 = randomBytes(128 * 1024 + 1);
+    const output3 = compressor.compress(input3);
+    expectDecompress(output3, input3);
+    expect(compressor['scratchBuf']).toBe(scratch1);
+  });
+
+  test('#compress scratch buffer can be stolen', () => {
+    const compressor = new Compressor();
+    expect(compressor['scratchBuf']).toBeNull();
+
+    // Prime with highly-compressible data to ensure buffer is saved
+    compressor.compress(Buffer.alloc(256));
+    expect(compressor['scratchBuf']).not.toBeNull();
+    const scratch = compressor['scratchBuf'];
+
+    // Compress incompressible data to fill scratch buffer
+    const input = randomBytes(256);
+    const output = compressor.compress(input);
+    expectDecompress(output, input);
+
+    // Verify buffer was stolen
+    expect(compressor['scratchBuf']).toBeNull();
+    expect(output.buffer).toBe(scratch?.buffer);
+  });
+
+  // TODO: loadDictionary, setParameters, updateParameters
+});
 
 describe('CompressStream', () => {
   let stream: CompressStream;
