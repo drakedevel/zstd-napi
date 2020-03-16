@@ -1,6 +1,11 @@
+import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
+
+function tsAssert(value: unknown, msg?: string | Error): asserts value {
+  assert(value, msg);
+}
 
 export type StrategyName = keyof typeof binding.Strategy;
 
@@ -149,7 +154,9 @@ export class CompressStream extends Transform {
 
   // TODO: Allow user to specify a dictionary
   constructor(parameters: Partial<CompressParameters> = {}) {
-    super();
+    // TODO: autoDestroy doesn't really work on Transform, we should consider
+    // calling .destroy ourselves when necessary.
+    super({ autoDestroy: true });
     updateCCtxParameters(this.cctx, parameters);
   }
 
@@ -164,39 +171,36 @@ export class CompressStream extends Transform {
     this.write(dummyFlushBuffer, '', callback);
   }
 
-  private doCompress(chunkBuf: Buffer, endType: binding.EndDirective): void {
+  private doCompress(chunk: Buffer, endType: binding.EndDirective): void {
     const flushing = endType !== binding.EndDirective.continue;
     for (;;) {
       const [ret, produced, consumed] = this.cctx.compressStream2(
         this.buffer,
-        chunkBuf,
+        chunk,
         endType,
       );
       if (produced > 0) {
         this.push(this.buffer.slice(0, produced));
         this.buffer = Buffer.allocUnsafe(Math.max(BUF_SIZE, ret));
       }
-      chunkBuf = chunkBuf.slice(consumed);
-      if (chunkBuf.length == 0 && (!flushing || ret == 0)) return;
+      chunk = chunk.slice(consumed);
+      if (chunk.length == 0 && (!flushing || ret == 0)) return;
     }
   }
 
-  _transform(chunk: unknown, encoding: string, done: TransformCallback): void {
+  _transform(chunk: unknown, _encoding: string, done: TransformCallback): void {
     try {
-      let chunkBuf: Buffer;
-      if (typeof chunk === 'string')
-        chunkBuf = Buffer.from(chunk, encoding as BufferEncoding);
-      else if (chunk instanceof Buffer) chunkBuf = chunk;
-      else throw new TypeError('Expected string or Buffer chunk');
+      // The Writable machinery is responsible for converting to a Buffer
+      tsAssert(chunk instanceof Buffer);
 
       // Handle flushes indicated by special dummy buffers
       let endType = binding.EndDirective.continue;
-      if (Object.is(chunkBuf, dummyFlushBuffer))
+      if (Object.is(chunk, dummyFlushBuffer))
         endType = binding.EndDirective.flush;
-      else if (Object.is(chunkBuf, dummyEndBuffer))
+      else if (Object.is(chunk, dummyEndBuffer))
         endType = binding.EndDirective.end;
 
-      this.doCompress(chunkBuf, endType);
+      this.doCompress(chunk, endType);
     } catch (err) {
       return done(err);
     }
