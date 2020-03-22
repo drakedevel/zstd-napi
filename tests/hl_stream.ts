@@ -15,15 +15,20 @@ function expectDecompress(input: Buffer, expected: Buffer): void {
 }
 
 describe('Compressor', () => {
+  let compressor: Compressor;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    compressor = new Compressor();
+  });
+
   test('#compress compresses data', () => {
-    const compressor = new Compressor();
     const input = Buffer.from('hello');
     const output = compressor.compress(input);
     expectDecompress(output, input);
   });
 
   test('#compress scratch buffer can be re-used', () => {
-    const compressor = new Compressor();
     expect(compressor['scratchBuf']).toBeNull();
 
     // Verify opportunistic buffer-saving
@@ -46,7 +51,6 @@ describe('Compressor', () => {
   });
 
   test('#compress scratch buffer can be stolen', () => {
-    const compressor = new Compressor();
     expect(compressor['scratchBuf']).toBeNull();
 
     // Prime with highly-compressible data to ensure buffer is saved
@@ -64,7 +68,81 @@ describe('Compressor', () => {
     expect(output.buffer).toBe(scratch?.buffer);
   });
 
-  // TODO: loadDictionary, setParameters, updateParameters
+  test('#loadDictionary works', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    const dictBuf = Buffer.alloc(0);
+    compressor.loadDictionary(dictBuf);
+    expect(mockBinding.CCtx.prototype.loadDictionary).toHaveBeenCalledWith(
+      dictBuf,
+    );
+  });
+
+  test('#setParameters resets other parameters', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    compressor.setParameters({ compressionLevel: 0 });
+    expect(mockBinding.CCtx.prototype.reset).toHaveBeenCalledWith(
+      binding.ResetDirective.parameters,
+    );
+    expect(mockBinding.CCtx.prototype.setParameter).toHaveBeenCalledWith(
+      binding.CParameter.compressionLevel,
+      0,
+    );
+  });
+
+  test('#updateParameters does not reset parameters', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    compressor.updateParameters({ compressionLevel: 0 });
+    expect(mockBinding.CCtx.prototype.reset).not.toHaveBeenCalled();
+    expect(mockBinding.CCtx.prototype.setParameter).toHaveBeenCalled();
+  });
+
+  test('#updateParameters maps parameters correctly', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    // Set one parameter of each type
+    compressor.updateParameters({
+      compressionLevel: 9,
+      enableLongDistanceMatching: true,
+      strategy: 'lazy',
+    });
+
+    // Verify types got mapped correctly
+    const setParam = mockBinding.CCtx.prototype.setParameter;
+    expect(setParam).toHaveBeenCalledTimes(3);
+    expect(setParam).toHaveBeenCalledWith(
+      binding.CParameter.compressionLevel,
+      9,
+    );
+    expect(setParam).toHaveBeenCalledWith(
+      binding.CParameter.enableLongDistanceMatching,
+      1,
+    );
+    expect(setParam).toHaveBeenCalledWith(
+      binding.CParameter.strategy,
+      binding.Strategy.lazy,
+    );
+  });
+
+  test('#updateParameters rejects invalid parameter names', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    expect(() => {
+      compressor.updateParameters({ invalidName: 42 } as any);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"Invalid parameter name: invalidName"`,
+    );
+    expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
+  });
+
+  test('#updateParameters ignores undefined values', () => {
+    compressor['cctx'] = new mockBinding.CCtx();
+
+    compressor.updateParameters({ compressionLevel: undefined });
+    expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
+  });
 });
 
 describe('CompressStream', () => {
