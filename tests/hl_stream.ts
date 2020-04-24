@@ -160,6 +160,8 @@ describe('CompressStream', () => {
   });
 
   afterEach(() => {
+    // TODO: Determine if this is supposed to be legal
+    // eslint-disable-next-line jest/no-standalone-expect
     expect(errorHandler).not.toHaveBeenCalled();
   });
 
