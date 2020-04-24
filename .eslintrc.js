@@ -25,6 +25,7 @@ module.exports = {
       plugins: ['jest'],
       extends: ['plugin:jest/recommended', 'plugin:jest/style'],
       rules: {
+        '@typescript-eslint/unbound-method': 'off',
         'jest/expect-expect': [
           'warn',
           {
