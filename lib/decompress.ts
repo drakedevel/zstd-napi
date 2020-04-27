@@ -1,7 +1,8 @@
 import { strict as assert } from 'assert';
+import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
-import { assertInvalidParameter } from './util';
+import { assertInvalidParameter, tsAssert } from './util';
 
 export interface DecompressParameters {
   windowLogMax: number;
@@ -98,5 +99,51 @@ export class Decompressor {
 
   updateParameters(parameters: Partial<DecompressParameters>): void {
     updateDCtxParameters(this.dctx, parameters);
+  }
+}
+
+export class DecompressStream extends Transform {
+  private dctx = new binding.DCtx();
+  private inFrame = false;
+
+  // TODO: Allow user to specify a dictionary
+  constructor(parameters: Partial<DecompressParameters> = {}) {
+    // TODO: autoDestroy doesn't really work on Transform, we should consider
+    // calling .destroy ourselves when necessary.
+    super({ autoDestroy: true });
+    updateDCtxParameters(this.dctx, parameters);
+  }
+
+  _transform(chunk: unknown, _encoding: string, done: TransformCallback): void {
+    // TODO: Optimize this by looking at the frame header
+    try {
+      // The Writable machinery is responsible for converting to a Buffer
+      tsAssert(chunk instanceof Buffer);
+      let srcBuf = chunk;
+
+      for (;;) {
+        const dstBuf = Buffer.allocUnsafe(BUF_SIZE);
+        const [ret, produced, consumed] = this.dctx.decompressStream(
+          dstBuf,
+          srcBuf,
+        );
+        if (produced > 0) this.push(dstBuf.slice(0, produced));
+
+        srcBuf = srcBuf.slice(consumed);
+        if (srcBuf.length === 0 && (produced < dstBuf.length || ret === 0)) {
+          this.inFrame = ret !== 0;
+          break;
+        }
+      }
+    } catch (err) {
+      return done(err);
+    }
+    return done();
+  }
+
+  _flush(done: TransformCallback): void {
+    if (this.inFrame)
+      return done(new Error('Stream ended in middle of compressed data frame'));
+    return done();
   }
 }

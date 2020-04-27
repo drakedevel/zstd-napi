@@ -1,12 +1,7 @@
-import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
-import { assertInvalidParameter } from './util';
-
-function tsAssert(value: unknown, msg?: string | Error): asserts value {
-  assert(value, msg);
-}
+import { assertInvalidParameter, tsAssert } from './util';
 
 export type StrategyName = keyof typeof binding.Strategy;
 
