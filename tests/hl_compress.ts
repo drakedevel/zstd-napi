@@ -130,7 +130,7 @@ describe('Compressor', () => {
     compressor['cctx'] = new mockBinding.CCtx();
 
     expect(() => {
-      compressor.updateParameters({ invalidName: 42 } as any);
+      compressor.updateParameters({ invalidName: 42 } as object);
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
     );
