@@ -2,6 +2,7 @@ import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
+import { assertInvalidParameter } from './util';
 
 function tsAssert(value: unknown, msg?: string | Error): asserts value {
   assert(value, msg);
@@ -40,10 +41,6 @@ export interface CompressParameters {
 }
 
 type CompressParameterName = keyof CompressParameters;
-
-function assertInvalidParameter(parameter: never): never {
-  throw new RangeError(`Invalid parameter name: ${parameter}`);
-}
 
 function updateCCtxParameters(
   cctx: binding.CCtx,

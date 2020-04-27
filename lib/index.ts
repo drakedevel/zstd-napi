@@ -4,3 +4,5 @@ export {
   Compressor,
   StrategyName,
 } from './compress';
+
+export { DecompressParameters, Decompressor } from './decompress';
