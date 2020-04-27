@@ -148,7 +148,7 @@ describe('Compressor', () => {
 describe('CompressStream', () => {
   let stream: CompressStream;
   let chunks: Buffer[];
-  const dataHandler = jest.fn(chunk => chunks.push(chunk));
+  const dataHandler = jest.fn((chunk) => chunks.push(chunk));
   const errorHandler = jest.fn();
 
   beforeEach(() => {
@@ -165,7 +165,7 @@ describe('CompressStream', () => {
     expect(errorHandler).not.toHaveBeenCalled();
   });
 
-  test('basic functionality works', done => {
+  test('basic functionality works', (done) => {
     stream.on('end', () => {
       expectDecompress(Buffer.concat(chunks), Buffer.from('hello'));
       return done();
@@ -174,7 +174,7 @@ describe('CompressStream', () => {
     stream.end('hello');
   });
 
-  test('#endFrame ends the frame at the correct point', done => {
+  test('#endFrame ends the frame at the correct point', (done) => {
     stream.on('end', () => {
       const result = Buffer.concat(chunks);
 
@@ -198,7 +198,7 @@ describe('CompressStream', () => {
     stream.end('world');
   });
 
-  test('#endFrame flushes', done => {
+  test('#endFrame flushes', (done) => {
     stream.write('hello', () => {
       // Verify nothing is written until we call flush
       expect(chunks).toHaveLength(0);
@@ -218,7 +218,7 @@ describe('CompressStream', () => {
     });
   });
 
-  test('#flush flushes but does not end frame', done => {
+  test('#flush flushes but does not end frame', (done) => {
     stream.on('end', () => {
       const result = Buffer.concat(chunks);
 
@@ -247,26 +247,26 @@ describe('CompressStream', () => {
     });
   });
 
-  test('#_transform correctly propagates errors', done => {
+  test('#_transform correctly propagates errors', (done) => {
     mockBinding.CCtx.prototype.compressStream2.mockImplementationOnce(() => {
       throw new Error('Simulated error');
     });
     stream['cctx'] = new mockBinding.CCtx();
 
-    stream.write('', err => {
+    stream.write('', (err) => {
       expect(err).toMatchObject({ message: 'Simulated error' });
       return done();
     });
   });
 
-  test('#_flush correctly propagates errors', done => {
+  test('#_flush correctly propagates errors', (done) => {
     mockBinding.CCtx.prototype.compressStream2.mockImplementationOnce(() => {
       throw new Error('Simulated error');
     });
     stream['cctx'] = new mockBinding.CCtx();
 
     stream.off('error', errorHandler);
-    stream.on('error', err => {
+    stream.on('error', (err) => {
       expect(err).toMatchObject(new Error('Simulated error'));
       return done();
     });
@@ -274,7 +274,7 @@ describe('CompressStream', () => {
     stream.end();
   });
 
-  test('handles input larger than buffer size', done => {
+  test('handles input larger than buffer size', (done) => {
     // Generate incompressible input that's larger than the buffer
     const input = randomBytes(binding.cStreamInSize() * 2 + 1);
 

@@ -135,7 +135,7 @@ describe('DCtx', () => {
   });
 
   test('#decompress works', () => {
-    expectDecompress(abcFrame, abcFrameContent, output =>
+    expectDecompress(abcFrame, abcFrameContent, (output) =>
       dctx.decompress(output, abcFrame),
     );
   });
@@ -160,14 +160,14 @@ describe('DCtx', () => {
   });
 
   test('#decompressUsingDict works', () => {
-    expectDecompress(abcDictFrame, abcFrameContent, output =>
+    expectDecompress(abcDictFrame, abcFrameContent, (output) =>
       dctx.decompressUsingDict(output, abcDictFrame, minDict),
     );
   });
 
   test('#decompressUsingDDict works', () => {
     const ddict = new binding.DDict(minDict);
-    expectDecompress(abcDictFrame, abcFrameContent, output =>
+    expectDecompress(abcDictFrame, abcFrameContent, (output) =>
       dctx.decompressUsingDDict(output, abcDictFrame, ddict),
     );
   });
