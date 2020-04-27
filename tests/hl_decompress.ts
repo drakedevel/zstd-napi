@@ -1,6 +1,12 @@
+/* eslint jest/no-test-callback: 0 */
 import { randomBytes } from 'crypto';
 import * as binding from '../binding';
-import { Compressor, CompressParameters, Decompressor } from '../lib';
+import {
+  Compressor,
+  CompressParameters,
+  Decompressor,
+  DecompressStream,
+} from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> = jest.genMockFromModule(
   '../binding',
@@ -115,5 +121,119 @@ describe('Decompressor', () => {
 
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
+  });
+});
+
+describe('DecompressStream', () => {
+  let stream: DecompressStream;
+  let chunks: Buffer[];
+  const dataHandler = jest.fn((chunk) => chunks.push(chunk));
+  const errorHandler = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    chunks = [];
+    stream = new DecompressStream();
+    stream.on('data', dataHandler);
+    stream.on('error', errorHandler);
+  });
+
+  afterEach(() => {
+    // TODO: Determine if this is supposed to be legal
+    // eslint-disable-next-line jest/no-standalone-expect
+    expect(errorHandler).not.toHaveBeenCalled();
+  });
+
+  test('basic functionality works', (done) => {
+    const original = Buffer.from('hello');
+
+    stream.on('end', () => {
+      expect(Buffer.concat(chunks).equals(original)).toBe(true);
+      return done();
+    });
+
+    stream.end(compress(original));
+  });
+
+  test('#_transform correctly propagates errors', (done) => {
+    mockBinding.DCtx.prototype.decompressStream.mockImplementationOnce(() => {
+      throw new Error('Simulated error');
+    });
+    stream['dctx'] = new mockBinding.DCtx();
+
+    stream.write('', (err) => {
+      expect(err).toMatchObject({ message: 'Simulated error' });
+      return done();
+    });
+  });
+
+  test('#_flush fails if in the middle of a frame', (done) => {
+    const input = compress(Buffer.from('hello'));
+
+    stream.off('error', errorHandler);
+    stream.on('error', (err) => {
+      expect(err).toMatchInlineSnapshot(
+        `[Error: Stream ended in middle of compressed data frame]`,
+      );
+      return done();
+    });
+
+    stream.end(input.slice(0, input.length - 1));
+  });
+
+  test('flushes complete frames eagerly', (done) => {
+    const orig1 = Buffer.from('hello');
+    const orig2 = Buffer.from(' world');
+    const original = Buffer.concat([orig1, orig2]);
+    stream.write(compress(orig1), () => {
+      expect(Buffer.concat(chunks).equals(orig1)).toBe(true);
+      stream.write(compress(orig2), () => {
+        expect(Buffer.concat(chunks).equals(original)).toBe(true);
+        stream.end();
+        return done();
+      });
+    });
+  });
+
+  test('handles multiple frames in single write', (done) => {
+    const orig1 = Buffer.from('hello');
+    const orig2 = Buffer.from(' world');
+    const original = Buffer.concat([orig1, orig2]);
+    stream.on('end', () => {
+      expect(Buffer.concat(chunks).equals(original)).toBe(true);
+      return done();
+    });
+
+    stream.end(Buffer.concat([compress(orig1), compress(orig2)]));
+  });
+
+  test('handles output that exactly matches buffer size', (done) => {
+    const original = randomBytes(binding.dStreamOutSize());
+
+    stream.on('end', () => {
+      expect(Buffer.concat(chunks).equals(original)).toBe(true);
+      return done();
+    });
+
+    stream.write(compress(original), () => {
+      // Verify we only got one block
+      expect(chunks).toHaveLength(1);
+      stream.end();
+    });
+  });
+
+  test('handles output larger than buffer size', (done) => {
+    const original = randomBytes(binding.dStreamOutSize() + 1);
+
+    stream.on('end', () => {
+      expect(Buffer.concat(chunks).equals(original)).toBe(true);
+      return done();
+    });
+
+    stream.write(compress(original), () => {
+      // Verify we actually got two blocks out of one write
+      expect(chunks).toHaveLength(2);
+      stream.end();
+    });
   });
 });
