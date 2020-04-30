@@ -38,27 +38,3 @@ jobs:
         with:
           name: package
           path: ${{ steps.npm_pack.outputs.package }}
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - name: Install clang-format
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install clang-format-9
-      - run: npm install --ignore-scripts
-      - run: npm run lint
-      - name: Check JS/TS is formatted with Prettier
-        run: ./node_modules/.bin/prettier --check '**/*.{js,json,ts}'
-      - name: Check C++ is formatted with clang-format
-        run: |
-          clang-format-9 -i src/*
-          git diff --stat --exit-code src/
