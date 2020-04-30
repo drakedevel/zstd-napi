@@ -17,7 +17,7 @@ jobs:
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
-      - run: tar --exclude-vcs czf ../build.tar.gz .
+      - run: tar czf ../build.tar.gz --exclude-vcs .
       - name: Upload build directory
         uses: actions/upload-artifact@v1
         with:
