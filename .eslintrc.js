@@ -2,8 +2,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: ['./tsconfig.eslint.json'],
+    project: './tsconfig.eslint.json',
   },
   extends: ['eslint:recommended', 'prettier'],
   env: {
@@ -25,6 +24,8 @@ module.exports = {
       plugins: ['jest'],
       extends: ['plugin:jest/recommended', 'plugin:jest/style'],
       rules: {
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/unbound-method': 'off',
         'jest/expect-expect': [
           'warn',

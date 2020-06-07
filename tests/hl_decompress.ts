@@ -109,7 +109,11 @@ describe('Decompressor', () => {
     decompressor['dctx'] = new mockBinding.DCtx();
 
     expect(() => {
-      decompressor.updateParameters({ invalidName: 42 } as object);
+      // TODO: Use ts-expect-error
+      decompressor.updateParameters({ invalidName: 42 } as Record<
+        string,
+        unknown
+      >);
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
     );
