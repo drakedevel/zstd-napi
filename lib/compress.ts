@@ -156,11 +156,11 @@ export class CompressStream extends Transform {
   // TODO: Provide API to allow changing parameters between frames
 
   endFrame(callback?: (error?: Error | null) => void): void {
-    this.write(dummyEndBuffer, '', callback);
+    this.write(dummyEndBuffer, undefined, callback);
   }
 
   flush(callback?: (error?: Error | null) => void): void {
-    this.write(dummyFlushBuffer, '', callback);
+    this.write(dummyFlushBuffer, undefined, callback);
   }
 
   private doCompress(chunk: Buffer, endType: binding.EndDirective): void {
