@@ -31,7 +31,7 @@
     "prebuild": "^10.0.0",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.5"
   },
   "dependencies": {
     "@types/node": "*",

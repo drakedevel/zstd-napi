@@ -318,9 +318,8 @@ test('loading from multiple threads works', async () => {
 
 test('passing wrong argument count throws error', () => {
   expect(() => {
-    // TODO: Use ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call
-    (binding.compressBound as any)();
+    // @ts-expect-error: deliberately passing wrong arguments
+    binding.compressBound();
   }).toThrowErrorMatchingInlineSnapshot(`"Expected 1 arguments, got 0"`);
 });
 

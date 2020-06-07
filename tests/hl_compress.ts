@@ -130,11 +130,8 @@ describe('Compressor', () => {
     compressor['cctx'] = new mockBinding.CCtx();
 
     expect(() => {
-      // TODO: Use ts-expect-error
-      compressor.updateParameters({ invalidName: 42 } as Record<
-        string,
-        unknown
-      >);
+      // @ts-expect-error: deliberately passing wrong arguments
+      compressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
     );
