@@ -204,11 +204,11 @@ describe('DDict', () => {
 });
 
 test('versionString works', () => {
-  expect(binding.versionString()).toBe('1.4.4');
+  expect(binding.versionString()).toBe('1.4.5');
 });
 
 test('versionNumber works', () => {
-  expect(binding.versionNumber()).toBe(10404);
+  expect(binding.versionNumber()).toBe(10405);
 });
 
 test('compress works', () => {

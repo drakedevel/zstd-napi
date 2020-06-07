@@ -18,6 +18,7 @@
         'zstd/lib/compress/zstd_compress.c',
         'zstd/lib/compress/zstd_compress_literals.c',
         'zstd/lib/compress/zstd_compress_sequences.c',
+        'zstd/lib/compress/zstd_compress_superblock.c',
         'zstd/lib/compress/zstd_double_fast.c',
         'zstd/lib/compress/zstd_fast.c',
         'zstd/lib/compress/zstd_lazy.c',
@@ -31,7 +32,6 @@
       ],
       'cflags+': ['-fvisibility=hidden'],
       'defines': ['ZSTD_MULTITHREAD', 'XXH_NAMESPACE=ZSTD_'],
-      'include_dirs': ['zstd/lib', 'zstd/lib/common'],
       'direct_dependent_settings': {
         'include_dirs': ['zstd/lib'],
       },
