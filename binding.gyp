@@ -1,9 +1,11 @@
 {
   'variables': {
+    'disable_cpp14': 0,
     'enable_gcov': 0,
     'napi_build_version': 3,
     'conditions': [
       ['OS!="win"', {
+        'disable_cpp14': '<!(echo $ZSTD_NAPI_DISABLE_CPP14)',
         'enable_gcov': '<!(echo $ZSTD_NAPI_ENABLE_GCOV)',
       }],
     ],
@@ -38,6 +40,10 @@
         ['enable_gcov==1', {
           'cflags+': ['--coverage', '-fno-inline'],
           'ldflags+': ['--coverage'],
+        }],
+        ['disable_cpp14==1', {
+          'cflags_cc!': ['-std=gnu++14'],
+          'cflags_cc+': ['-std=gnu++1y'],
         }],
       ],
     },
