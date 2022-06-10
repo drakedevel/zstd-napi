@@ -39,6 +39,10 @@ jobs:
       - run: npm run build-prebuild
         env:
           JOBS: 3
+      - run: npm run build-prebuild -- -a arm64
+        if: runner.os == 'macOS'
+        env:
+          JOBS: 3
       - name: Upload prebuilds
         uses: actions/upload-artifact@v1
         with:
