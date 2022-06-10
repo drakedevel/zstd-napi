@@ -3,9 +3,8 @@ import { randomBytes } from 'crypto';
 import * as binding from '../binding';
 import { Compressor, CompressStream } from '../lib';
 
-const mockBinding: jest.Mocked<typeof binding> = jest.genMockFromModule(
-  '../binding',
-);
+const mockBinding: jest.Mocked<typeof binding> =
+  jest.genMockFromModule('../binding');
 
 // TODO: Use HL API
 function expectDecompress(input: Buffer, expected: Buffer): void {
@@ -254,10 +253,14 @@ describe('CompressStream', () => {
     });
     stream['cctx'] = new mockBinding.CCtx();
 
-    stream.write('', (err) => {
+    const writeCb = jest.fn();
+    stream.off('error', errorHandler);
+    stream.on('error', (err) => {
       expect(err).toMatchObject({ message: 'Simulated error' });
+      expect(writeCb).toHaveBeenCalledWith(err);
       return done();
     });
+    stream.write('', writeCb);
   });
 
   test('#_flush correctly propagates errors', (done) => {

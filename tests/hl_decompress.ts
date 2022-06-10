@@ -8,9 +8,8 @@ import {
   DecompressStream,
 } from '../lib';
 
-const mockBinding: jest.Mocked<typeof binding> = jest.genMockFromModule(
-  '../binding',
-);
+const mockBinding: jest.Mocked<typeof binding> =
+  jest.genMockFromModule('../binding');
 
 function compress(
   input: Uint8Array,
@@ -162,10 +161,14 @@ describe('DecompressStream', () => {
     });
     stream['dctx'] = new mockBinding.DCtx();
 
-    stream.write('', (err) => {
+    const writeCb = jest.fn();
+    stream.off('error', errorHandler);
+    stream.on('error', (err) => {
       expect(err).toMatchObject({ message: 'Simulated error' });
+      expect(writeCb).toHaveBeenCalledWith(err);
       return done();
     });
+    stream.write('', writeCb);
   });
 
   test('#_flush fails if in the middle of a frame', (done) => {
