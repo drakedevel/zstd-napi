@@ -21,17 +21,18 @@
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/jest": "^26.0.3",
-    "@typescript-eslint/eslint-plugin": "^3.5.0",
-    "@typescript-eslint/parser": "^3.5.0",
-    "eslint": "^7.4.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-jest": "^23.17.1",
-    "jest": "^26.1.0",
+    "@tsconfig/node14": "^1.0.1",
+    "@types/jest": "^28.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.5.3",
+    "jest": "^28.1.1",
     "prebuild": "^10.0.0",
     "prettier": "^2.0.5",
-    "ts-jest": "^26.1.1",
-    "typescript": "^3.9.6"
+    "ts-jest": "^28.0.4",
+    "typescript": "^4.7.3"
   },
   "dependencies": {
     "@types/node": "^16.11.39",

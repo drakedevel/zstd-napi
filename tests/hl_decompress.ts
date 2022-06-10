@@ -1,4 +1,4 @@
-/* eslint jest/no-test-callback: 0 */
+/* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
 import * as binding from '../binding';
 import {
@@ -9,7 +9,7 @@ import {
 } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
-  jest.genMockFromModule('../binding');
+  jest.createMockFromModule('../binding');
 
 function compress(
   input: Uint8Array,
@@ -127,7 +127,7 @@ describe('Decompressor', () => {
 describe('DecompressStream', () => {
   let stream: DecompressStream;
   let chunks: Buffer[];
-  const dataHandler = jest.fn((chunk) => chunks.push(chunk));
+  const dataHandler = jest.fn((chunk: Buffer) => chunks.push(chunk));
   const errorHandler = jest.fn();
 
   beforeEach(() => {

@@ -1,10 +1,10 @@
-/* eslint jest/no-test-callback: 0 */
+/* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
 import * as binding from '../binding';
 import { Compressor, CompressStream } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
-  jest.genMockFromModule('../binding');
+  jest.createMockFromModule('../binding');
 
 // TODO: Use HL API
 function expectDecompress(input: Buffer, expected: Buffer): void {
@@ -148,7 +148,7 @@ describe('Compressor', () => {
 describe('CompressStream', () => {
   let stream: CompressStream;
   let chunks: Buffer[];
-  const dataHandler = jest.fn((chunk) => chunks.push(chunk));
+  const dataHandler = jest.fn((chunk: Buffer) => chunks.push(chunk));
   const errorHandler = jest.fn();
 
   beforeEach(() => {

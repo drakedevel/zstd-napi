@@ -136,7 +136,7 @@ export class DecompressStream extends Transform {
         }
       }
     } catch (err) {
-      return done(err);
+      return done(err as Error);
     }
     return done();
   }

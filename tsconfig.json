@@ -1,10 +1,9 @@
 {
+  "extends": "@tsconfig/node14",
   "compilerOptions": {
     "declaration": true,
-    "module": "CommonJS",
-    "outDir": "dist",
-    "strict": true,
-    "target": "ES2017"
+    "esModuleInterop": false,
+    "outDir": "dist"
   },
   "include": ["binding.d.ts", "lib/**/*.ts"]
 }

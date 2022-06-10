@@ -194,7 +194,7 @@ export class CompressStream extends Transform {
 
       this.doCompress(chunk, endType);
     } catch (err) {
-      return done(err);
+      return done(err as Error);
     }
     return done();
   }
@@ -203,7 +203,7 @@ export class CompressStream extends Transform {
     try {
       this.doCompress(dummyEndBuffer, binding.EndDirective.end);
     } catch (err) {
-      return done(err);
+      return done(err as Error);
     }
     return done();
   }
