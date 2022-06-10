@@ -34,7 +34,7 @@ jobs:
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - run: npm install --ignore-scripts
       - run: npm run build-prebuild
         env:

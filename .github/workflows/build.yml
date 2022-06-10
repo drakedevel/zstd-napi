@@ -12,7 +12,7 @@ jobs:
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - run: npm install
         env:
           JOBS: 3
@@ -43,7 +43,7 @@ jobs:
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - name: Install clang-format
         run: |
           sudo apt-get -y update
