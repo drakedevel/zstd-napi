@@ -5,20 +5,18 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Build prebuilds
         uses: ./.github/actions/build
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: prebuilds
-          path: prebuilds
+          path: prebuilds/
 
   build-other:
     runs-on: ${{ matrix.os }}
@@ -26,16 +24,14 @@ jobs:
       matrix:
         os: [macos-latest, windows-2019]
     steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        shell: bash
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: '16.x'
-      - run: npm install --ignore-scripts
+          submodules: recursive
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - run: npm ci --ignore-scripts
       - run: npm run build-prebuild
         env:
           JOBS: 3
@@ -44,7 +40,7 @@ jobs:
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: prebuilds
-          path: prebuilds
+          path: prebuilds/

@@ -5,30 +5,29 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: '16.x'
-      - run: npm install
+          submodules: recursive
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - run: npm ci
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
       - run: npm run test-coverage
       - name: Submit coverage data to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
+          gcov: true
           token: ${{ secrets.CODECOV_TOKEN }}
-          yml: .codecov.yml
       - run: ./node_modules/.bin/tsc
       - id: npm_pack
         name: Build npm package
         run: echo "::set-output name=package::$(npm pack)"
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: package
           path: ${{ steps.npm_pack.outputs.package }}
@@ -36,19 +35,18 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: |
-          git submodule sync --recursive
-          git -c protocol.version=2 submodule update --init --force --recursive --depth=1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: '16.x'
+          submodules: recursive
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
       - name: Install clang-format
         run: |
           sudo apt-get -y update
           sudo apt-get -y install clang-format-9
-      - run: npm install --ignore-scripts
+      - run: npm ci --ignore-scripts
       - run: npm run lint
       - name: Check JS/TS is formatted with Prettier
         run: ./node_modules/.bin/prettier --check '**/*.{js,json,ts}'
