@@ -12,7 +12,10 @@ jobs:
         with:
           node-version: 16
           cache: npm
-      - run: npm ci
+      # Work around nodejs/node-gyp#2219 until we move away from prebuild
+      - run: npm ci --ignore-scripts
+      - run: patch node_modules/node-gyp/gyp/pylib/gyp/input.py .github/node-gyp.patch
+      - run: npm install
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
@@ -45,12 +48,12 @@ jobs:
       - name: Install clang-format
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install clang-format-9
+          sudo apt-get -y install clang-format-14
       - run: npm ci --ignore-scripts
       - run: npm run lint
       - name: Check JS/TS is formatted with Prettier
         run: ./node_modules/.bin/prettier --check '**/*.{js,json,ts}'
       - name: Check C++ is formatted with clang-format
         run: |
-          clang-format-9 -i src/*
+          clang-format-14 -i src/*
           git diff --stat --exit-code src/
