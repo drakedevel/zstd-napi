@@ -26,6 +26,7 @@
         'zstd/lib/compress/zstd_opt.c',
         'zstd/lib/compress/zstdmt_compress.c',
         'zstd/lib/decompress/huf_decompress.c',
+        'zstd/lib/decompress/huf_decompress_amd64.S',
         'zstd/lib/decompress/zstd_ddict.c',
         'zstd/lib/decompress/zstd_decompress_block.c',
         'zstd/lib/decompress/zstd_decompress.c',
