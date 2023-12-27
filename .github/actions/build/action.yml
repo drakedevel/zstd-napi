@@ -1,4 +1,4 @@
-name: Build prebuilds
+name: Build bindings
 description: Build binaries for N-API module
 runs:
   using: docker

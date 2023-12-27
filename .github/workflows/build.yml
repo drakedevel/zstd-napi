@@ -12,10 +12,8 @@ jobs:
         with:
           node-version: 16
           cache: npm
-      # Work around nodejs/node-gyp#2219 until we move away from prebuild
       - run: npm ci --ignore-scripts
-      - run: patch node_modules/node-gyp/gyp/pylib/gyp/input.py .github/node-gyp.patch
-      - run: npm install
+      - run: npm install --build-from-source
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
@@ -29,7 +27,7 @@ jobs:
       - id: npm_pack
         name: Build npm package
         run: echo "package=$(npm pack)" >> "$GITHUB_OUTPUT"
-      - name: Upload prebuilds
+      - name: Upload NPM package
         uses: actions/upload-artifact@v3
         with:
           name: package
