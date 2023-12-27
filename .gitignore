@@ -1,5 +1,6 @@
 /build/
+/build-tmp-*/
 /dist/
+/libs/napi-*/
 /node_modules/
-/prebuilds/
 zstd-napi-*.tgz

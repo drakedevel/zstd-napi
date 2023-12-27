@@ -12,7 +12,7 @@
   },
   'targets': [
     {
-      'target_name': 'binding',
+      'target_name': '<(module_name)',
       'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc', 'src/constants.cc', 'src/dctx.cc', 'src/ddict.cc'],
       'dependencies': ['deps/zstd.gyp:libzstd'],
       'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
@@ -47,5 +47,16 @@
         }],
       ],
     },
+    {
+      'target_name': 'copy_build',
+      'type': 'none',
+      'dependencies': ['<(module_name)'],
+      'copies': [{
+        'files': [
+          '<(PRODUCT_DIR)/<(module_name).node',
+        ],
+        'destination': '<(module_path)',
+      }],
+    }
   ],
 }
