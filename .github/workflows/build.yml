@@ -12,9 +12,7 @@ jobs:
         with:
           node-version: 16
           cache: npm
-      # Work around nodejs/node-gyp#2219 until we move away from prebuild
       - run: npm ci --ignore-scripts
-      - run: patch node_modules/node-gyp/gyp/pylib/gyp/input.py .github/node-gyp.patch
       - run: npm install
         env:
           JOBS: 3
