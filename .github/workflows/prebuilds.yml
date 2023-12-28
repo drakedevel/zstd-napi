@@ -29,10 +29,10 @@ jobs:
           submodules: recursive
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: npm
       - run: npm ci --ignore-scripts
-      # Workaround for pre-Node-16 nodejs/node-gyp#2869
+      # Workaround for nodejs/node-gyp#2869, remove after updated in prebuild
       - run: python3 -m pip install setuptools
         if: runner.os == 'macOS'
       - run: npm run build-prebuild
