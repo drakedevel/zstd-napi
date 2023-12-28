@@ -32,6 +32,9 @@ jobs:
           node-version: 16
           cache: npm
       - run: npm ci --ignore-scripts
+      # Workaround for pre-Node-16 nodejs/node-gyp#2869
+      - run: python3 -m pip install setuptools
+        if: runner.os == 'macOS'
       - run: npm run build-prebuild
         env:
           JOBS: 3
