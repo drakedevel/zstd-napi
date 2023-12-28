@@ -38,7 +38,7 @@
           },
         }],
         ['enable_gcov==1', {
-          'cflags+': ['--coverage', '-fno-inline'],
+          'cflags+': ['--coverage', '-fno-inline', '-fprofile-abs-path'],
           'ldflags+': ['--coverage'],
         }],
         ['disable_cpp14==1', {
