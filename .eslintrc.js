@@ -13,11 +13,7 @@ module.exports = {
     {
       files: './**/*.ts',
       plugins: ['@typescript-eslint'],
-      extends: [
-        'plugin:@typescript-eslint/eslint-recommended',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/recommended-requiring-type-checking',
-      ],
+      extends: ['plugin:@typescript-eslint/recommended-type-checked'],
     },
     {
       files: './tests/**/*.{js,ts}',
