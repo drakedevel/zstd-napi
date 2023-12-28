@@ -43,6 +43,12 @@
             'MACOSX_DEPLOYMENT_TARGET': '10.7',
           },
         }],
+        ['OS=="win"', {
+          'sources!': [
+            # MSVC doesn't support GAS assembly syntax
+            'zstd/lib/decompress/huf_decompress_amd64.S',
+          ],
+        }],
       ],
     },
   ]
