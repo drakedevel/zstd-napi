@@ -1,11 +1,14 @@
 name: prebuilds
 on: push
 
+permissions:
+  contents: read
+
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Build prebuilds
@@ -13,9 +16,9 @@ jobs:
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: prebuilds
+          name: prebuilds-linux
           path: prebuilds/
 
   build-other:
@@ -24,10 +27,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-2019]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
@@ -43,7 +46,7 @@ jobs:
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: prebuilds
+          name: prebuilds-${{ matrix.os }}
           path: prebuilds/

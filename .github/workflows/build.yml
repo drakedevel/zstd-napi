@@ -1,14 +1,17 @@
 name: build
 on: push
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
@@ -27,26 +30,22 @@ jobs:
       - id: npm_pack
         name: Build npm package
         run: echo "package=$(npm pack)" >> "$GITHUB_OUTPUT"
-      - name: Upload prebuilds
-        uses: actions/upload-artifact@v3
+      - name: Upload NPM package
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: ${{ steps.npm_pack.outputs.package }}
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
-      - name: Install clang-format
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install clang-format-14
       - run: npm ci --ignore-scripts
       - run: npm run lint
       - name: Check JS/TS is formatted with Prettier
