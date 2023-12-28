@@ -36,7 +36,7 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       # Workaround for nodejs/node-gyp#2869, remove after updated in prebuild
-      - run: python3 -m pip install setuptools
+      - run: python3 -m pip install -r .github/setuptools-requirements.txt --require-hashes
         if: runner.os == 'macOS'
       - run: npm run build-prebuild
         env:

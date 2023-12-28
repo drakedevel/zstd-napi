@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:10-slim
+FROM docker.io/library/debian:10-slim@sha256:f149ba7869035b3aaca9afa676104d08a5fc44abf450eedd3ea73f9d8714b669
 
 RUN apt-get update && \
     apt-get -y install curl g++ gnupg make && \

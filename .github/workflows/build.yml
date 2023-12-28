@@ -16,7 +16,7 @@ jobs:
           node-version: 18
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm install --build-from-source
+      - run: npm run build
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: 1
