@@ -2,7 +2,6 @@
   "extends": "@tsconfig/node14",
   "compilerOptions": {
     "declaration": true,
-    "esModuleInterop": false,
     "outDir": "dist"
   },
   "include": ["binding.d.ts", "lib/**/*.ts"]

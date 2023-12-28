@@ -1,6 +1,6 @@
 import { Transform, TransformCallback } from 'stream';
 
-import * as binding from '../binding';
+import binding from '../binding';
 import { assertInvalidParameter, tsAssert } from './util';
 
 export type StrategyName = keyof typeof binding.Strategy;

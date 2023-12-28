@@ -1,6 +1,6 @@
 /* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
-import * as binding from '../binding';
+import binding from '../binding';
 import { Compressor, CompressStream } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
