@@ -1,8 +1,8 @@
 {
-  "extends": "@tsconfig/node18",
+  "extends": ["@tsconfig/node18", "@tsconfig/strictest"],
   "compilerOptions": {
-    "declaration": true,
-    "outDir": "dist"
+    "noEmit": true
   },
-  "include": ["binding.d.ts", "lib/**/*.ts"]
+  "include": ["**/*.ts", "**/*.js", ".*.js"],
+  "exclude": ["dist"]
 }

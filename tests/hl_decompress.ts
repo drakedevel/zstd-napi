@@ -108,13 +108,13 @@ describe('Decompressor', () => {
     decompressor['dctx'] = new mockBinding.DCtx();
 
     expect(() => {
-      // @ts-expect-error: deliberately passing wrong arguments
+      // @ts-expect-error: testing invalid key
       decompressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
     );
     expect(() => {
-      // @ts-expect-error: deliberately passing wrong arguments
+      // @ts-expect-error: testing invalid value type
       decompressor.updateParameters({ windowLogMax: 'invalid' });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid type for parameter: windowLogMax"`,
@@ -125,6 +125,7 @@ describe('Decompressor', () => {
   test('#updateParameters ignores undefined values', () => {
     decompressor['dctx'] = new mockBinding.DCtx();
 
+    // @ts-expect-error: testing loose undefined handling
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
   });

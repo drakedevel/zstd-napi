@@ -104,7 +104,11 @@ export class DecompressStream extends Transform {
     updateDCtxParameters(this.dctx, parameters);
   }
 
-  _transform(chunk: unknown, _encoding: string, done: TransformCallback): void {
+  override _transform(
+    chunk: unknown,
+    _encoding: string,
+    done: TransformCallback,
+  ): void {
     // TODO: Optimize this by looking at the frame header
     try {
       // The Writable machinery is responsible for converting to a Buffer
@@ -133,7 +137,7 @@ export class DecompressStream extends Transform {
     return;
   }
 
-  _flush(done: TransformCallback): void {
+  override _flush(done: TransformCallback): void {
     if (this.inFrame) {
       done(new Error('Stream ended in middle of compressed data frame'));
       return;

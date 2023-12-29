@@ -26,7 +26,7 @@ jobs:
         with:
           gcov: true
           token: ${{ secrets.CODECOV_TOKEN }}
-      - run: ./node_modules/.bin/tsc
+      - run: ./node_modules/.bin/tsc -p tsconfig.emit.json
       - id: npm_pack
         name: Build npm package
         run: echo "package=$(npm pack)" >> "$GITHUB_OUTPUT"

@@ -1,12 +1,5 @@
-export {
-  CompressParameters,
-  CompressStream,
-  Compressor,
-  StrategyName,
-} from './compress';
+export { CompressStream, Compressor } from './compress';
+export type { CompressParameters, StrategyName } from './compress';
 
-export {
-  DecompressParameters,
-  DecompressStream,
-  Decompressor,
-} from './decompress';
+export { DecompressStream, Decompressor } from './decompress';
+export type { DecompressParameters } from './decompress';

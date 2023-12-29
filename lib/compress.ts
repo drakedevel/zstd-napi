@@ -153,7 +153,11 @@ export class CompressStream extends Transform {
     }
   }
 
-  _transform(chunk: unknown, _encoding: string, done: TransformCallback): void {
+  override _transform(
+    chunk: unknown,
+    _encoding: string,
+    done: TransformCallback,
+  ): void {
     try {
       // The Writable machinery is responsible for converting to a Buffer
       tsAssert(chunk instanceof Buffer);
@@ -174,7 +178,7 @@ export class CompressStream extends Transform {
     return;
   }
 
-  _flush(done: TransformCallback): void {
+  override _flush(done: TransformCallback): void {
     try {
       this.doCompress(dummyEndBuffer, binding.EndDirective.end);
     } catch (err) {

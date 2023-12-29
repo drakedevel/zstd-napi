@@ -1,4 +1,5 @@
 /* eslint jest/no-done-callback: 0 */
+import assert from 'assert/strict';
 import { randomBytes } from 'crypto';
 import binding from '../binding';
 import { Compressor, CompressStream } from '../lib';
@@ -146,6 +147,7 @@ describe('Compressor', () => {
   test('#updateParameters ignores undefined values', () => {
     compressor['cctx'] = new mockBinding.CCtx();
 
+    // @ts-expect-error: testing loose undefined handling
     compressor.updateParameters({ compressionLevel: undefined });
     expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
   });
@@ -211,6 +213,7 @@ describe('CompressStream', () => {
       stream.endFrame(() => {
         expect(chunks).toHaveLength(1);
         const [result] = chunks;
+        assert.ok(result);
 
         // Verify exactly one frame was emitted
         const frameLen = binding.findFrameCompressedSize(result);
