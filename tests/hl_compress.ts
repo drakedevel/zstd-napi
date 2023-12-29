@@ -11,7 +11,7 @@ const mockBinding: jest.Mocked<typeof binding> =
 function expectDecompress(input: Buffer, expected: Buffer): void {
   const output = Buffer.alloc(expected.length);
   const len = binding.decompress(output, input);
-  expect(output.slice(0, len).equals(expected)).toBe(true);
+  expect(output.subarray(0, len).equals(expected)).toBe(true);
 }
 
 describe('Compressor', () => {
@@ -189,8 +189,8 @@ describe('CompressStream', () => {
       // Verify two frames were emitted
       const firstFrameLen = binding.findFrameCompressedSize(result);
       expect(firstFrameLen).toBeLessThan(result.length);
-      const firstFrame = result.slice(0, firstFrameLen);
-      const lastFrame = result.slice(firstFrameLen);
+      const firstFrame = result.subarray(0, firstFrameLen);
+      const lastFrame = result.subarray(firstFrameLen);
       const lastFrameLen = binding.findFrameCompressedSize(lastFrame);
       expect(lastFrameLen).toBe(lastFrame.length);
 

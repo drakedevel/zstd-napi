@@ -189,7 +189,7 @@ describe('DecompressStream', () => {
       return done();
     });
 
-    stream.end(input.slice(0, input.length - 1));
+    stream.end(input.subarray(0, input.length - 1));
   });
 
   test('flushes complete frames eagerly', (done) => {

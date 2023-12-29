@@ -33,7 +33,7 @@ function expectCompress(
 ): void {
   const output = Buffer.alloc(binding.compressBound(input.length));
   const len = f(output, input);
-  expect(output.slice(0, len).equals(expected)).toBe(true);
+  expect(output.subarray(0, len).equals(expected)).toBe(true);
 }
 
 function expectDecompress(
@@ -43,7 +43,7 @@ function expectDecompress(
 ): void {
   const output = Buffer.alloc(expected.length);
   const len = f(output, input);
-  expect(output.slice(0, len).equals(expected)).toBe(true);
+  expect(output.subarray(0, len).equals(expected)).toBe(true);
 }
 
 describe('CCtx', () => {
@@ -122,7 +122,7 @@ describe('CCtx', () => {
 describe('CDict', () => {
   test('constructor errors on corrupt dictionary', () => {
     expect(() => {
-      new binding.CDict(minDict.slice(0, 32), 3);
+      new binding.CDict(minDict.subarray(0, 32), 3);
     }).toThrow('Failed to create CDict');
   });
 });
@@ -144,14 +144,14 @@ describe('DCtx', () => {
     const output = Buffer.alloc(abcFrameContent.length);
     let [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
       output,
-      abcStreamFrame.slice(0, 12),
+      abcStreamFrame.subarray(0, 12),
     );
     expect(inputHint).toBe(abcStreamFrame.length - 12);
     expect(dstProduced).toBe(0);
     expect(srcConsumed).toBe(12);
     [inputHint, dstProduced, srcConsumed] = dctx.decompressStream(
       output,
-      abcStreamFrame.slice(srcConsumed),
+      abcStreamFrame.subarray(srcConsumed),
     );
     expect(inputHint).toBe(0);
     expect(dstProduced).toBe(abcFrameContent.length);
@@ -193,7 +193,7 @@ describe('DCtx', () => {
 describe('DDict', () => {
   test('constructor errors on corrupt dictionary', () => {
     expect(() => {
-      new binding.DDict(minDict.slice(0, 32));
+      new binding.DDict(minDict.subarray(0, 32));
     }).toThrow('Failed to create DDict');
   });
 
@@ -232,7 +232,7 @@ describe('getFrameContentSize', () => {
   });
   test('throws error when frame is corrupt', () => {
     expect(() => {
-      binding.getFrameContentSize(minEmptyFrame.slice(0, 4));
+      binding.getFrameContentSize(minEmptyFrame.subarray(0, 4));
     }).toThrowErrorMatchingInlineSnapshot(`"Could not parse Zstandard header"`);
   });
 });

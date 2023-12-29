@@ -71,7 +71,7 @@ export class Compressor {
     let result;
     if (length < 0.75 * dest.length) {
       // Destination buffer is too wasteful, trim by copying
-      result = Buffer.from(dest.slice(0, length));
+      result = Buffer.from(dest.subarray(0, length));
 
       // Save the old buffer for scratch if it's small enough
       if (dest.length <= 128 * 1024 && buffer.length > this.scratchLen) {
@@ -80,7 +80,7 @@ export class Compressor {
       }
     } else {
       // Destination buffer is about the right size, return it directly
-      result = dest.slice(0, length);
+      result = dest.subarray(0, length);
 
       // Make sure we don't re-use the scratch buffer if we're returning it
       if (Object.is(dest, this.scratchBuf)) {
@@ -145,10 +145,10 @@ export class CompressStream extends Transform {
         endType,
       );
       if (produced > 0) {
-        this.push(this.buffer.slice(0, produced));
+        this.push(this.buffer.subarray(0, produced));
         this.buffer = Buffer.allocUnsafe(Math.max(BUF_SIZE, ret));
       }
-      chunk = chunk.slice(consumed);
+      chunk = chunk.subarray(consumed);
       if (chunk.length == 0 && (!flushing || ret == 0)) return;
     }
   }

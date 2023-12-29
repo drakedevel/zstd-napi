@@ -70,7 +70,7 @@ export class Decompressor {
         chunk,
         remainingInput,
       );
-      resultChunks.push(chunk.slice(0, produced));
+      resultChunks.push(chunk.subarray(0, produced));
       remainingInput = remainingInput.subarray(consumed);
     }
 
@@ -121,9 +121,9 @@ export class DecompressStream extends Transform {
           dstBuf,
           srcBuf,
         );
-        if (produced > 0) this.push(dstBuf.slice(0, produced));
+        if (produced > 0) this.push(dstBuf.subarray(0, produced));
 
-        srcBuf = srcBuf.slice(consumed);
+        srcBuf = srcBuf.subarray(consumed);
         if (srcBuf.length === 0 && (produced < dstBuf.length || ret === 0)) {
           this.inFrame = ret !== 0;
           break;
