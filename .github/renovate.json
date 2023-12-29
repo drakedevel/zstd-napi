@@ -14,5 +14,6 @@
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     }
-  ]
+  ],
+  "timezone": "America/Los_Angeles"
 }
