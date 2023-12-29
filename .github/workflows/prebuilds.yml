@@ -8,7 +8,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           submodules: recursive
       - name: Build prebuilds
@@ -16,7 +16,7 @@ jobs:
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4
         with:
           name: prebuilds-linux
           path: prebuilds/
@@ -27,10 +27,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-2019]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           submodules: recursive
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
         with:
           node-version: 18
           cache: npm
@@ -46,7 +46,7 @@ jobs:
         env:
           JOBS: 3
       - name: Upload prebuilds
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4
         with:
           name: prebuilds-${{ matrix.os }}
           path: prebuilds/

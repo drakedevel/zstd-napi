@@ -26,11 +26,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       with:
         submodules: ${{ (matrix.language == 'c-cpp' && 'recursive') || '' }}
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
       with:
         node-version: 18
         cache: npm
@@ -39,7 +39,7 @@ jobs:
       run: npm ci --ignore-scripts
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@012739e5082ff0c22ca6d6ab32e07c36df03c4a4 # v3
       with:
         languages: ${{ matrix.language }}
 
@@ -50,6 +50,6 @@ jobs:
         JOBS: 3
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@012739e5082ff0c22ca6d6ab32e07c36df03c4a4 # v3
       with:
         category: '/language:${{matrix.language}}'
