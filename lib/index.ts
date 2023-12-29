@@ -1,3 +1,4 @@
+/** @module index */
 export { CompressStream, Compressor } from './compress';
 export type { CompressParameters, StrategyName } from './compress';
 
