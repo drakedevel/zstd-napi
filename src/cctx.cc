@@ -8,15 +8,15 @@ void CCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "CCtx",
       {
-          InstanceMethod("compress", &CCtx::wrapCompress),
-          InstanceMethod("compressUsingDict", &CCtx::wrapCompressUsingDict),
-          InstanceMethod("compressUsingCDict", &CCtx::wrapCompressUsingCDict),
-          InstanceMethod("setParameter", &CCtx::wrapSetParameter),
-          InstanceMethod("setPledgedSrcSize", &CCtx::wrapSetPledgedSrcSize),
-          InstanceMethod("reset", &CCtx::wrapReset),
-          InstanceMethod("compress2", &CCtx::wrapCompress2),
-          InstanceMethod("compressStream2", &CCtx::wrapCompressStream2),
-          InstanceMethod("loadDictionary", &CCtx::wrapLoadDictionary),
+          InstanceMethod<&CCtx::wrapCompress>("compress"),
+          InstanceMethod<&CCtx::wrapCompressUsingDict>("compressUsingDict"),
+          InstanceMethod<&CCtx::wrapCompressUsingCDict>("compressUsingCDict"),
+          InstanceMethod<&CCtx::wrapSetParameter>("setParameter"),
+          InstanceMethod<&CCtx::wrapSetPledgedSrcSize>("setPledgedSrcSize"),
+          InstanceMethod<&CCtx::wrapReset>("reset"),
+          InstanceMethod<&CCtx::wrapCompress2>("compress2"),
+          InstanceMethod<&CCtx::wrapCompressStream2>("compressStream2"),
+          InstanceMethod<&CCtx::wrapLoadDictionary>("loadDictionary"),
       });
   exports.Set("CCtx", func);
 }

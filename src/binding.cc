@@ -147,6 +147,21 @@ Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
 }
 
+// This is a copy of PropertyDescriptor::Function, except it uses the templated
+// version of Function::New instead of the heap-allocating one. Should be
+// replaced when added upstream (not yet added as of 7.x).
+template <Function::Callback cb>
+inline PropertyDescriptor propertyDescFunction(
+    Env env,
+    Object /*object*/,
+    const char* utf8name,
+    napi_property_attributes attributes = napi_default,
+    void* data = nullptr) {
+  return PropertyDescriptor({utf8name, nullptr, nullptr, nullptr, nullptr,
+                             Napi::Function::New<cb>(env, utf8name, data),
+                             attributes, nullptr});
+}
+
 Object ModuleInit(Env env, Object exports) {
   CCtx::Init(env, exports);
   CDict::Init(env, exports);
@@ -157,36 +172,29 @@ Object ModuleInit(Env env, Object exports) {
   createEnums(env, exports);
 
   exports.DefineProperties({
-      PropertyDescriptor::Function(env, exports, "versionNumber",
-                                   wrapVersionNumber),
-      PropertyDescriptor::Function(env, exports, "versionString",
-                                   wrapVersionString),
-      PropertyDescriptor::Function(env, exports, "compress", wrapCompress),
-      PropertyDescriptor::Function(env, exports, "decompress", wrapDecompress),
-      PropertyDescriptor::Function(env, exports, "getFrameContentSize",
-                                   wrapGetFrameContentSize),
-      PropertyDescriptor::Function(env, exports, "findFrameCompressedSize",
-                                   wrapFindFrameCompressedSize),
-      PropertyDescriptor::Function(env, exports, "compressBound",
-                                   wrapCompressBound),
-      PropertyDescriptor::Function(env, exports, "minCLevel", wrapMinCLevel),
-      PropertyDescriptor::Function(env, exports, "maxCLevel", wrapMaxCLevel),
-      PropertyDescriptor::Function(env, exports, "cParamGetBounds",
-                                   wrapCParamGetBounds),
-      PropertyDescriptor::Function(env, exports, "dParamGetBounds",
-                                   wrapDParamGetBounds),
-      PropertyDescriptor::Function(env, exports, "cStreamInSize",
-                                   wrapCStreamInSize),
-      PropertyDescriptor::Function(env, exports, "cStreamOutSize",
-                                   wrapCStreamOutSize),
-      PropertyDescriptor::Function(env, exports, "dStreamInSize",
-                                   wrapDStreamInSize),
-      PropertyDescriptor::Function(env, exports, "dStreamOutSize",
-                                   wrapDStreamOutSize),
-      PropertyDescriptor::Function(env, exports, "getDictIDFromDict",
-                                   wrapGetDictIDFromDict),
-      PropertyDescriptor::Function(env, exports, "getDictIDFromFrame",
-                                   wrapGetDictIDFromFrame),
+      propertyDescFunction<wrapVersionNumber>(env, exports, "versionNumber"),
+      propertyDescFunction<wrapVersionString>(env, exports, "versionString"),
+      propertyDescFunction<wrapCompress>(env, exports, "compress"),
+      propertyDescFunction<wrapDecompress>(env, exports, "decompress"),
+      propertyDescFunction<wrapGetFrameContentSize>(env, exports,
+                                                    "getFrameContentSize"),
+      propertyDescFunction<wrapFindFrameCompressedSize>(
+          env, exports, "findFrameCompressedSize"),
+      propertyDescFunction<wrapCompressBound>(env, exports, "compressBound"),
+      propertyDescFunction<wrapMinCLevel>(env, exports, "minCLevel"),
+      propertyDescFunction<wrapMaxCLevel>(env, exports, "maxCLevel"),
+      propertyDescFunction<wrapCParamGetBounds>(env, exports,
+                                                "cParamGetBounds"),
+      propertyDescFunction<wrapDParamGetBounds>(env, exports,
+                                                "dParamGetBounds"),
+      propertyDescFunction<wrapCStreamInSize>(env, exports, "cStreamInSize"),
+      propertyDescFunction<wrapCStreamOutSize>(env, exports, "cStreamOutSize"),
+      propertyDescFunction<wrapDStreamInSize>(env, exports, "dStreamInSize"),
+      propertyDescFunction<wrapDStreamOutSize>(env, exports, "dStreamOutSize"),
+      propertyDescFunction<wrapGetDictIDFromDict>(env, exports,
+                                                  "getDictIDFromDict"),
+      propertyDescFunction<wrapGetDictIDFromFrame>(env, exports,
+                                                   "getDictIDFromFrame"),
   });
 
   return exports;

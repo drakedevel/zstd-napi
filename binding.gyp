@@ -15,7 +15,7 @@
       'target_name': 'binding',
       'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc', 'src/constants.cc', 'src/dctx.cc', 'src/ddict.cc'],
       'dependencies': ['deps/zstd.gyp:libzstd'],
-      'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
+      'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
       'defines': [
         'NAPI_VERSION=<(napi_build_version)',
         'NODE_ADDON_API_DISABLE_DEPRECATED',
