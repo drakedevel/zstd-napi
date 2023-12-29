@@ -6,13 +6,15 @@
     {
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+      "dependencyDashboardApproval": true,
+      "enable": false
     },
     {
       "matchDatasources": ["npm"],
       "matchPackageNames": ["@types/node", "node-addon-api"],
       "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+      "dependencyDashboardApproval": true,
+      "enable": false
     }
   ],
   "timezone": "America/Los_Angeles"
