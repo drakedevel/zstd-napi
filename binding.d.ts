@@ -82,6 +82,7 @@ export class CCtx {
   loadDictionary(dictBuf: Uint8Array): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class CDict {
   constructor(dictBuf: Uint8Array, level: number);
 }

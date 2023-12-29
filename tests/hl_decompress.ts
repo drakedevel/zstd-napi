@@ -91,7 +91,7 @@ describe('Decompressor', () => {
       binding.ResetDirective.parameters,
     );
     expect(mockBinding.DCtx.prototype.setParameter).toHaveBeenCalledWith(
-      binding.CParameter.compressionLevel,
+      binding.DParameter.windowLogMax,
       10,
     );
   });
@@ -112,6 +112,12 @@ describe('Decompressor', () => {
       decompressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
+    );
+    expect(() => {
+      // @ts-expect-error: deliberately passing wrong arguments
+      decompressor.updateParameters({ windowLogMax: 'invalid' });
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"Invalid type for parameter: windowLogMax"`,
     );
     expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
   });

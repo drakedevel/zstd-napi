@@ -2,31 +2,21 @@ import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import binding from '../binding';
-import { assertInvalidParameter, tsAssert } from './util';
+import { ParamObject, mapNumber, mapParameters, tsAssert } from './util';
 
-export interface DecompressParameters {
-  windowLogMax: number;
-}
+const PARAM_MAPPERS = {
+  windowLogMax: mapNumber,
+};
 
-type DecompressParameterName = keyof DecompressParameters;
+export type DecompressParameters = ParamObject<typeof PARAM_MAPPERS>;
 
 function updateDCtxParameters(
   dctx: binding.DCtx,
   parameters: Partial<DecompressParameters>,
 ): void {
-  for (const [key, value] of Object.entries(parameters)) {
-    if (value === undefined) continue;
-    const name = key as DecompressParameterName;
-    let mapped: number;
-    switch (name) {
-      case 'windowLogMax':
-        mapped = Number(parameters[name]!);
-        break;
-
-      default:
-        assertInvalidParameter(name);
-    }
-    dctx.setParameter(binding.DParameter[name], mapped);
+  const mapped = mapParameters(binding.DParameter, PARAM_MAPPERS, parameters);
+  for (const [param, value] of mapped) {
+    dctx.setParameter(param, value);
   }
 }
 
@@ -136,14 +126,19 @@ export class DecompressStream extends Transform {
         }
       }
     } catch (err) {
-      return done(err as Error);
+      done(err as Error);
+      return;
     }
-    return done();
+    done();
+    return;
   }
 
   _flush(done: TransformCallback): void {
-    if (this.inFrame)
-      return done(new Error('Stream ended in middle of compressed data frame'));
-    return done();
+    if (this.inFrame) {
+      done(new Error('Stream ended in middle of compressed data frame'));
+      return;
+    }
+    done();
+    return;
   }
 }

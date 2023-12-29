@@ -125,7 +125,7 @@ describe('Compressor', () => {
     );
   });
 
-  test('#updateParameters rejects invalid parameter names', () => {
+  test('#updateParameters rejects invalid parameter names/types', () => {
     compressor['cctx'] = new mockBinding.CCtx();
 
     expect(() => {
@@ -133,6 +133,12 @@ describe('Compressor', () => {
       compressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid parameter name: invalidName"`,
+    );
+    expect(() => {
+      // @ts-expect-error: deliberately passing wrong arguments
+      compressor.updateParameters({ compressionLevel: 'invalid' });
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"Invalid type for parameter: compressionLevel"`,
     );
     expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
   });

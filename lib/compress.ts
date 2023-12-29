@@ -1,83 +1,56 @@
 import { Transform, TransformCallback } from 'stream';
 
 import binding from '../binding';
-import { assertInvalidParameter, tsAssert } from './util';
+import {
+  ParamObject,
+  mapBoolean,
+  mapEnum,
+  mapNumber,
+  mapParameters,
+  tsAssert,
+} from './util';
 
 export type StrategyName = keyof typeof binding.Strategy;
 
-export interface CompressParameters {
-  compressionLevel: number;
+const PARAM_MAPPERS = {
+  compressionLevel: mapNumber,
 
   // Advanced compression options
-  windowLog: number;
-  hashLog: number;
-  chainLog: number;
-  searchLog: number;
-  minMatch: number;
-  targetLength: number;
-  strategy: StrategyName;
+  windowLog: mapNumber,
+  hashLog: mapNumber,
+  chainLog: mapNumber,
+  searchLog: mapNumber,
+  minMatch: mapNumber,
+  targetLength: mapNumber,
+  strategy: mapEnum(binding.Strategy),
 
   // Long-distance matching options
-  enableLongDistanceMatching: boolean;
-  ldmHashLog: number;
-  ldmMinMatch: number;
-  ldmBucketSizeLog: number;
-  ldmHashRateLog: number;
+  enableLongDistanceMatching: mapBoolean,
+  ldmHashLog: mapNumber,
+  ldmMinMatch: mapNumber,
+  ldmBucketSizeLog: mapNumber,
+  ldmHashRateLog: mapNumber,
 
   // Frame parameters
-  contentSizeFlag: boolean;
-  checksumFlag: boolean;
-  dictIDFlag: boolean;
+  contentSizeFlag: mapBoolean,
+  checksumFlag: mapBoolean,
+  dictIDFlag: mapBoolean,
 
   // Multi-threading parameters
-  nbWorkers: number;
-  jobSize: number;
-  overlapLog: number;
-}
+  nbWorkers: mapNumber,
+  jobSize: mapNumber,
+  overlapLog: mapNumber,
+};
 
-type CompressParameterName = keyof CompressParameters;
+export type CompressParameters = ParamObject<typeof PARAM_MAPPERS>;
 
 function updateCCtxParameters(
   cctx: binding.CCtx,
   parameters: Partial<CompressParameters>,
 ): void {
-  for (const [key, value] of Object.entries(parameters)) {
-    if (value === undefined) continue;
-    const name = key as CompressParameterName;
-    let mapped: number;
-    switch (name) {
-      case 'compressionLevel':
-      case 'windowLog':
-      case 'hashLog':
-      case 'chainLog':
-      case 'searchLog':
-      case 'minMatch':
-      case 'targetLength':
-      case 'ldmHashLog':
-      case 'ldmMinMatch':
-      case 'ldmBucketSizeLog':
-      case 'ldmHashRateLog':
-      case 'nbWorkers':
-      case 'jobSize':
-      case 'overlapLog':
-        mapped = parameters[name]!;
-        break;
-
-      case 'enableLongDistanceMatching':
-      case 'contentSizeFlag':
-      case 'checksumFlag':
-      case 'dictIDFlag':
-        mapped = Number(parameters[name]!);
-        break;
-
-      case 'strategy':
-        mapped = binding.Strategy[parameters[name]!];
-        break;
-
-      default:
-        assertInvalidParameter(name);
-    }
-    cctx.setParameter(binding.CParameter[name], mapped);
+  const mapped = mapParameters(binding.CParameter, PARAM_MAPPERS, parameters);
+  for (const [param, value] of mapped) {
+    cctx.setParameter(param, value);
   }
 }
 
@@ -194,17 +167,21 @@ export class CompressStream extends Transform {
 
       this.doCompress(chunk, endType);
     } catch (err) {
-      return done(err as Error);
+      done(err as Error);
+      return;
     }
-    return done();
+    done();
+    return;
   }
 
   _flush(done: TransformCallback): void {
     try {
       this.doCompress(dummyEndBuffer, binding.EndDirective.end);
     } catch (err) {
-      return done(err as Error);
+      done(err as Error);
+      return;
     }
-    return done();
+    done();
+    return;
   }
 }

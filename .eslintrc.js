@@ -13,14 +13,23 @@ module.exports = {
     {
       files: './**/*.ts',
       plugins: ['@typescript-eslint'],
-      extends: ['plugin:@typescript-eslint/recommended-type-checked'],
+      extends: [
+        'plugin:@typescript-eslint/strict-type-checked',
+        'plugin:@typescript-eslint/stylistic-type-checked',
+      ],
     },
     {
       files: './tests/**/*.{js,ts}',
       plugins: ['jest'],
       extends: ['plugin:jest/recommended', 'plugin:jest/style'],
       rules: {
-        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/ban-ts-comment': [
+          'error',
+          {
+            'ts-expect-error': 'allow-with-description',
+          },
+        ],
+        '@typescript-eslint/dot-notation': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/unbound-method': 'off',
