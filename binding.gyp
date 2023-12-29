@@ -19,6 +19,9 @@
       'defines': [
         'NAPI_VERSION=<(napi_build_version)',
         'NODE_ADDON_API_DISABLE_DEPRECATED',
+        # Prevent crash if we try to throw an exception during worker shutdown,
+        # see nodejs/node-addon-api#975 for more context
+        'NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS',
       ],
       'cflags!': ['-fno-exceptions'],
       'cflags_cc!': ['-fno-exceptions'],
@@ -33,6 +36,7 @@
           },
         }],
         ['OS=="win"', {
+          'defines': ['_HAS_EXCEPTIONS=1'],
           'msvs_settings': {
             'VCCLCompilerTool': {'ExceptionHandling': 1},
           },
