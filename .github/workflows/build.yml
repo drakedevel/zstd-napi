@@ -56,6 +56,36 @@ jobs:
             npx -y --package=typescript@$version -- tsc -p .
           done
 
+  platform-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-12
+          - macos-14
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2019
+          - windows-2022
+        node: [14, 16, 18, 20, 22]
+    steps:
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm i -g npm@9
+        if: matrix.node == 14
+      - run: npm ci --prod --ignore-scripts
+      - run: npm run build
+        env:
+          JOBS: 3
+      - run: npm ci --ignore-scripts
+      - run: npm run test
+
   lint:
     runs-on: ubuntu-24.04
     steps:
