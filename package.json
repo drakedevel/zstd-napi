@@ -16,7 +16,8 @@
     "lint": "eslint --ext .js,.ts .",
     "prettier": "prettier -l --write '**/*.{js,json,ts,yml}'",
     "test": "jest",
-    "test-coverage": "jest --coverage --coverageReporters=json"
+    "test-coverage": "jest --coverage --coverageReporters=json",
+    "typedoc": "typedoc"
   },
   "author": "Andrew Drake <adrake@adrake.org>",
   "license": "Apache-2.0",
