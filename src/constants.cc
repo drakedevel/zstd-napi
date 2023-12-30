@@ -18,8 +18,8 @@ void createEnums(Env env, Object exports) {
   do {                                           \
     String vName = String::New(env, #jname);     \
     Number vValue = Number::New(env, pfx##name); \
-    (obj)[vName] = vValue;                       \
-    (obj)[vValue] = vName;                       \
+    (obj).Set(vName, vValue);                    \
+    (obj).Set(vValue, vName);                    \
   } while (0)
 
   // ZSTD_strategy
