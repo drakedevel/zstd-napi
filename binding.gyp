@@ -22,6 +22,8 @@
         # Prevent crash if we try to throw an exception during worker shutdown,
         # see nodejs/node-addon-api#975 for more context
         'NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS',
+        # Prevent using external buffers, which would break on Electron
+        'NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED',
       ],
       'cflags!': ['-fno-exceptions'],
       'cflags_cc!': ['-fno-exceptions'],
