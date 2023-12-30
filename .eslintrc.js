@@ -12,11 +12,14 @@ module.exports = {
   overrides: [
     {
       files: './**/*.ts',
-      plugins: ['@typescript-eslint'],
+      plugins: ['@typescript-eslint', 'eslint-plugin-tsdoc'],
       extends: [
         'plugin:@typescript-eslint/strict-type-checked',
         'plugin:@typescript-eslint/stylistic-type-checked',
       ],
+      rules: {
+        'tsdoc/syntax': 'error',
+      },
     },
     {
       files: './tests/**/*.{js,ts}',
