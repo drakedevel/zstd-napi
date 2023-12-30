@@ -58,6 +58,7 @@ export enum Strategy {
 type StreamResult = [number, number, number];
 
 export class CCtx {
+  private __brand__: unique symbol;
   compress(dstBuf: Uint8Array, srcBuf: Uint8Array, level: number): number;
   compressUsingDict(
     dstBuf: Uint8Array,
@@ -82,12 +83,13 @@ export class CCtx {
   loadDictionary(dictBuf: Uint8Array): void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class CDict {
+  private __brand__: unique symbol;
   constructor(dictBuf: Uint8Array, level: number);
 }
 
 export class DCtx {
+  private __brand__: unique symbol;
   decompress(dstBuf: Uint8Array, srcBuf: Uint8Array): number;
   decompressStream(dstBuf: Uint8Array, srcBuf: Uint8Array): StreamResult;
   decompressUsingDict(
@@ -106,6 +108,7 @@ export class DCtx {
 }
 
 export class DDict {
+  private __brand__: unique symbol;
   constructor(dictBuf: Uint8Array);
   getDictID(): number;
 }

@@ -4,6 +4,8 @@
 
 using namespace Napi;
 
+const napi_type_tag DCtx::typeTag = {0x1c73d7689d424a96, 0x45bc0e392233f8ca};
+
 void DCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "DCtx",

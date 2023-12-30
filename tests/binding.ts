@@ -72,6 +72,14 @@ describe('CCtx', () => {
     );
   });
 
+  test('#compressUsingCDict rejects invalid dictionary objects', () => {
+    expect(() => {
+      const ddict = new binding.DDict(minDict);
+      // @ts-expect-error: testing invalid value
+      cctx.compressUsingCDict(Buffer.alloc(0), Buffer.alloc(0), ddict);
+    }).toThrowErrorMatchingInlineSnapshot(`"Native object tag mismatch"`);
+  });
+
   test('#setPledgedSrcSize works', () => {
     // TODO: Find some way to distinguish this from a no-op
     cctx.setPledgedSrcSize(1);
@@ -170,6 +178,14 @@ describe('DCtx', () => {
     expectDecompress(abcDictFrame, abcFrameContent, (output) =>
       dctx.decompressUsingDDict(output, abcDictFrame, ddict),
     );
+  });
+
+  test('#decompressUsingDDict rejects invalid dictionary objects', () => {
+    expect(() => {
+      const cdict = new binding.CDict(minDict, 3);
+      // @ts-expect-error: testing invalid value
+      dctx.decompressUsingDDict(Buffer.alloc(0), Buffer.alloc(0), cdict);
+    }).toThrowErrorMatchingInlineSnapshot(`"Native object tag mismatch"`);
   });
 
   test('#setParameter works', () => {

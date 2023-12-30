@@ -9,6 +9,7 @@
 
 class CDict : public ObjectWrapHelper<CDict> {
  public:
+  static const napi_type_tag typeTag;
   static void Init(Napi::Env env, Napi::Object exports);
   CDict(const Napi::CallbackInfo& info);
 

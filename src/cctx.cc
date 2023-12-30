@@ -4,6 +4,8 @@
 
 using namespace Napi;
 
+const napi_type_tag CCtx::typeTag = {0xced16821986135b4, 0x11b09ca57b5ab06c};
+
 void CCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "CCtx",

@@ -9,6 +9,7 @@
 
 class CCtx : public ObjectWrapHelper<CCtx> {
  public:
+  static const napi_type_tag typeTag;
   static void Init(Napi::Env env, Napi::Object exports);
   CCtx(const Napi::CallbackInfo& info);
 
