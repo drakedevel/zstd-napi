@@ -1,5 +1,5 @@
 /* eslint jest/no-done-callback: 0 */
-import assert from 'assert/strict';
+import { strict as assert } from 'assert';
 import { randomBytes } from 'crypto';
 import binding from '../binding';
 import { Compressor, CompressStream, compress, decompress } from '../lib';
