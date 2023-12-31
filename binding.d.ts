@@ -1,4 +1,25 @@
 /**
+ * This module (imported as `zstd-napi/binding`) exposes a thin (but safe!)
+ * wrapper around the native Zstandard API. If you aren't trying to do something
+ * weird, use the {@link "index" | high-level API} instead.
+ *
+ * Native API functions that are associated with a data structure are methods on
+ * the wrapper class corresponding to that data structure. For example, many
+ * compression functions take a `ZSTD_CCtx` and can therefore be found on the
+ * {@link CCtx} class.
+ *
+ * The upstream
+ * {@link https://facebook.github.io/zstd/zstd_manual.html | Zstandard manual}
+ * is the best source for understanding how to use this API. While this
+ * documentation tries to be helpful, it has only a small fraction of the
+ * information. Documentation for structures and functions within this module
+ * will mention the corresponding native names to enable cross-referencing.
+ * (Alas, it appears not to be possible to _link_ to functions on that page...)
+ *
+ * @module
+ */
+
+/**
  * Magic number denoting the start of a Zstandard frame.
  *
  * Corresponds to `ZSTD_MAGICNUMBER`.
