@@ -54,11 +54,34 @@ function updateCCtxParameters(
   }
 }
 
+/**
+ * High-level interface for customized single-pass Zstandard compression.
+ *
+ * @example Basic usage
+ * ```
+ * const cmp = new Compressor();
+ * const result = cmp.compress(Buffer.from('your data here'));
+ * ```
+ *
+ * @example Advanced usage
+ * ```
+ * const cmp = new Compressor();
+ * cmp.setParameters({compressionLevel: 9});
+ * cmp.loadDictionary(fs.readFileSync('path/to/dictionary.dct'));
+ * const result = cmp.compress(Buffer.from('your data here'));
+ * ```
+ */
 export class Compressor {
   private cctx = new binding.CCtx();
   private scratchBuf: Buffer | null = null;
   private scratchLen = -1;
 
+  /**
+   * Compress the data in `buffer` with the configured dictionary/parameters.
+   *
+   * @param buffer - Data to compress
+   * @returns A new Buffer containing the compressed data
+   */
   compress(buffer: Uint8Array): Buffer {
     let dest: Buffer;
     if (this.scratchBuf && buffer.length <= this.scratchLen) {
@@ -91,6 +114,16 @@ export class Compressor {
     return result;
   }
 
+  /**
+   * Load a compression dictionary from the provided buffer.
+   *
+   * The loaded dictionary will be used for all future {@link compress} calls
+   * until removed or replaced. Passing an empty buffer to this function will
+   * remove a previously loaded dictionary.
+   *
+   * Set any parameters you want to set before loading a dictionary, since
+   * parameters can't be changed while a dictionary is loaded.
+   */
   loadDictionary(data: Buffer): void {
     // TODO: Compression parameters get locked in on next compress operation,
     // and are cleared by setParameters. There should be some checks to ensure
@@ -98,11 +131,23 @@ export class Compressor {
     this.cctx.loadDictionary(data);
   }
 
+  /**
+   * Reset the compressor state to only the provided parameters.
+   *
+   * Any loaded dictionary will be cleared, and any parameters not specified
+   * will be reset to their default values.
+   */
   setParameters(parameters: Partial<CompressParameters>): void {
     this.cctx.reset(binding.ResetDirective.parameters);
     this.updateParameters(parameters);
   }
 
+  /**
+   * Modify compression parameters.
+   *
+   * Parameters not specified will be left at their current values. Changing
+   * parameters is not possible while a dictionary is loaded.
+   */
   updateParameters(parameters: Partial<CompressParameters>): void {
     updateCCtxParameters(this.cctx, parameters);
   }
@@ -113,11 +158,33 @@ const BUF_SIZE = binding.cStreamOutSize();
 const dummyFlushBuffer = Buffer.alloc(0);
 const dummyEndBuffer = Buffer.alloc(0);
 
+/**
+ * High-level interface for streaming Zstandard compression.
+ *
+ * Implements the standard Node stream transformer interface, so can be used
+ * with `.pipe` or any other streaming interface.
+ *
+ * @example Basic usage
+ * ```
+ * import { pipeline } from 'stream/promises';
+ * const cmp = new CompressStream();
+ * await pipeline(
+ *   fs.createReadStream('data.txt'),
+ *   new CompressStream(),
+ *   fs.createWriteStream('data.txt.zst'),
+ * );
+ * ```
+ */
 export class CompressStream extends Transform {
   private cctx = new binding.CCtx();
   private buffer = Buffer.allocUnsafe(BUF_SIZE);
 
   // TODO: Allow user to specify a dictionary
+  /**
+   * Create a new streaming compressor with the specified parameters.
+   *
+   * @param parameters - Compression parameters
+   */
   constructor(parameters: Partial<CompressParameters> = {}) {
     // TODO: autoDestroy doesn't really work on Transform, we should consider
     // calling .destroy ourselves when necessary.
@@ -128,10 +195,29 @@ export class CompressStream extends Transform {
   // TODO: Provide API to allow changing parameters mid-frame in MT mode
   // TODO: Provide API to allow changing parameters between frames
 
+  /**
+   * End the current Zstandard frame without ending the stream.
+   *
+   * Frames are compressed independently, so this can be used to create a
+   * "seekable" archive, or to provide more resilience to data corruption by
+   * isolating parts of the file from each other.
+   *
+   * The optional `callback` is invoked with the same semantics as it is for a
+   * a stream write.
+   */
   endFrame(callback?: (error?: Error | null) => void): void {
     this.write(dummyEndBuffer, undefined, callback);
   }
 
+  /**
+   * Flush internal compression buffers to the stream.
+   *
+   * Ensures that a receiver can decompress all bytes written so far without
+   * as much negative impact to compression as {@link endFrame}.
+   *
+   * The optional `callback` is invoked with the same semantics as it is for a
+   * a stream write.
+   */
   flush(callback?: (error?: Error | null) => void): void {
     this.write(dummyFlushBuffer, undefined, callback);
   }
@@ -153,6 +239,7 @@ export class CompressStream extends Transform {
     }
   }
 
+  /** @internal */
   override _transform(
     chunk: unknown,
     _encoding: string,
@@ -178,6 +265,7 @@ export class CompressStream extends Transform {
     return;
   }
 
+  /** @internal */
   override _flush(done: TransformCallback): void {
     try {
       this.doCompress(dummyEndBuffer, binding.EndDirective.end);

@@ -34,9 +34,32 @@ function getTotalContentSize(buffer: Uint8Array): number | null {
 
 const BUF_SIZE = binding.dStreamOutSize();
 
+/**
+ * High-level interface for customized single-pass Zstandard decompression.
+ *
+ * @example Basic usage
+ * ```
+ * const dec = new Decompressor();
+ * const result = dec.decompress(compressedBuffer);
+ * ```
+ *
+ * @example Advanced usage
+ * ```
+ * const dec = new Decompressor();
+ * dec.setParameters({windowLogMax: 24});
+ * dec.loadDictionary(fs.readFileSync('path/to/dictionary.dct'));
+ * const result = dec.decompress(compressedBuffer);
+ * ```
+ */
 export class Decompressor {
   private dctx = new binding.DCtx();
 
+  /**
+   * Decompress the data in `buffer` with the configured dictionary/parameters.
+   *
+   * @param buffer - Compressed data
+   * @returns A new buffer with the uncompressed data
+   */
   decompress(buffer: Uint8Array): Buffer {
     // TODO: Default allocation limit, with option to override
     // TODO: Add a way to supply a known size or size hint
@@ -78,25 +101,64 @@ export class Decompressor {
     return Buffer.concat(resultChunks);
   }
 
+  /**
+   * Load a compression dictionary from the provided buffer.
+   *
+   * The loaded dictionary will be used for all future {@link decompress} calls
+   * until removed or replaced. Passing an empty buffer to this function will
+   * remove a previously loaded dictionary.
+   */
   loadDictionary(data: Buffer): void {
     this.dctx.loadDictionary(data);
   }
 
+  /**
+   * Reset the decompressor state to only the provided parameters.
+   *
+   * Any loaded dictionary will be cleared, and any parameters not specified
+   * will be reset to their default values.
+   */
   setParameters(parameters: Partial<DecompressParameters>): void {
     this.dctx.reset(binding.ResetDirective.parameters);
     this.updateParameters(parameters);
   }
 
+  /**
+   * Modify decompression parameters.
+   *
+   * Parameters not specified will be left at their current values.
+   */
   updateParameters(parameters: Partial<DecompressParameters>): void {
     updateDCtxParameters(this.dctx, parameters);
   }
 }
 
+/**
+ * High-level interface for streaming Zstandard decompression.
+ *
+ * Implements the standard Node stream transformer interface, so can be used
+ * with `.pipe` or any other streaming interface.
+ *
+ * @example Basic usage
+ * ```
+ * import { pipeline } from 'stream/promises';
+ * await pipeline(
+ *   fs.createReadStream('data.txt.zst'),
+ *   new DecompressStream(),
+ *   fs.createWriteStream('data.txt'),
+ * );
+ * ```
+ */
 export class DecompressStream extends Transform {
   private dctx = new binding.DCtx();
   private inFrame = false;
 
   // TODO: Allow user to specify a dictionary
+  /**
+   * Create a new streaming decompressor with the specified parameters.
+   *
+   * @param parameters - Decompression parameters
+   */
   constructor(parameters: Partial<DecompressParameters> = {}) {
     // TODO: autoDestroy doesn't really work on Transform, we should consider
     // calling .destroy ourselves when necessary.
@@ -104,6 +166,7 @@ export class DecompressStream extends Transform {
     updateDCtxParameters(this.dctx, parameters);
   }
 
+  /** @internal */
   override _transform(
     chunk: unknown,
     _encoding: string,
@@ -137,6 +200,7 @@ export class DecompressStream extends Transform {
     return;
   }
 
+  /** @internal */
   override _flush(done: TransformCallback): void {
     if (this.inFrame) {
       done(new Error('Stream ended in middle of compressed data frame'));
