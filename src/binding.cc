@@ -84,6 +84,10 @@ Value wrapMaxCLevel(const CallbackInfo& info) {
   return Number::New(info.Env(), ZSTD_maxCLevel());
 }
 
+Value wrapDefaultCLevel(const CallbackInfo& info) {
+  return Number::New(info.Env(), ZSTD_defaultCLevel());
+}
+
 // Advanced compression
 static inline Value convertParamBounds(Env env, const ZSTD_bounds& bounds) {
   checkZstdError(env, bounds.error);
@@ -183,6 +187,7 @@ Object ModuleInit(Env env, Object exports) {
       propertyDescFunction<wrapCompressBound>(env, exports, "compressBound"),
       propertyDescFunction<wrapMinCLevel>(env, exports, "minCLevel"),
       propertyDescFunction<wrapMaxCLevel>(env, exports, "maxCLevel"),
+      propertyDescFunction<wrapDefaultCLevel>(env, exports, "defaultCLevel"),
       propertyDescFunction<wrapCParamGetBounds>(env, exports,
                                                 "cParamGetBounds"),
       propertyDescFunction<wrapDParamGetBounds>(env, exports,

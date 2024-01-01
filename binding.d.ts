@@ -624,6 +624,13 @@ export function minCLevel(): number;
 export function maxCLevel(): number;
 
 /**
+ * Returns the default compression level.
+ *
+ * @category Simple API
+ */
+export function defaultCLevel(): number;
+
+/**
  * Get upper and lower bounds for a compression parameter.
  *
  * Wraps `ZSTD_cParam_getBounds`.

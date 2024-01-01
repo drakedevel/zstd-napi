@@ -276,6 +276,10 @@ test('maxCLevel works', () => {
   expect(binding.maxCLevel()).toBeGreaterThan(0);
 });
 
+test('defaultCLevel works', () => {
+  expect(binding.defaultCLevel()).toBe(3);
+});
+
 function expectBounds(bounds: binding.Bounds): void {
   expect(bounds).toMatchObject({
     lowerBound: expect.any(Number),
