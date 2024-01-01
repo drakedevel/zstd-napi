@@ -537,7 +537,8 @@ export function versionString(): string;
  *
  * @remarks
  * This function is here for completeness, creating a {@link CCtx} and reusing
- * it will give better performance than calling this repeatedly.
+ * it will give better performance than calling this repeatedly. The high-level
+ * {@link index.compress | compress} function will take care of this for you.
  *
  * @param dstBuf - Output buffer for compressed bytes
  * @param srcBuf - Data to compress
@@ -561,7 +562,9 @@ export function compress(
  *
  * @remarks
  * This function is here for completeness, creating a {@link DCtx} and reusing
- * it will give better performance than calling this repeatedly.
+ * it will give better performance than calling this repeatedly. The high-level
+ * {@link index.decompress | decompress} function will take care of this for
+ * you.
  *
  * @param dstBuf - Output buffer for decompressed bytes
  * @param srcBuf - Data to decompress

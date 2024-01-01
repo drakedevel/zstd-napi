@@ -1,24 +1,10 @@
 /* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
 import binding from '../binding';
-import {
-  Compressor,
-  CompressParameters,
-  Decompressor,
-  DecompressStream,
-} from '../lib';
+import { Decompressor, DecompressStream, compress, decompress } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
   jest.createMockFromModule('../binding');
-
-function compress(
-  input: Uint8Array,
-  params: Partial<CompressParameters> = {},
-): Buffer {
-  const compressor = new Compressor();
-  compressor.setParameters(params);
-  return compressor.compress(input);
-}
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;
@@ -246,5 +232,12 @@ describe('DecompressStream', () => {
       expect(chunks).toHaveLength(2);
       stream.end();
     });
+  });
+});
+
+describe('decompress', () => {
+  test('basic functionality works', () => {
+    const original = Buffer.from('hello');
+    expect(decompress(compress(original)).equals(original)).toBe(true);
   });
 });

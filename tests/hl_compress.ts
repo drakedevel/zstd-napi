@@ -2,16 +2,14 @@
 import assert from 'assert/strict';
 import { randomBytes } from 'crypto';
 import binding from '../binding';
-import { Compressor, CompressStream } from '../lib';
+import { Compressor, CompressStream, compress, decompress } from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
   jest.createMockFromModule('../binding');
 
-// TODO: Use HL API
 function expectDecompress(input: Buffer, expected: Buffer): void {
-  const output = Buffer.alloc(expected.length);
-  const len = binding.decompress(output, input);
-  expect(output.subarray(0, len).equals(expected)).toBe(true);
+  const output = decompress(input);
+  expect(output.equals(expected)).toBe(true);
 }
 
 describe('Compressor', () => {
@@ -302,5 +300,12 @@ describe('CompressStream', () => {
       expect(chunks).toHaveLength(2);
       stream.end();
     });
+  });
+});
+
+describe('compress', () => {
+  test('basic functionality works', () => {
+    const input = Buffer.from('hello');
+    expectDecompress(compress(input), input);
   });
 });
