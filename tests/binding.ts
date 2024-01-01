@@ -133,6 +133,11 @@ describe('CDict', () => {
       new binding.CDict(minDict.subarray(0, 32), 3);
     }).toThrow('Failed to create CDict');
   });
+
+  test('#getDictID works', () => {
+    const cdict = new binding.CDict(minDict, 3);
+    expect(cdict.getDictID()).toBe(minDictId);
+  });
 });
 
 describe('DCtx', () => {

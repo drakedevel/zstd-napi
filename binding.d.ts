@@ -341,6 +341,15 @@ export class CDict {
    * Wraps `ZSTD_createCDict`.
    */
   constructor(dictBuf: Uint8Array, level: number);
+
+  /**
+   * Returns the ID for this dictionary.
+   *
+   * Wraps `ZSTD_getDictID_fromCDict`.
+   *
+   * @returns The ID, or 0 if this is a non-standard/content-only dictionary
+   */
+  getDictID(): number;
 }
 
 /**

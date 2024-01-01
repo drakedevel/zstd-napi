@@ -18,6 +18,8 @@ class CDict : public ObjectWrapHelper<CDict> {
   zstd_unique_ptr<ZSTD_CDict, ZSTD_freeCDict> cdict;
 
   int64_t getCurrentSize() { return ZSTD_sizeof_CDict(cdict.get()); }
+
+  Napi::Value wrapGetDictID(const Napi::CallbackInfo& info);
 };
 
 #endif
