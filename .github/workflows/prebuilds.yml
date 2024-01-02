@@ -5,7 +5,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-prebuilds:
     runs-on: ${{ matrix.os }}
     container:
       image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
