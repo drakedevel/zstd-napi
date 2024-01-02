@@ -3,7 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "noEmit": false,
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": false
   },
   "include": ["binding.d.ts", "lib/**/*.ts"]
 }

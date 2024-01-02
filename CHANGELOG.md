@@ -20,6 +20,7 @@
 - Prebuilds for Node-API 6.
 - Support for Node-API < 8.
 - Support for GNU/Linux with Glibc < 2.28.
+- Support for TypeScript < 4.3.
 
 ### Fixed
 

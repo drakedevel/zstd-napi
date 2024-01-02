@@ -164,8 +164,6 @@ type StreamResult = [
  * calls `ZSTD_freeCCtx` when this object is garbage collected.
  */
 export class CCtx {
-  private __brand__: unique symbol;
-
   /**
    * Creates a new compression context.
    *
@@ -319,6 +317,8 @@ export class CCtx {
    * Wraps `ZSTD_CCtx_loadDictionary`.
    */
   loadDictionary(dictBuf: Uint8Array): void;
+
+  private __brand: 'CCtx';
 }
 
 /**
@@ -330,8 +330,6 @@ export class CCtx {
  * @category Dictionary
  */
 export class CDict {
-  private __brand__: unique symbol;
-
   /**
    * Load a dictionary for compression from the bytes in `dictBuf`.
    *
@@ -350,6 +348,8 @@ export class CDict {
    * @returns The ID, or 0 if this is a non-standard/content-only dictionary
    */
   getDictID(): number;
+
+  private __brand: 'CDict';
 }
 
 /**
@@ -359,8 +359,6 @@ export class CDict {
  * calls `ZSTD_freeDCtx` when this object is garbage collected.
  */
 export class DCtx {
-  private __brand__: unique symbol;
-
   /**
    * Creates a new decompression context.
    *
@@ -478,6 +476,8 @@ export class DCtx {
    * Wraps `ZSTD_DCtx_loadDictionary`.
    */
   loadDictionary(dictBuf: Uint8Array): void;
+
+  private __brand: 'DCtx';
 }
 
 /**
@@ -489,8 +489,6 @@ export class DCtx {
  * @category Dictionary
  */
 export class DDict {
-  private __brand__: unique symbol;
-
   /**
    * Load a dictionary for decompression from the bytes in `dictBuf`.
    *
@@ -506,6 +504,8 @@ export class DDict {
    * @returns The ID, or 0 if this is a non-standard/content-only dictionary
    */
   getDictID(): number;
+
+  private __brand: 'DDict';
 }
 
 /**
