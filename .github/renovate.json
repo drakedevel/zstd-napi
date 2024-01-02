@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:best-practices", "npm:unpublishSafe"],
-  "ignorePaths": ["setuptools-requirements.txt"],
   "packageRules": [
     {
       "matchDatasources": ["docker"],

@@ -35,13 +35,10 @@ jobs:
           node-version: 18
           cache: npm
       - run: npm ci --ignore-scripts
-      # Workaround for nodejs/node-gyp#2869, remove after updated in prebuild
-      - run: python3 -m pip install -r .github/setuptools-requirements.txt --require-hashes
-        if: runner.os == 'macOS'
-      - run: npm run build-prebuild
+      - run: bash .github/prebuild.sh
         env:
           JOBS: 3
-      - run: npm run build-prebuild -- -a arm64
+      - run: bash .github/prebuild.sh arm64
         if: runner.os == 'macOS'
         env:
           JOBS: 3
