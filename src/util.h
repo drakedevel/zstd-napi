@@ -51,8 +51,8 @@ static inline Napi::Value makeStreamResult(Napi::Env env,
   // N-API doesn't expose the relevant V8 features to speed that up.
   Napi::Array result = Napi::Array::New(env, 3);
   result[uint32_t(0)] = convertZstdResult(env, ret);
-  result[1] = outBuf.pos;
-  result[2] = inBuf.pos;
+  result[uint32_t(1)] = outBuf.pos;
+  result[uint32_t(2)] = inBuf.pos;
   return result;
 }
 

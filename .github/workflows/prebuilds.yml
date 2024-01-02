@@ -12,9 +12,11 @@ jobs:
     strategy:
       matrix:
         os: [macos-12, ubuntu-22.04, windows-2022]
+    env:
+      JOBS: 3
     steps:
       - name: Install system dependencies
-        run: apt-get update && apt-get -y install g++ git jq make python3
+        run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
         if: runner.os == 'Linux'
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
@@ -24,13 +26,22 @@ jobs:
           node-version: 18
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: bash .github/prebuild.sh
+      - name: Build x64
+        run: bash .github/prebuild.sh
+      - name: Build arm
+        run: bash .github/prebuild.sh arm
+        if: runner.os == 'Linux'
         env:
-          JOBS: 3
-      - run: bash .github/prebuild.sh arm64
-        if: runner.os == 'macOS'
-        env:
-          JOBS: 3
+          CC: arm-linux-gnueabihf-gcc
+          CXX: arm-linux-gnueabihf-g++
+      - name: Build arm64
+        run: |
+          ${{runner.os == 'Linux' }} && export CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++
+          bash .github/prebuild.sh arm64
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+      - name: Build ia32
+        run: bash .github/prebuild.sh ia32
+        if: runner.os == 'Windows'
       - name: Upload prebuilds
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4
         with:
