@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Worker } from 'worker_threads';
-import binding from '../binding';
+import * as binding from '../binding';
 
 // Minimal dictionary (generated with zstd --train on random hex)
 const minDict = fs.readFileSync(path.join(__dirname, 'data', 'minimal.dct'));

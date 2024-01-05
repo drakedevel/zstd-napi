@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
-import binding from '../binding';
+import * as binding from '../binding';
 import { mapNumber, mapParameters, tsAssert } from './util';
 
 /**

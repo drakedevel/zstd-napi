@@ -1,6 +1,7 @@
 {
   "extends": ["@tsconfig/node18", "@tsconfig/strictest"],
   "compilerOptions": {
+    "esModuleInterop": false,
     "noEmit": true
   },
   "include": ["**/*.ts", "**/*.js", ".*.js"],

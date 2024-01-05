@@ -1,7 +1,7 @@
 /* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
-import binding from '../binding';
+import * as binding from '../binding';
 import {
   Decompressor,
   DecompressParameters,

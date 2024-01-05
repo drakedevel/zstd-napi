@@ -1,6 +1,6 @@
 import { Transform, TransformCallback } from 'stream';
 
-import binding from '../binding';
+import * as binding from '../binding';
 import {
   mapBoolean,
   mapEnum,

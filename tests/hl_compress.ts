@@ -1,8 +1,8 @@
 /* eslint jest/no-done-callback: 0 */
-import assert from 'assert/strict';
+import * as assert from 'assert/strict';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
-import binding from '../binding';
+import * as binding from '../binding';
 import {
   Compressor,
   CompressParameters,

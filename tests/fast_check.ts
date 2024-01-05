@@ -1,7 +1,7 @@
 /* eslint jest/no-standalone-expect: 0 */
 import { fc, it } from '@fast-check/jest';
-import assert from 'assert/strict';
-import stream from 'stream/promises';
+import * as assert from 'assert/strict';
+import * as stream from 'stream/promises';
 
 import {
   Compressor,
