@@ -3,9 +3,8 @@
   "extends": ["config:best-practices", "npm:unpublishSafe"],
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true
     },
     {
       "matchDatasources": ["npm"],
@@ -14,5 +13,6 @@
       "dependencyDashboardApproval": true
     }
   ],
+  "reviewers": ["drakedevel"],
   "timezone": "America/Los_Angeles"
 }
