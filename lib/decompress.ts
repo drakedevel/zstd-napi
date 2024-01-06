@@ -2,17 +2,19 @@ import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import binding from '../binding';
-import { ParamObject, mapNumber, mapParameters, tsAssert } from './util';
+import { mapNumber, mapParameters, tsAssert } from './util';
+
+export interface DecompressParameters {
+  windowLogMax?: number | undefined;
+}
 
 const PARAM_MAPPERS = {
   windowLogMax: mapNumber,
 };
 
-export type DecompressParameters = ParamObject<typeof PARAM_MAPPERS>;
-
 function updateDCtxParameters(
   dctx: binding.DCtx,
-  parameters: Partial<DecompressParameters>,
+  parameters: DecompressParameters,
 ): void {
   const mapped = mapParameters(binding.DParameter, PARAM_MAPPERS, parameters);
   for (const [param, value] of mapped) {
@@ -118,7 +120,7 @@ export class Decompressor {
    * Any loaded dictionary will be cleared, and any parameters not specified
    * will be reset to their default values.
    */
-  setParameters(parameters: Partial<DecompressParameters>): void {
+  setParameters(parameters: DecompressParameters): void {
     this.dctx.reset(binding.ResetDirective.parameters);
     this.updateParameters(parameters);
   }
@@ -128,7 +130,7 @@ export class Decompressor {
    *
    * Parameters not specified will be left at their current values.
    */
-  updateParameters(parameters: Partial<DecompressParameters>): void {
+  updateParameters(parameters: DecompressParameters): void {
     updateDCtxParameters(this.dctx, parameters);
   }
 }
@@ -159,7 +161,7 @@ export class DecompressStream extends Transform {
    *
    * @param parameters - Decompression parameters
    */
-  constructor(parameters: Partial<DecompressParameters> = {}) {
+  constructor(parameters: DecompressParameters = {}) {
     // TODO: autoDestroy doesn't really work on Transform, we should consider
     // calling .destroy ourselves when necessary.
     super({ autoDestroy: true });

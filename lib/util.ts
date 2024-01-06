@@ -1,13 +1,18 @@
 import { strict as assert } from 'assert';
 
-export interface ParamMapper<T> {
+interface ParamMapper<T> {
   validateInput(value: unknown): value is T;
   mapValue(value: T): number;
 }
 
-export type ParamObject<M> = {
-  [key in keyof M]: M[key] extends ParamMapper<infer T> ? T : never;
+type ParamObject<M> = {
+  [key in keyof M]?: M[key] extends ParamMapper<infer T>
+    ? T | undefined
+    : never;
 };
+
+type StrKeys<O> = Extract<keyof O, string>;
+type OnlyKeys<O, K> = O & Record<Exclude<keyof O, K>, never>;
 
 export function tsAssert(value: unknown, msg?: string | Error): asserts value {
   assert(value, msg);
@@ -18,12 +23,11 @@ export const mapNumber: ParamMapper<number> = {
   mapValue: (value) => value,
 };
 
-export function mapEnum<
-  E extends { [key in K]: number },
-  K extends string = keyof E & string,
->(enumObj: E): ParamMapper<K> {
+export function mapEnum<E extends Record<StrKeys<E>, number>>(
+  enumObj: E,
+): ParamMapper<StrKeys<E>> {
   return {
-    validateInput: (value): value is K =>
+    validateInput: (value): value is StrKeys<E> =>
       typeof value === 'string' && value in enumObj,
     mapValue: (value) => enumObj[value],
   };
@@ -46,12 +50,13 @@ function mapParameter<P>(
 }
 
 export function mapParameters<
-  E extends { [key in K]: number },
-  K extends string = keyof E & string,
+  E,
+  M extends Record<StrKeys<E>, ParamMapper<unknown>>,
+  P extends ParamObject<M>,
 >(
   paramEnum: E,
-  mapper: { [key in keyof E]: ParamMapper<unknown> },
-  params: Record<string, unknown>,
+  mapper: OnlyKeys<M, StrKeys<E>>,
+  params: OnlyKeys<P, StrKeys<E>>,
 ): Map<E[keyof E], number> {
   const result = new Map<E[keyof E], number>();
   for (const [rawKey, value] of Object.entries(params)) {
@@ -59,7 +64,7 @@ export function mapParameters<
       if (!(rawKey in mapper)) {
         throw new RangeError(`Invalid parameter name: ${rawKey}`);
       }
-      const key = rawKey as K;
+      const key = rawKey as StrKeys<E>;
       result.set(paramEnum[key], mapParameter(key, mapper[key], value));
     }
   }

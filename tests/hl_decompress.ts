@@ -111,7 +111,6 @@ describe('Decompressor', () => {
   test('#updateParameters ignores undefined values', () => {
     decompressor['dctx'] = new mockBinding.DCtx();
 
-    // @ts-expect-error: testing loose undefined handling
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
   });

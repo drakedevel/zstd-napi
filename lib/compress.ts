@@ -2,7 +2,6 @@ import { Transform, TransformCallback } from 'stream';
 
 import binding from '../binding';
 import {
-  ParamObject,
   mapBoolean,
   mapEnum,
   mapNumber,
@@ -11,6 +10,36 @@ import {
 } from './util';
 
 export type StrategyName = keyof typeof binding.Strategy;
+
+export interface CompressParameters {
+  compressionLevel?: number | undefined;
+
+  // Advanced compression options
+  windowLog?: number | undefined;
+  hashLog?: number | undefined;
+  chainLog?: number | undefined;
+  searchLog?: number | undefined;
+  minMatch?: number | undefined;
+  targetLength?: number | undefined;
+  strategy?: StrategyName | undefined;
+
+  // Long-distance matching options
+  enableLongDistanceMatching?: boolean | undefined;
+  ldmHashLog?: number | undefined;
+  ldmMinMatch?: number | undefined;
+  ldmBucketSizeLog?: number | undefined;
+  ldmHashRateLog?: number | undefined;
+
+  // Frame parameters
+  contentSizeFlag?: boolean | undefined;
+  checksumFlag?: boolean | undefined;
+  dictIDFlag?: boolean | undefined;
+
+  // Multi-threading parameters
+  nbWorkers?: number | undefined;
+  jobSize?: number | undefined;
+  overlapLog?: number | undefined;
+}
 
 const PARAM_MAPPERS = {
   compressionLevel: mapNumber,
@@ -42,11 +71,9 @@ const PARAM_MAPPERS = {
   overlapLog: mapNumber,
 };
 
-export type CompressParameters = ParamObject<typeof PARAM_MAPPERS>;
-
 function updateCCtxParameters(
   cctx: binding.CCtx,
-  parameters: Partial<CompressParameters>,
+  parameters: CompressParameters,
 ): void {
   const mapped = mapParameters(binding.CParameter, PARAM_MAPPERS, parameters);
   for (const [param, value] of mapped) {
@@ -137,7 +164,7 @@ export class Compressor {
    * Any loaded dictionary will be cleared, and any parameters not specified
    * will be reset to their default values.
    */
-  setParameters(parameters: Partial<CompressParameters>): void {
+  setParameters(parameters: CompressParameters): void {
     this.cctx.reset(binding.ResetDirective.parameters);
     this.updateParameters(parameters);
   }
@@ -148,7 +175,7 @@ export class Compressor {
    * Parameters not specified will be left at their current values. Changing
    * parameters is not possible while a dictionary is loaded.
    */
-  updateParameters(parameters: Partial<CompressParameters>): void {
+  updateParameters(parameters: CompressParameters): void {
     updateCCtxParameters(this.cctx, parameters);
   }
 }
@@ -185,7 +212,7 @@ export class CompressStream extends Transform {
    *
    * @param parameters - Compression parameters
    */
-  constructor(parameters: Partial<CompressParameters> = {}) {
+  constructor(parameters: CompressParameters = {}) {
     // TODO: autoDestroy doesn't really work on Transform, we should consider
     // calling .destroy ourselves when necessary.
     super({ autoDestroy: true });

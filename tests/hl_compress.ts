@@ -145,7 +145,6 @@ describe('Compressor', () => {
   test('#updateParameters ignores undefined values', () => {
     compressor['cctx'] = new mockBinding.CCtx();
 
-    // @ts-expect-error: testing loose undefined handling
     compressor.updateParameters({ compressionLevel: undefined });
     expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
   });

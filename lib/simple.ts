@@ -17,7 +17,7 @@ let defaultDecompressor: Decompressor | undefined;
  */
 export function compress(
   data: Uint8Array,
-  parameters: Partial<CompressParameters> = {},
+  parameters: CompressParameters = {},
 ) {
   if (!defaultCompressor) {
     defaultCompressor = new Compressor();
@@ -39,7 +39,7 @@ export function compress(
  */
 export function decompress(
   data: Uint8Array,
-  parameters: Partial<DecompressParameters> = {},
+  parameters: DecompressParameters = {},
 ) {
   if (!defaultDecompressor) {
     defaultDecompressor = new Decompressor();
