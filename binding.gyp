@@ -47,5 +47,19 @@
         }],
       ],
     },
+    {
+      'target_name': 'copy_licenses',
+      'type': 'none',
+      'copies': [{
+        'files': ['LICENSE', 'NOTICE'],
+        'destination': '<(PRODUCT_DIR)',
+      }],
+      'actions': [{
+        'action_name': 'zstd_license',
+        'inputs': ['deps/zstd/LICENSE'],
+        'outputs': ['<(PRODUCT_DIR)/LICENSE.zstd'],
+        'action': ['cp', 'deps/zstd/LICENSE', '<@(_outputs)'],
+      }],
+    },
   ],
 }
