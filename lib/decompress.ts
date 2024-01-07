@@ -4,6 +4,13 @@ import { Transform, TransformCallback } from 'stream';
 import binding from '../binding';
 import { mapNumber, mapParameters, tsAssert } from './util';
 
+/**
+ * Zstandard decompression parameters.
+ *
+ * Most applications will not need to adjust these. See the
+ * {@link https://facebook.github.io/zstd/zstd_manual.html | Zstandard manual}
+ * for a full description.
+ */
 export interface DecompressParameters {
   windowLogMax?: number | undefined;
 }

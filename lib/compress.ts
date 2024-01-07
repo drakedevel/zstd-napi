@@ -9,35 +9,67 @@ import {
   tsAssert,
 } from './util';
 
-export type StrategyName = keyof typeof binding.Strategy;
-
+/**
+ * Zstandard compression parameters.
+ *
+ * Most applications will only need the {@link compressionLevel} parameter. See
+ * the {@link https://facebook.github.io/zstd/zstd_manual.html | Zstandard manual}
+ * for a full description.
+ */
 export interface CompressParameters {
+  /**
+   * Compression level, where higher numbers compress better but are slower.
+   *
+   * Typical values range from 1 to 9, with a default of 3, but values up to 22
+   * are allowed, as are negative values (see {@link binding.minCLevel}). Zero
+   * is interpreted as "use the default".
+   *
+   * @category Basic parameters
+   */
   compressionLevel?: number | undefined;
 
   // Advanced compression options
+  /** @category Advanced compression options */
   windowLog?: number | undefined;
+  /** @category Advanced compression options */
   hashLog?: number | undefined;
+  /** @category Advanced compression options */
   chainLog?: number | undefined;
+  /** @category Advanced compression options */
   searchLog?: number | undefined;
+  /** @category Advanced compression options */
   minMatch?: number | undefined;
+  /** @category Advanced compression options */
   targetLength?: number | undefined;
-  strategy?: StrategyName | undefined;
+  /** @category Advanced compression options */
+  strategy?: keyof typeof binding.Strategy | undefined;
 
   // Long-distance matching options
+  /** @category Long-distance matching */
   enableLongDistanceMatching?: boolean | undefined;
+  /** @category Long-distance matching */
   ldmHashLog?: number | undefined;
+  /** @category Long-distance matching */
   ldmMinMatch?: number | undefined;
+  /** @category Long-distance matching */
   ldmBucketSizeLog?: number | undefined;
+  /** @category Long-distance matching */
   ldmHashRateLog?: number | undefined;
 
   // Frame parameters
+  /** @category Frame parameters */
   contentSizeFlag?: boolean | undefined;
+  /** @category Frame parameters */
   checksumFlag?: boolean | undefined;
+  /** @category Frame parameters */
   dictIDFlag?: boolean | undefined;
 
   // Multi-threading parameters
+  /** @category Multi-threading parameters */
   nbWorkers?: number | undefined;
+  /** @category Multi-threading parameters */
   jobSize?: number | undefined;
+  /** @category Multi-threading parameters */
   overlapLog?: number | undefined;
 }
 
