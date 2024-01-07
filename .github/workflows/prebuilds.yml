@@ -48,10 +48,9 @@ jobs:
           name: prebuilds-${{ matrix.os }}
           path: prebuilds/
       - id: hash
-        run: |
-          cd prebuilds
-          echo "hash-${{ matrix.os }}=$(openssl sha256 -r * | base64 -w0)" >> "$GITHUB_OUTPUT"
+        run: echo "hash-${{ matrix.os }}=$(openssl sha256 -r * | tr '*' ' ' | jq -Rrs @base64)" >> "$GITHUB_OUTPUT"
         shell: bash
+        working-directory: prebuilds
 
   prebuild-hashes:
     needs: [build-prebuilds]
@@ -59,7 +58,10 @@ jobs:
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
-      - run: echo '${{ toJSON(needs.build-prebuilds.outputs) }}'
+      - run: jq -nr 'env.HASHES|fromjson|.[]|@base64d'
+        env:
+          HASHES: ${{ toJSON(needs.build-prebuilds.outputs) }}
+
 
   # prebuild-provenance:
   #   needs: [prebuild-hashes]
