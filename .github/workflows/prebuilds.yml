@@ -14,7 +14,7 @@ jobs:
         os: [macos-12, ubuntu-22.04, windows-2022]
     outputs:
       hash-macos-12: ${{ steps.hash.outputs.hash-macos-12 }}
-      hash-ubuntu-22.04: ${{ steps.hash.outputs.hash-ubuntu-22.04 }}
+      hash-ubuntu-22.04: ${{ steps.hash.outputs['hash-ubuntu-22.04'] }}
       hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
     env:
       JOBS: 3
