@@ -50,7 +50,8 @@ jobs:
       - id: hash
         run: |
           cd prebuilds
-          echo "hash-${{ matrix.os }}=$(sha256sum * | base64 -w0)" >> "$GITHUB_OUTPUT"
+          echo "hash-${{ matrix.os }}=$(openssl sha256 -r * | base64 -w0)" >> "$GITHUB_OUTPUT"
+        shell: bash
 
   prebuild-hashes:
     needs: [build-prebuilds]
