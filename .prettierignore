@@ -1,2 +1,4 @@
+coverage
 deps/zstd
 dist
+docs

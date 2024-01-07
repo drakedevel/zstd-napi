@@ -45,5 +45,5 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ['dist/', 'node_modules/'],
+  ignorePatterns: ['coverage/', 'docs/', 'dist/', 'node_modules/'],
 };

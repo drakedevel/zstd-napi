@@ -5,5 +5,5 @@
     "noEmit": true
   },
   "include": ["**/*.ts", "**/*.js", ".*.js"],
-  "exclude": ["dist"]
+  "exclude": ["coverage", "dist", "docs"]
 }
