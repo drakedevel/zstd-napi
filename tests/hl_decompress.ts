@@ -1,7 +1,14 @@
 /* eslint jest/no-done-callback: 0 */
 import { randomBytes } from 'crypto';
+import { expectTypeOf } from 'expect-type';
 import binding from '../binding';
-import { Decompressor, DecompressStream, compress, decompress } from '../lib';
+import {
+  Decompressor,
+  DecompressParameters,
+  DecompressStream,
+  compress,
+  decompress,
+} from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
   jest.createMockFromModule('../binding');
@@ -113,6 +120,14 @@ describe('Decompressor', () => {
 
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
+  });
+});
+
+describe('DecompressParameters', () => {
+  test('matches binding.DParameter', () => {
+    expectTypeOf<keyof DecompressParameters>().toEqualTypeOf<
+      keyof typeof binding.DParameter
+    >();
   });
 });
 

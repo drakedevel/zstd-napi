@@ -1,8 +1,15 @@
 /* eslint jest/no-done-callback: 0 */
 import assert from 'assert/strict';
 import { randomBytes } from 'crypto';
+import { expectTypeOf } from 'expect-type';
 import binding from '../binding';
-import { Compressor, CompressStream, compress, decompress } from '../lib';
+import {
+  Compressor,
+  CompressParameters,
+  CompressStream,
+  compress,
+  decompress,
+} from '../lib';
 
 const mockBinding: jest.Mocked<typeof binding> =
   jest.createMockFromModule('../binding');
@@ -147,6 +154,14 @@ describe('Compressor', () => {
 
     compressor.updateParameters({ compressionLevel: undefined });
     expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
+  });
+});
+
+describe('CompressParameters', () => {
+  test('matches binding.CParameter', () => {
+    expectTypeOf<keyof CompressParameters>().toEqualTypeOf<
+      keyof typeof binding.CParameter
+    >();
   });
 });
 
