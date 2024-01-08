@@ -35,7 +35,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v1.9.0
     with:
       node-version: 18
-      run-scripts: 'ci --ignore-scripts'
+      run-scripts: 'ci-ignore-scripts'
 
   lint:
     runs-on: ubuntu-22.04
