@@ -1,5 +1,5 @@
 /* eslint jest/no-done-callback: 0 */
-import * as assert from 'assert/strict';
+import { strict as assert } from 'assert';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
 import * as binding from '../binding';

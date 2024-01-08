@@ -1,7 +1,7 @@
 /* eslint jest/no-standalone-expect: 0 */
 import { fc, it } from '@fast-check/jest';
-import * as assert from 'assert/strict';
-import * as stream from 'stream/promises';
+import { strict as assert } from 'assert';
+import * as events from 'events';
 
 import {
   Compressor,
@@ -100,8 +100,7 @@ describe('streaming API', () => {
         }
       }
       cmp.end();
-      await stream.finished(cmp);
-      await stream.finished(dec);
+      await events.once(dec, 'end');
 
       // Verify the output matches
       const actual = Buffer.concat(output);
