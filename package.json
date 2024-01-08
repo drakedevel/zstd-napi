@@ -6,8 +6,23 @@
     "type": "git",
     "url": "https://github.com/drakedevel/zstd-napi.git"
   },
+  "license": "Apache-2.0",
+  "author": "Andrew Drake <adrake@adrake.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "binding.d.ts",
+    "binding.gyp",
+    "binding.js",
+    "deps",
+    "dist",
+    "src"
+  ],
+  "binary": {
+    "napi_versions": [
+      8
+    ]
+  },
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
     "clang-format": "clang-format -i src/*",
@@ -18,8 +33,11 @@
     "test-coverage": "jest --coverage --coverageReporters=json",
     "typedoc": "typedoc"
   },
-  "author": "Andrew Drake <adrake@adrake.org>",
-  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/node": "^18.19.3",
+    "node-addon-api": "^7.0.0",
+    "prebuild-install": "^7.1.1"
+  },
   "devDependencies": {
     "@fast-check/jest": "1.8.0",
     "@tsconfig/node18": "18.2.2",
@@ -38,23 +56,5 @@
     "ts-jest": "29.1.1",
     "typedoc": "0.25.6",
     "typescript": "5.3.3"
-  },
-  "dependencies": {
-    "@types/node": "^18.19.3",
-    "node-addon-api": "^7.0.0",
-    "prebuild-install": "^7.1.1"
-  },
-  "binary": {
-    "napi_versions": [
-      8
-    ]
-  },
-  "files": [
-    "binding.d.ts",
-    "binding.gyp",
-    "binding.js",
-    "deps",
-    "dist",
-    "src"
-  ]
+  }
 }
