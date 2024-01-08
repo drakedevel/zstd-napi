@@ -1,0 +1,53 @@
+name: release
+on:
+  push:
+    tags:
+      - 'u*.*.*'  # Temporary testing pattern
+
+permissions:
+  contents: read
+
+jobs:
+  release-sanity-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - name: Verify package.json has correct version for tag
+        run: |
+          pkg_json="$(jq -r .version package.json)"
+          tag="${{ github.ref_name }}"
+          if [[ "$pkg_json" != "${tag:1}" ]]; then
+            echo "::error::package.json has version ${pkg_json}, expected ${tag:1}"
+            exit 1
+          fi
+      - name: Verify release tag has a verified signature
+        run: |
+          tag_json="$(gh api '/repos/${{ github.repository }}/git/tags/${{ github.event.after }}')"
+          echo "$tag_json"
+          if [[ "$(jq .verification.verified <<<"$tag_json")" != "true" ]]; then
+            echo "::error::Release tag does not have a verified signature"
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Verify package with this version has not already been published
+        run: |
+          pkg_name="$(jq -r '"\(.name)@\(.version)"' package.json)"
+          if npm view "$pkg_name" &>/dev/null; then
+            echo "::error::Package ${pkg_name} has already been published"
+            exit 1
+          fi
+
+  # build-release:
+  #   needs: [release-sanity-check]
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
+  #       with:
+  #         node-version-file: .node-version
+  #         cache: npm
+  #     - run: npm ci --ignore-scripts
+  #     - run: npm run build --jobs=max
