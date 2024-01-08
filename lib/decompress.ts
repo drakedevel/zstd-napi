@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
-import { mapNumber, mapParameters, tsAssert } from './util';
+import { mapNumber, mapParameters } from './util';
 
 /**
  * Zstandard decompression parameters.
@@ -184,7 +184,7 @@ export class DecompressStream extends Transform {
     // TODO: Optimize this by looking at the frame header
     try {
       // The Writable machinery is responsible for converting to a Buffer
-      tsAssert(chunk instanceof Buffer);
+      assert(chunk instanceof Buffer);
       let srcBuf = chunk;
 
       for (;;) {

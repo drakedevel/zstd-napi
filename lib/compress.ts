@@ -1,13 +1,8 @@
+import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
 import * as binding from '../binding';
-import {
-  mapBoolean,
-  mapEnum,
-  mapNumber,
-  mapParameters,
-  tsAssert,
-} from './util';
+import { mapBoolean, mapEnum, mapNumber, mapParameters } from './util';
 
 /**
  * Zstandard compression parameters.
@@ -306,7 +301,7 @@ export class CompressStream extends Transform {
   ): void {
     try {
       // The Writable machinery is responsible for converting to a Buffer
-      tsAssert(chunk instanceof Buffer);
+      assert(chunk instanceof Buffer);
 
       // Handle flushes indicated by special dummy buffers
       let endType = binding.EndDirective.continue;

@@ -1,5 +1,3 @@
-import { strict as assert } from 'assert';
-
 interface ParamMapper<T> {
   validateInput(value: unknown): value is T;
   mapValue(value: T): number;
@@ -13,10 +11,6 @@ type ParamObject<M> = {
 
 type StrKeys<O> = Extract<keyof O, string>;
 type OnlyKeys<O, K> = O & Record<Exclude<keyof O, K>, never>;
-
-export function tsAssert(value: unknown, msg?: string | Error): asserts value {
-  assert(value, msg);
-}
 
 export const mapNumber: ParamMapper<number> = {
   validateInput: (value): value is number => typeof value === 'number',
