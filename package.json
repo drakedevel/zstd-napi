@@ -13,6 +13,7 @@
     "clang-format": "clang-format -i src/*",
     "install": "prebuild-install -r napi || node-gyp rebuild",
     "lint": "eslint --ext .js,.ts .",
+    "prepare": "tsc -p tsconfig.emit.json",
     "prettier": "prettier -l --write '**/*.{js,json,ts,yml}'",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageReporters=json",
