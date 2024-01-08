@@ -178,7 +178,7 @@ export class Compressor {
    * Set any parameters you want to set before loading a dictionary, since
    * parameters can't be changed while a dictionary is loaded.
    */
-  loadDictionary(data: Buffer): void {
+  loadDictionary(data: Uint8Array): void {
     // TODO: Compression parameters get locked in on next compress operation,
     // and are cleared by setParameters. There should be some checks to ensure
     // users have a safe usage pattern.

@@ -117,7 +117,7 @@ export class Decompressor {
    * until removed or replaced. Passing an empty buffer to this function will
    * remove a previously loaded dictionary.
    */
-  loadDictionary(data: Buffer): void {
+  loadDictionary(data: Uint8Array): void {
     this.dctx.loadDictionary(data);
   }
 
