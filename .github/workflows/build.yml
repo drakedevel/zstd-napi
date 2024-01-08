@@ -36,6 +36,23 @@ jobs:
           name: package
           path: ${{ steps.npm_pack.outputs.package }}
 
+  other-ts-versions:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: |
+          for version in 4.5 4.6 4.7 4.8 4.9 5.0 5.1 5.2 5.3; do
+            echo "=== Typescript ${version} ==="
+            npx -y --package=typescript@$version -- tsc -p tsconfig.old-ts.json
+          done
+
   lint:
     runs-on: ubuntu-22.04
     steps:

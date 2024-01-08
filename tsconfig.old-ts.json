@@ -1,0 +1,11 @@
+{
+  "extends": "@tsconfig/strictest",
+  "compilerOptions": {
+    "esModuleInterop": false,
+    "module": "commonjs",
+    "noEmit": true,
+    "skipLibCheck": false,
+    "target": "es2020"
+  },
+  "include": ["binding.d.ts", "lib/**/*.ts"]
+}
