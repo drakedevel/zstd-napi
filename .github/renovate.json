@@ -17,6 +17,11 @@
       "matchManagers": ["nodenv"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["github/codeql-action"],
+      "groupName": "CodeQL"
     }
   ],
   "reviewers": ["drakedevel"],
