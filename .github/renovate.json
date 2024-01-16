@@ -8,6 +8,11 @@
       "automerge": true
     },
     {
+      "matchDepTypes": ["action"],
+      "matchUpdateTypes": ["minor", "patch", "pinDigest"],
+      "automerge": true
+    },
+    {
       "matchDatasources": ["npm"],
       "matchPackageNames": ["@types/node", "node-addon-api"],
       "matchUpdateTypes": ["major"],
