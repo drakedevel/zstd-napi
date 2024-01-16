@@ -4,6 +4,10 @@
   "assignAutomerge": true,
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "schedule": ["before 8am on saturday"]
+    },
+    {
       "matchDepTypes": ["devDependencies"],
       "automerge": true
     },
