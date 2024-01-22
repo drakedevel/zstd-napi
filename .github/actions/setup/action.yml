@@ -1,0 +1,14 @@
+name: setup
+inputs:
+  node-version:
+    description: Node version override
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+      with:
+        node-version: ${{ inputs.node-version }}
+        node-version-file: ${{ (inputs.node-version == '' && '.node-version') || null }}
+        cache: npm
+    - run: npm ci --ignore-scripts
+      shell: bash

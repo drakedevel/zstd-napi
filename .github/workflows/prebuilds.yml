@@ -1,11 +1,11 @@
 name: prebuilds
-on: push
+on: [workflow_call]
 
 permissions:
   contents: read
 
 jobs:
-  build-prebuilds:
+  build:
     runs-on: ${{ matrix.os }}
     container:
       image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
@@ -21,11 +21,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           submodules: recursive
-      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
-        with:
-          node-version-file: .node-version
-          cache: npm
-      - run: npm ci --ignore-scripts
+      - uses: ./.github/actions/setup
       - name: Build x64
         run: bash .github/prebuild.sh
       - name: Build arm
