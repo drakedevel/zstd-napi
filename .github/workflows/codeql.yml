@@ -38,14 +38,21 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
+      - name: Pre-build libzstd
+        if: matrix.language == 'c-cpp'
+        run: |
+          ./node_modules/.bin/node-gyp configure
+          make -C build -j3 Release/obj.target/deps/zstd.a
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@0b21cf2492b6b02c465a3e5d7c473717ad7721ba # v3.23.1
         with:
           languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
 
       - name: Build
         if: matrix.language == 'c-cpp'
-        run: npm run build
+        run: ./node_modules/.bin/node-gyp build
         env:
           JOBS: 3
 
