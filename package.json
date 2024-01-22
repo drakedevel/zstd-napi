@@ -28,7 +28,7 @@
     "clang-format": "clang-format -i src/*",
     "install": "prebuild-install -r napi || node-gyp rebuild",
     "lint": "eslint --ext .js,.ts .",
-    "prettier": "prettier -l --write '**/*.{js,json,ts,yml}'",
+    "prettier": "prettier -l --write .",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageReporters=json",
     "typedoc": "typedoc"

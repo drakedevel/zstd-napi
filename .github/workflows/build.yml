@@ -85,7 +85,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run lint
       - name: Check JS/TS is formatted with Prettier
-        run: ./node_modules/.bin/prettier --check '**/*.{js,json,ts}'
+        run: ./node_modules/.bin/prettier --check .
       - name: Check C++ is formatted with clang-format
         run: |
           clang-format-14 -i src/*
