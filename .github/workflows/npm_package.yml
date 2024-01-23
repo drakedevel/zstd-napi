@@ -1,5 +1,9 @@
 name: npm-package
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      provenance:
+        type: boolean
 
 permissions:
   contents: read
@@ -7,6 +11,7 @@ permissions:
 jobs:
   build-unsigned:
     runs-on: ubuntu-22.04
+    if: '!inputs.provenance'
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
@@ -21,3 +26,14 @@ jobs:
         with:
           name: package
           path: ${{ steps.npm_pack.outputs.package }}
+
+  build-provenance:
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v1.9.0
+    if: inputs.provenance
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    with:
+      node-version-file: .node-version
+      run-scripts: ci-ignore-scripts
