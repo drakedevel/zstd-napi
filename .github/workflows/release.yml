@@ -1,0 +1,53 @@
+name: release
+on:
+  push:
+    tags:
+      - v*.*.*
+
+permissions:
+  contents: read
+
+jobs:
+  sanity-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: true # TODO
+
+  create-draft-release:
+    needs: [sanity-check]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - run: gh release create ${{ github.ref_name }} -d --generate-notes --verify-tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  npm-package:
+    needs: [create-draft-release]
+    uses: ./.github/workflows/npm_package.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    with:
+      provenance: true
+
+  prebuilds:
+    needs: [create-draft-release]
+    uses: ./.github/workflows/prebuilds.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    with:
+      provenance: true
+
+  npm-publish:
+    if: false
+    environment: npm-publish
+    needs: [npm-package, prebuilds]
+    runs-on: ubuntu-22.04
+    steps:
+      - run: true # TODO
