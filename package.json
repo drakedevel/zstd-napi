@@ -25,9 +25,11 @@
   },
   "scripts": {
     "build": "node-gyp configure && node-gyp build",
+    "ci-ignore-scripts": "npm ci --ignore-scripts",
     "clang-format": "clang-format -i src/*",
     "install": "prebuild-install -r napi || node-gyp rebuild",
     "lint": "eslint .",
+    "prepare": "tsc -p tsconfig.emit.json",
     "prettier": "prettier -l --write .",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageReporters=json",
