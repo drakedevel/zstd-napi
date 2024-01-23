@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/npm_package.yml
     permissions:
       actions: read
-      contents: read
+      contents: write
       id-token: write
 
   prebuilds:

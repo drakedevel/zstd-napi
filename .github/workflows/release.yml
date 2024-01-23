@@ -43,6 +43,7 @@ jobs:
       id-token: write
     with:
       provenance: true
+      upload-assets: true
 
   npm-publish:
     if: false
