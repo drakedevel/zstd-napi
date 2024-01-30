@@ -25,7 +25,7 @@ jobs:
       - run: npm run ${{ (matrix.node == '' && 'test-coverage') || 'test' }}
       - name: Submit coverage data to Codecov
         if: matrix.node == ''
-        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
+        uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3.1.6
         with:
           gcov: true
           token: ${{ secrets.CODECOV_TOKEN }}
