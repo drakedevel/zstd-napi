@@ -6,6 +6,7 @@ describe('mapParameters', () => {
   }
   const goodMapper = { paramOne: mapNumber };
 
+  // eslint-disable-next-line jest/expect-expect -- type-only tests
   it('should reject mismatched mapper objects', () => {
     mapParameters(TestParameter, goodMapper, {});
 

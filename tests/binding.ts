@@ -81,13 +81,31 @@ describe('CCtx', () => {
   });
 
   test('#setPledgedSrcSize works', () => {
-    // TODO: Find some way to distinguish this from a no-op
-    cctx.setPledgedSrcSize(1);
+    const srcBuf = Buffer.from('hello');
+    const dstBuf = Buffer.alloc(binding.compressBound(srcBuf.length));
+    cctx.setPledgedSrcSize(srcBuf.length + 1);
+    cctx.compressStream2(dstBuf, srcBuf, binding.EndDirective.continue);
+    expect(() => {
+      cctx.compressStream2(dstBuf, Buffer.alloc(0), binding.EndDirective.end);
+    }).toThrowErrorMatchingInlineSnapshot(`"Src size is incorrect"`);
   });
 
   test('#reset works', () => {
-    // TODO: Find some way to distinguish this from a no-op
+    const srcBuf = Buffer.from('hello');
+    const dstBuf = Buffer.alloc(binding.compressBound(srcBuf.length * 2));
+    const [, dstProd] = cctx.compressStream2(
+      dstBuf,
+      srcBuf,
+      binding.EndDirective.continue,
+    );
+    expect(dstProd).toBe(0);
     cctx.reset(binding.ResetDirective.sessionAndParameters);
+    const [, dstProd2] = cctx.compressStream2(
+      dstBuf,
+      srcBuf,
+      binding.EndDirective.end,
+    );
+    expectDecompress(dstBuf.subarray(0, dstProd2), srcBuf, binding.decompress);
   });
 
   test('#compress2 works', () => {
@@ -194,13 +212,25 @@ describe('DCtx', () => {
   });
 
   test('#setParameter works', () => {
-    // TODO: Find some way to distinguish this from a no-op
     dctx.setParameter(binding.DParameter.windowLogMax, 10);
+    const { upperBound } = binding.dParamGetBounds(
+      binding.DParameter.windowLogMax,
+    );
+    expect(() => {
+      dctx.setParameter(binding.DParameter.windowLogMax, upperBound + 1);
+    }).toThrowErrorMatchingInlineSnapshot(`"Parameter is out of bound"`);
   });
 
   test('#reset works', () => {
-    // TODO: Find some way to distinguish this from a no-op
+    const dstBuf = Buffer.alloc(1);
+    const [, , consumed1] = dctx.decompressStream(
+      dstBuf,
+      minEmptyFrame.subarray(0, 4),
+    );
+    expect(consumed1).toBe(4);
     dctx.reset(binding.ResetDirective.sessionAndParameters);
+    const [, , consumed2] = dctx.decompressStream(dstBuf, minEmptyFrame);
+    expect(consumed2).toBe(minEmptyFrame.length);
   });
 
   test('#loadDictionary works', () => {
