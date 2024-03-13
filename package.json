@@ -54,7 +54,7 @@
     "node-gyp": "10.0.1",
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
-    "typedoc": "0.25.9",
+    "typedoc": "0.25.12",
     "typescript": "5.3.3"
   },
   "engines": {
