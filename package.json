@@ -27,7 +27,7 @@
     "build": "node-gyp configure && node-gyp build",
     "clang-format": "clang-format -i src/*",
     "install": "prebuild-install -r napi || node-gyp rebuild",
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint .",
     "prettier": "prettier -l --write .",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageReporters=json",
@@ -39,23 +39,26 @@
     "prebuild-install": "^7.1.1"
   },
   "devDependencies": {
+    "@eslint/js": "8.57.0",
     "@fast-check/jest": "1.8.0",
     "@tsconfig/node18": "18.2.4",
     "@tsconfig/strictest": "2.0.3",
+    "@types/eslint__js": "8.42.3",
+    "@types/eslint-config-prettier": "6.11.3",
     "@types/jest": "29.5.12",
-    "@typescript-eslint/eslint-plugin": "7.5.0",
-    "@typescript-eslint/parser": "7.5.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jest": "27.9.0",
     "eslint-plugin-tsdoc": "0.2.17",
     "expect-type": "0.18.0",
+    "globals": "15.0.0",
     "jest": "29.7.0",
     "node-gyp": "10.0.1",
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
     "typedoc": "0.25.12",
-    "typescript": "5.4.4"
+    "typescript": "5.4.4",
+    "typescript-eslint": "7.5.0"
   },
   "engines": {
     "node": "^12.22.0 || ^14.17.0 || ^15.12.0 || >=16"
