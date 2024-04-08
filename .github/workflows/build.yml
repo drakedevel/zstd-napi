@@ -31,9 +31,17 @@ jobs:
 
   npm-package:
     uses: ./.github/workflows/npm_package.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
 
   prebuilds:
     uses: ./.github/workflows/prebuilds.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
 
   other-ts-versions:
     runs-on: ubuntu-22.04

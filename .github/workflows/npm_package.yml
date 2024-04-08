@@ -1,5 +1,11 @@
 name: npm-package
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      provenance:
+        type: boolean
+      upload-assets:
+        type: boolean
 
 permissions:
   contents: read
@@ -7,6 +13,7 @@ permissions:
 jobs:
   build-unsigned:
     runs-on: ubuntu-22.04
+    if: '!inputs.provenance'
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
@@ -19,5 +26,53 @@ jobs:
       - name: Upload NPM package
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         with:
-          name: package
+          name: npm-package
           path: ${{ steps.npm_pack.outputs.package }}
+
+  build-provenance:
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v1.10.0
+    if: inputs.provenance
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    with:
+      node-version-file: .node-version
+      run-scripts: ci-ignore-scripts
+
+  upload:
+    if: inputs.upload-assets && !(failure() || cancelled())
+    needs: [build-provenance, build-unsigned]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - if: inputs.provenance
+        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        with:
+          name: ${{ needs.build-provenance.outputs.package-download-name }}
+          path: ${{ needs.build-provenance.outputs.package-name }}
+          sha256: ${{ needs.build-provenance.outputs.package-download-sha256 }}
+
+      - if: '!inputs.provenance'
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        with:
+          name: npm-package
+
+      - run: gh release upload '${{ github.ref_name }}' zstd-napi-*.tgz
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - if: inputs.provenance
+        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        with:
+          name: ${{ needs.build-provenance.outputs.provenance-download-name }}
+          path: attestations
+          sha256: ${{ needs.build-provenance.outputs.provenance-download-sha256 }}
+
+      - if: inputs.provenance
+        run: gh release upload '${{ github.ref_name }}' 'attestations/${{ needs.build-provenance.outputs.provenance-download-name }}/${{ needs.build-provenance.outputs.provenance-name }}'
+        env:
+          GH_TOKEN: ${{ github.token }}

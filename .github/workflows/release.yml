@@ -1,0 +1,80 @@
+name: release
+on:
+  push:
+    tags:
+      - v*.*.*
+
+permissions:
+  contents: read
+
+jobs:
+  sanity-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Verify package.json has correct version for tag
+        run: |
+          pkg_json="$(jq -r .version package.json)"
+          tag="${{ github.ref_name }}"
+          tag_ver="$(sed -E 's/^v([^-]+)(-.*)?$/\1/' <<< "$tag")"
+          if [[ "$pkg_json" != "$tag_ver" ]]; then
+            echo "::error::package.json has version ${pkg_json}, expected ${tag_ver}"
+            exit 1
+          fi
+
+  create-draft-release:
+    needs: [sanity-check]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - run: gh release create ${{ github.ref_name }} -d --generate-notes --verify-tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  npm-package:
+    needs: [create-draft-release]
+    uses: ./.github/workflows/npm_package.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    with:
+      provenance: true
+      upload-assets: true
+
+  prebuilds:
+    needs: [create-draft-release]
+    uses: ./.github/workflows/prebuilds.yml
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    with:
+      provenance: true
+      upload-assets: true
+
+  npm-publish:
+    if: "!contains(github.ref_name, '-')"
+    environment: npm-publish
+    needs: [npm-package, prebuilds]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version-file: .node-version
+          registry-url: https://registry.npmjs.org
+      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        with:
+          name: ${{ needs.npm-package.outputs.package-download-name }}
+          path: ${{ needs.npm-package.outputs.package-name }}
+          sha256: ${{ needs.npm-package.outputs.package-download-sha256 }}
+      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        with:
+          name: ${{ needs.npm-package.outputs.provenance-download-name }}
+          path: attestations
+          sha256: ${{ needs.npm-package.outputs.provenance-download-sha256 }}
+      - run: npm publish '${{ needs.npm-package.outputs.package-name }}' --provenance-file='attestations/${{ needs.npm-package.outputs.provenance-download-name }}/${{ needs.npm-package.outputs.provenance-name }}'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
