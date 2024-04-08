@@ -63,7 +63,7 @@ jobs:
     steps:
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version-file: .node-version
+          node-version: '18'
           registry-url: https://registry.npmjs.org
       - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
         with:
