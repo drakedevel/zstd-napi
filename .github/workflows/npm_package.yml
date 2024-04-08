@@ -30,7 +30,7 @@ jobs:
           path: ${{ steps.npm_pack.outputs.package }}
 
   build-provenance:
-    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v1.10.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@c747fe7769adf3656dc7d588b161cb614d7abfee # v1.10.0
     if: inputs.provenance
     permissions:
       actions: read
