@@ -4,6 +4,8 @@ on:
     inputs:
       provenance:
         type: boolean
+      upload-assets:
+        type: boolean
 
 permissions:
   contents: read
@@ -56,6 +58,23 @@ jobs:
         shell: bash
         working-directory: prebuilds
 
+  upload-build:
+    if: inputs.upload-assets
+    needs: [build]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+        with:
+          pattern: prebuilds-*
+          merge-multiple: true
+          path: prebuilds
+      - run: gh release upload '${{ github.ref_name }}' ./prebuilds/*.tar.gz
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   hashes:
     needs: [build]
     if: inputs.provenance
@@ -80,3 +99,18 @@ jobs:
     with:
       base64-subjects: ${{ needs.hashes.outputs.hashes }}
       provenance-name: prebuilds.intoto.jsonl
+
+  upload-provenance:
+    if: inputs.provenance && inputs.upload-assets
+    needs: [provenance]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: ${{ needs.provenance.outputs.provenance-name }}
+      - run: gh release upload '${{ github.ref_name }}' '${{ needs.provenance.outputs.provenance-name }}'
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -33,6 +33,7 @@ jobs:
       id-token: write
     with:
       provenance: true
+      upload-assets: true
 
   prebuilds:
     needs: [create-draft-release]
