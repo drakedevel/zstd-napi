@@ -11,7 +11,16 @@ jobs:
   sanity-check:
     runs-on: ubuntu-22.04
     steps:
-      - run: true # TODO
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Verify package.json has correct version for tag
+        run: |
+          pkg_json="$(jq -r .version package.json)"
+          tag="${{ github.ref_name }}"
+          tag_ver="$(sed -E 's/^v([^-]+)(-.*)?$/\1/' <<< "$tag")"
+          if [[ "$pkg_json" != "$tag_ver" ]]; then
+            echo "::error::package.json has version ${pkg_json}, expected ${tag_ver}"
+            exit 1
+          fi
 
   create-draft-release:
     needs: [sanity-check]
