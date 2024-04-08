@@ -38,6 +38,8 @@ export interface CompressParameters {
   targetLength?: number | undefined;
   /** @category Advanced compression options */
   strategy?: keyof typeof binding.Strategy | undefined;
+  /** @category Advanced compression options */
+  targetCBlockSize?: number | undefined;
 
   // Long-distance matching options
   /** @category Long-distance matching */
@@ -79,6 +81,7 @@ const PARAM_MAPPERS = {
   minMatch: mapNumber,
   targetLength: mapNumber,
   strategy: mapEnum(binding.Strategy),
+  targetCBlockSize: mapNumber,
 
   // Long-distance matching options
   enableLongDistanceMatching: mapBoolean,

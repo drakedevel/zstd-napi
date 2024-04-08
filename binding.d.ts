@@ -59,6 +59,7 @@ export enum CParameter {
   minMatch,
   targetLength,
   strategy,
+  targetCBlockSize,
   enableLongDistanceMatching,
   ldmHashLog,
   ldmMinMatch,

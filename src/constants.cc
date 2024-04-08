@@ -47,6 +47,7 @@ void createEnums(Env env, Object exports) {
   E(minMatch);
   E(targetLength);
   E(strategy);
+  E(targetCBlockSize);
   E(enableLongDistanceMatching);
   E(ldmHashLog);
   E(ldmMinMatch);
