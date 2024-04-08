@@ -38,7 +38,7 @@ jobs:
       id-token: write
     with:
       node-version-file: .node-version
-      run-scripts: ci-ignore-scripts
+      run-scripts: submodule-update,ci-ignore-scripts
 
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())

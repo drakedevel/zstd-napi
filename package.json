@@ -31,6 +31,7 @@
     "lint": "eslint .",
     "prepare": "tsc -p tsconfig.emit.json",
     "prettier": "prettier -l --write .",
+    "submodule-update": "git submodule update --init",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageReporters=json",
     "typedoc": "typedoc"
