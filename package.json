@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
-    "@fast-check/jest": "1.8.0",
+    "@fast-check/jest": "1.8.1",
     "@tsconfig/node18": "18.2.4",
     "@tsconfig/strictest": "2.0.3",
     "@types/eslint__js": "8.42.3",
