@@ -33,6 +33,10 @@
       "groupName": "CodeQL"
     },
     {
+      "matchSourceUrls": ["https://github.com/eslint/eslint"],
+      "groupName": "eslint monorepo"
+    },
+    {
       "matchManagers": ["github-actions"],
       "matchPackageNames": ["slsa-framework/slsa-github-generator"],
       "pinDigests": false
