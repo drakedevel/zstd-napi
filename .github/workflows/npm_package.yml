@@ -30,7 +30,7 @@ jobs:
           path: ${{ steps.npm_pack.outputs.package }}
 
   build-provenance:
-    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v1.10.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v2.0.0
     if: inputs.provenance
     permissions:
       actions: read
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - if: inputs.provenance
-        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@5a775b367a56d5bd118a224a811bba288150a563 # v2.0.0
         with:
           name: ${{ needs.build-provenance.outputs.package-download-name }}
           path: ${{ needs.build-provenance.outputs.package-name }}
@@ -66,7 +66,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - if: inputs.provenance
-        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@5a775b367a56d5bd118a224a811bba288150a563 # v2.0.0
         with:
           name: ${{ needs.build-provenance.outputs.provenance-download-name }}
           path: attestations
