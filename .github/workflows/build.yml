@@ -12,7 +12,7 @@ jobs:
         node: [14, 16, '', 20, 21]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
@@ -46,7 +46,7 @@ jobs:
   other-ts-versions:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - uses: ./.github/actions/setup
       - run: |
           for version in 4.5 4.6 4.7 4.8 4.9 5.0 5.1 5.2 5.3 5.4; do
@@ -57,7 +57,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - uses: ./.github/actions/setup
       - run: ./node_modules/.bin/tsc -p .
       - run: npm run lint
