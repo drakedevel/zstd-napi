@@ -22,7 +22,7 @@ jobs:
       - run: ./node_modules/.bin/tsc -p tsconfig.emit.json
       - id: npm_pack
         name: Build npm package
-        run: echo "package=$(npm pack)" >> "$GITHUB_OUTPUT"
+        run: echo "package=$(npm pack -s)" >> "$GITHUB_OUTPUT"
       - name: Upload NPM package
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
