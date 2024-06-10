@@ -37,7 +37,6 @@ module.exports = tseslint.config(
   },
   {
     files: ['**/*.ts'],
-    // @ts-expect-error: plugin type incompatible with exactOptionalPropertyTypes
     plugins: { tsdoc },
     rules: {
       'tsdoc/syntax': 'error',
