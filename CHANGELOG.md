@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- From-source builds now work on Windows without requiring POSIX command-line utilities. (#92)
+
 ## [0.0.8] - 2024-04-07
 
 ### Added
