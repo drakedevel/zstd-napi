@@ -1,5 +1,6 @@
 {
   'variables': {
+    'copy_licenses': 0,
     'enable_gcov': 0,
     'napi_build_version': 3,
     'conditions': [
@@ -50,16 +51,20 @@
     {
       'target_name': 'copy_licenses',
       'type': 'none',
-      'copies': [{
-        'files': ['LICENSE', 'NOTICE'],
-        'destination': '<(PRODUCT_DIR)',
-      }],
-      'actions': [{
-        'action_name': 'zstd_license',
-        'inputs': ['deps/zstd/LICENSE'],
-        'outputs': ['<(PRODUCT_DIR)/LICENSE.zstd'],
-        'action': ['cp', 'deps/zstd/LICENSE', '<@(_outputs)'],
-      }],
+      'conditions': [
+        ['copy_licenses==1', {
+          'copies': [{
+            'files': ['LICENSE', 'NOTICE'],
+            'destination': '<(PRODUCT_DIR)',
+          }],
+          'actions': [{
+            'action_name': 'zstd_license',
+            'inputs': ['deps/zstd/LICENSE'],
+            'outputs': ['<(PRODUCT_DIR)/LICENSE.zstd'],
+            'action': ['cp', 'deps/zstd/LICENSE', '<@(_outputs)'],
+          }],
+        }],
+      ],
     },
   ],
 }
