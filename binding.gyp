@@ -35,6 +35,11 @@
             'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',
             'MACOSX_DEPLOYMENT_TARGET': '10.7',
           },
+          'conditions': [
+            ['target_arch=="x64"', {
+              'xcode_configuration_platform': 'x86_64',
+            }],
+          ],
         }],
         ['OS=="win"', {
           'defines': ['_HAS_EXCEPTIONS=1'],

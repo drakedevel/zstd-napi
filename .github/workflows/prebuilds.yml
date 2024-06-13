@@ -17,9 +17,9 @@ jobs:
       image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
     strategy:
       matrix:
-        os: [macos-12, ubuntu-22.04, windows-2022]
+        os: [macos-14, ubuntu-22.04, windows-2022]
     outputs:
-      hash-macos-12: ${{ steps.hash.outputs.hash-macos-12 }}
+      hash-macos-14: ${{ steps.hash.outputs.hash-macos-14 }}
       hash-ubuntu-22.04: ${{ steps.hash.outputs['hash-ubuntu-22.04'] }}
       hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
     env:
@@ -32,22 +32,26 @@ jobs:
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
-      - name: Build x64
+      - name: Build ${{ (runner.os == 'macOS' && 'arm64') || 'x64' }}
         run: bash .github/prebuild.sh
-      - name: Build arm
+      - name: Build arm cross
         run: bash .github/prebuild.sh arm
         if: runner.os == 'Linux'
         env:
           CC: arm-linux-gnueabihf-gcc
           CXX: arm-linux-gnueabihf-g++
-      - name: Build arm64
-        run: |
-          ${{runner.os == 'Linux' }} && export CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++
-          bash .github/prebuild.sh arm64
-        if: runner.os == 'Linux' || runner.os == 'macOS'
-      - name: Build ia32
+      - name: Build arm64 cross
+        run: bash .github/prebuild.sh arm64
+        if: runner.os == 'Linux'
+        env:
+          CC: aarch64-linux-gnu-gcc
+          CXX: aarch64-linux-gnu-g++
+      - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
         if: runner.os == 'Windows'
+      - name: Build x64 cross
+        run: bash .github/prebuild.sh x64
+        if: runner.os == 'macOS'
       - name: Upload prebuilds
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
