@@ -68,7 +68,11 @@ jobs:
           - ubuntu-24.04
           - windows-2019
           - windows-2022
-        node: [14, 16, 18, 20, 22]
+        node: [12.22.0, 14.17.0, 16, 18, 20, 22]
+        exclude:
+          # These pre-date arm64 Darwin
+          - { os: macos-14, node: 12.22.0 }
+          - { os: macos-14, node: 14.17.0 }
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
@@ -77,14 +81,24 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+      - run: npm i -g npm@8
+        # Install npm 8 first on Windows with Node 14, since the npm 6.x version
+        # it ships with seems to be unable to directly install npm 9.x (throws a
+        # bogus permission error) only on Windows.
+        if: matrix.node == '12.22.0' || (matrix.node == '14.17.0' && runner.os == 'Windows')
       - run: npm i -g npm@9
-        if: matrix.node == 14
+        if: matrix.node == '14.17.0'
+      - run: sudo apt-get -y install python3-setuptools
+        if: (matrix.node == '12.22.0' || matrix.node == '14.17.0' || matrix.node == '16') && runner.os == 'Linux'
+      - run: pip3 install --break-system-packages setuptools
+        if: (matrix.node == '12.22.0' || matrix.node == '14.17.0' || matrix.node == '16') && runner.os == 'macOS'
       - run: npm ci --prod --ignore-scripts
       - run: npm run build
         env:
           JOBS: 3
       - run: npm ci --ignore-scripts
       - run: npm run test
+        if: matrix.node != '12.22.0' # Recent Jest can't run on 12.x
 
   lint:
     runs-on: ubuntu-24.04
