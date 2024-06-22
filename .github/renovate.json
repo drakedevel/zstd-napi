@@ -8,10 +8,20 @@
       "schedule": ["before 8am on saturday"]
     },
     {
+      "matchSourceUrls": ["https://github.com/eslint/eslint"],
+      "groupName": "eslint monorepo"
+    },
+    {
       "matchManagers": ["github-actions"],
       "matchPackagePrefixes": ["actions/", "codecov/", "github/"],
       "matchUpdateTypes": ["minor", "patch", "pinDigest"],
       "groupName": "CI actions (non-major)"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "dev dependencies (non-major)"
     },
     {
       "matchDepTypes": ["devDependencies"],
@@ -32,15 +42,6 @@
       "matchManagers": ["nodenv"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["github/codeql-action"],
-      "groupName": "CodeQL"
-    },
-    {
-      "matchSourceUrls": ["https://github.com/eslint/eslint"],
-      "groupName": "eslint monorepo"
     },
     {
       "matchManagers": ["github-actions"],
