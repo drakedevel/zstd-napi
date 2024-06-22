@@ -12,7 +12,7 @@ jobs:
         node: [14, 16, '', 20, 22]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
@@ -25,7 +25,7 @@ jobs:
       - run: npm run ${{ (matrix.node == '' && 'test-coverage') || 'test' }}
       - name: Submit coverage data to Codecov
         if: matrix.node == ''
-        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # v4.3.1
+        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -46,7 +46,7 @@ jobs:
   other-ts-versions:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: ./.github/actions/setup
       - run: |
           for version in 4.5 4.6 4.7 4.8 4.9 5.0 5.1 5.2 5.3 5.4; do
@@ -57,7 +57,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: ./.github/actions/setup
       - run: ./node_modules/.bin/tsc -p .
       - run: npm run lint
