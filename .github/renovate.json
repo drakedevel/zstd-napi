@@ -20,7 +20,13 @@
     {
       "matchDepTypes": ["devDependencies"],
       "matchCurrentVersion": "!/^0/",
-      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchUpdateTypes": ["minor"],
+      "excludePackageNames": ["typescript"],
+      "groupName": "dev dependencies (non-major)"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "digest"],
       "groupName": "dev dependencies (non-major)"
     },
     {
