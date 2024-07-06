@@ -33,18 +33,9 @@ module.exports = tseslint.config(
   {
     files: ['tests/**/*.{js,ts}'],
     ...jest.configs['flat/recommended'],
-    ...jest.configs['flat/style'],
-  },
-  {
-    files: ['**/*.ts'],
-    plugins: { tsdoc },
     rules: {
-      'tsdoc/syntax': 'error',
-    },
-  },
-  {
-    files: ['tests/**/*.{js,ts}'],
-    rules: {
+      ...jest.configs['flat/style'].rules,
+      ...jest.configs['flat/recommended'].rules,
       '@typescript-eslint/ban-ts-comment': [
         'error',
         {
@@ -61,6 +52,13 @@ module.exports = tseslint.config(
           assertFunctionNames: ['expect*'],
         },
       ],
+    },
+  },
+  {
+    files: ['**/*.ts'],
+    plugins: { tsdoc },
+    rules: {
+      'tsdoc/syntax': 'error',
     },
   },
 );
