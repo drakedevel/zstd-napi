@@ -60,7 +60,7 @@
     "node-gyp": "10.1.0",
     "prettier": "3.3.1",
     "ts-jest": "29.1.4",
-    "typedoc": "0.25.13",
+    "typedoc": "0.26.3",
     "typescript": "5.4.5",
     "typescript-eslint": "7.12.0"
   },
