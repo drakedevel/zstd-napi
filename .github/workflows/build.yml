@@ -24,6 +24,8 @@ jobs:
         env:
           JOBS: 3
           ZSTD_NAPI_ENABLE_GCOV: ${{ (matrix.node == '' && 1) || null }}
+          ZSTD_NAPI_ENABLE_HARDEN: 1
+          ZSTD_NAPI_ENABLE_LTO: 1
       - run: npm run ${{ (matrix.node == '' && 'test-coverage') || 'test' }}
       - name: Submit coverage data to Codecov
         if: matrix.node == ''
