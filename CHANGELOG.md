@@ -4,7 +4,9 @@
 
 ### Changed
 
+- Build macOS prebuilds on macOS 14.
 - Upgrade Zstandard to 1.5.7.
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
 
 ### Fixed
 
