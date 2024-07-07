@@ -5,6 +5,7 @@
 ### Changed
 
 - Build GNU/Linux prebuilds on Debian 11 (binaries are still compatible with Glibc 2.28).
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
 
 ## [0.0.11] - 2025-05-11
 
@@ -32,6 +33,7 @@
 
 - Build macOS prebuilds on macOS 14.
 - Upgrade Zstandard to 1.5.7.
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
 
 ### Fixed
 
