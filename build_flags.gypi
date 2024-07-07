@@ -14,10 +14,9 @@
       'cflags': ['-fstack-clash-protection', '-fstack-protector-strong', '-g', '-grecord-gcc-switches'],
       'ldflags': ['-Wl,-z,now'],
       'conditions': [
-        # TODO: Enable when building on newer Debian
-        # ['target_arch == "arm64"', {
-        #   'cflags': ['-mbranch-protection=standard'],
-        # }],
+        ['target_arch == "arm64"', {
+          'cflags': ['-mbranch-protection=standard'],
+        }],
         ['target_arch == "x64"', {
           'cflags': ['-fcf-protection=full'],
         }],

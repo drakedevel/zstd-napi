@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container:
-      image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
+      image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:11-slim' || null }}
     strategy:
       matrix:
         os: [macos-14, ubuntu-22.04, windows-2022]
