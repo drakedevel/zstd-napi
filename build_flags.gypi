@@ -14,6 +14,10 @@
       'cflags': ['-fstack-clash-protection', '-fstack-protector-strong', '-g', '-grecord-gcc-switches'],
       'ldflags': ['-Wl,-z,now'],
       'conditions': [
+        # TODO: Enable when building on newer Debian
+        # ['target_arch == "arm64"', {
+        #   'cflags': ['-mbranch-protection=standard'],
+        # }],
         ['target_arch == "x64"', {
           'cflags': ['-fcf-protection=full'],
         }],
@@ -23,6 +27,9 @@
       'xcode_settings': {
         'OTHER_CFLAGS': ['-fstack-clash-protection', '-fstack-protector-strong'],
         'conditions': [
+          ['target_arch == "arm64"', {
+            'OTHER_CFLAGS': ['-mbranch-protection=standard'],
+          }],
           ['target_arch == "x64"', {
             'OTHER_CFLAGS': ['-fcf-protection=full'],
           }],
