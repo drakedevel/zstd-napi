@@ -1,11 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
+
 ## [0.0.9] - 2025-02-21
 
 ### Changed
 
 - Build macOS prebuilds on macOS 14.
 - Upgrade Zstandard to 1.5.7.
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
 
 ### Fixed
 
