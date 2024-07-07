@@ -2,6 +2,7 @@
   'targets': [
     {
       'target_name': 'libzstd',
+      'includes': ['../build_flags.gypi'],
       'type': 'static_library',
       'sources': [
         'zstd/lib/common/debug.c',

@@ -12,6 +12,7 @@
   'targets': [
     {
       'target_name': 'binding',
+      'includes': ['build_flags.gypi'],
       'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc', 'src/constants.cc', 'src/dctx.cc', 'src/ddict.cc'],
       'dependencies': ['deps/zstd.gyp:libzstd'],
       'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
