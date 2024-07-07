@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Build macOS prebuilds on macOS 14.
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
+
 ### Fixed
 
 - From-source builds now work on Windows without requiring POSIX command-line utilities. (#92)
