@@ -39,6 +39,9 @@
     ['enable_lto == 1', {
       'cflags': ['-flto=auto'],
       'ldflags': ['-flto=auto'],
+      'xcode_settings': {
+        'LLVM_LTO': 'YES',
+      },
     }],
     ['OS == "mac" and target_arch == "x64"', {
       'xcode_configuration_platform': 'x86_64',
