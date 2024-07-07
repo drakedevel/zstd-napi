@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Build GNU/Linux and macOS prebuilds with hardening flags and LTO.
+
 ## [0.0.10] - 2025-03-15
 
 ### Changed
