@@ -24,6 +24,8 @@ jobs:
       hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
     env:
       JOBS: 3
+      ZSTD_NAPI_ENABLE_HARDEN: 1
+      ZSTD_NAPI_ENABLE_LTO: 1
     steps:
       - name: Install system dependencies
         run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
