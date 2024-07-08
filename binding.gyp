@@ -12,6 +12,7 @@
   'targets': [
     {
       'target_name': 'binding',
+      'includes': ['build_flags.gypi'],
       'sources': ['src/binding.cc', 'src/cctx.cc', 'src/cdict.cc', 'src/constants.cc', 'src/dctx.cc', 'src/ddict.cc'],
       'dependencies': ['deps/zstd.gyp:libzstd'],
       'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
@@ -35,11 +36,6 @@
             'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',
             'MACOSX_DEPLOYMENT_TARGET': '10.7',
           },
-          'conditions': [
-            ['target_arch=="x64"', {
-              'xcode_configuration_platform': 'x86_64',
-            }],
-          ],
         }],
         ['OS=="win"', {
           'defines': ['_HAS_EXCEPTIONS=1'],
