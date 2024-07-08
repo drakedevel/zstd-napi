@@ -129,7 +129,7 @@ jobs:
       - run: |
           docker run --platform linux/${{ (matrix.arch == 'x64' && 'amd64') || matrix.arch }} \
             -v $(pwd):/code -w /code node:$(cat .node-version)-buster-slim \
-            npm run test
+            npm run test -- --testTimeout 120000 --forceExit false
         if: runner.os == 'Linux'
       - run: npm run test
         if: runner.os != 'Linux'
