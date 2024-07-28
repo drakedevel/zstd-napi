@@ -13,7 +13,7 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "matchPackagePrefixes": ["actions/", "codecov/", "github/"],
+      "matchPackagePrefixes": ["actions/", "codecov/", "github/", "ossf/"],
       "matchUpdateTypes": ["minor", "patch", "pinDigest"],
       "groupName": "CI actions (non-major)"
     },
