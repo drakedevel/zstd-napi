@@ -31,6 +31,22 @@ jobs:
         with:
           use_oidc: true
 
+  uasan-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/setup
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npx -c 'node-gyp rebuild --napi_build_version=8 --zstd_asan=1 --zstd_ubsan=1'
+      - run: npm run test
+        env:
+          # Preloading ASAN into Node generates a ton of false-positive leaks
+          ASAN_OPTIONS: detect_leaks=0
+          LD_PRELOAD: /usr/lib/x86_64-linux-gnu/libasan.so.8
+
   npm-package:
     uses: ./.github/workflows/npm_package.yml
     permissions:
