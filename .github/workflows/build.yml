@@ -33,24 +33,20 @@ jobs:
 
   uasan-test:
     runs-on: ubuntu-22.04
+    container: ghcr.io/drakedevel/node-special:18.20.4-asan-debug-test
     steps:
+      - run: apt-get update && apt-get -y install build-essential git clang python3
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           submodules: recursive
-      - uses: ./.github/actions/setup
-        with:
-          node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts
       - run: npx -c 'node-gyp rebuild --napi_build_version=8 --zstd_asan=1 --zstd_ubsan=1'
         env:
           CC: clang
           CXX: clang++
           JOBS: 3
-      - run: clang --version
-      - run: npm run test
-        env:
-          # Preloading ASAN into Node generates a ton of false-positive leaks
-          ASAN_OPTIONS: detect_leaks=0
-          LD_PRELOAD: /usr/lib/clang/15/lib/linux/libclang_rt.asan-x86_64.so
+      # Run tests in-line so Jest doesn't kill processes before leak checks finish
+      - run: npm run test -- -i
 
   npm-package:
     uses: ./.github/workflows/npm_package.yml
