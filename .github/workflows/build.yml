@@ -46,7 +46,7 @@ jobs:
           CXX: clang++
           JOBS: 3
       # Run tests in-line so Jest doesn't kill processes before leak checks finish
-      - run: npm run test -- -i
+      - run: node-debug ./node_modules/.bin/jest -i
 
   npm-package:
     uses: ./.github/workflows/npm_package.yml
