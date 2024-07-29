@@ -384,6 +384,6 @@ test('libzstd errors are propagated', () => {
   }).toThrowErrorMatchingInlineSnapshot(`"Destination buffer is too small"`);
 });
 
-test('asan trips on use-after-free', () => {
-  (binding as unknown as { useFreeTest: () => void }).useFreeTest();
+test('asan trips on leak', () => {
+  (binding as unknown as { leakTest: () => void }).leakTest();
 });
