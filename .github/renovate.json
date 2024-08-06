@@ -13,16 +13,21 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "matchPackagePrefixes": ["actions/", "codecov/", "github/", "ossf/"],
       "matchUpdateTypes": ["minor", "patch", "pinDigest"],
-      "groupName": "CI actions (non-major)"
+      "groupName": "CI actions (non-major)",
+      "matchPackageNames": [
+        "actions/{/,}**",
+        "codecov/{/,}**",
+        "github/{/,}**",
+        "ossf/{/,}**"
+      ]
     },
     {
       "matchDepTypes": ["devDependencies"],
       "matchCurrentVersion": "!/^0/",
       "matchUpdateTypes": ["minor"],
-      "excludePackageNames": ["typescript"],
-      "groupName": "dev dependencies (non-major)"
+      "groupName": "dev dependencies (non-major)",
+      "matchPackageNames": ["!typescript"]
     },
     {
       "matchDepTypes": ["devDependencies"],
