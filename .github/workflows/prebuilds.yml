@@ -111,12 +111,14 @@ jobs:
           - { os: ubuntu-22.04, arch: arm }
           - { os: ubuntu-22.04, arch: arm64 }
           - { os: ubuntu-22.04, arch: x64 }
+          - { os: windows-2022, arch: ia32 }
           - { os: windows-2022, arch: x64 }
-          # TODO: Some way to test Windows ia32?
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: ./.github/actions/setup
-      - uses: docker/setup-qemu-action@v3
+        with:
+          architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
+      - uses: docker/setup-qemu-action@v3.2.0
         if: runner.os == 'Linux' && matrix.arch != 'x64'
         with:
           platforms: ${{ matrix.arch }}
@@ -126,7 +128,8 @@ jobs:
       - run: tar xf zstd-napi-v*-napi-v8-*-${{ matrix.arch }}.tar.gz
         shell: bash
       # FIXME: Build buster-slim image for latest 18.x
-      - run: |
+      - name: Run npm run test in Docker${{ (matrix.arch == 'x64' && '') || ' with QEMU' }}
+        run: |
           docker run --platform linux/${{ (matrix.arch == 'x64' && 'amd64') || matrix.arch }} \
             -v $(pwd):/code -w /code node:18.20.3-buster-slim \
             npm run test -- --testTimeout 120000 --forceExit false
