@@ -1,5 +1,7 @@
 name: setup
 inputs:
+  architecture:
+    description: Node architecture override
   node-version:
     description: Node version override
 runs:
@@ -9,6 +11,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         node-version-file: ${{ (inputs.node-version == '' && '.node-version') || null }}
+        architecture: ${{ inputs.architecture }}
         cache: npm
     - run: npm ci --ignore-scripts
       shell: bash
