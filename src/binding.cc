@@ -151,21 +151,6 @@ Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
 }
 
-Value wrapLeakTest(const CallbackInfo& info) {
-  int* value = (int*)malloc(sizeof(int));
-  *value = 42;
-  printf("Leaked read: %d\n", *value);
-  return info.Env().Undefined();
-}
-
-Value wrapUseFreeTest(const CallbackInfo& info) {
-  int* uninitialized = (int*)malloc(sizeof(int));
-  *uninitialized = 0;
-  free(uninitialized);
-  printf("Use-after-free: %d\n", *uninitialized);
-  return info.Env().Undefined();
-}
-
 // This is a copy of PropertyDescriptor::Function, except it uses the templated
 // version of Function::New instead of the heap-allocating one. Should be
 // replaced when added upstream (not yet added as of 7.x).
@@ -215,8 +200,6 @@ Object ModuleInit(Env env, Object exports) {
                                                   "getDictIDFromDict"),
       propertyDescFunction<wrapGetDictIDFromFrame>(env, exports,
                                                    "getDictIDFromFrame"),
-      propertyDescFunction<wrapLeakTest>(env, exports, "leakTest"),
-      propertyDescFunction<wrapUseFreeTest>(env, exports, "useFreeTest"),
   });
 
   return exports;

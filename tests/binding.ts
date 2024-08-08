@@ -383,7 +383,3 @@ test('libzstd errors are propagated', () => {
     binding.compress(Buffer.alloc(0), Buffer.alloc(0), 3);
   }).toThrowErrorMatchingInlineSnapshot(`"Destination buffer is too small"`);
 });
-
-test('asan trips on use-after-free', () => {
-  (binding as unknown as { useFreeTest: () => void }).useFreeTest();
-});
