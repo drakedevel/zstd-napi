@@ -38,7 +38,7 @@
     "typedoc": "typedoc"
   },
   "dependencies": {
-    "@types/eslint": "9.6.0",
+    "@types/eslint": "9.6.1",
     "@types/node": "*",
     "node-addon-api": "^7.0.0",
     "prebuild-install": "^7.1.1"
