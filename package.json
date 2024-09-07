@@ -38,7 +38,6 @@
     "typedoc": "typedoc"
   },
   "dependencies": {
-    "@types/eslint": "9.6.0",
     "@types/node": "*",
     "node-addon-api": "^7.0.0",
     "prebuild-install": "^7.1.1"
@@ -48,6 +47,7 @@
     "@fast-check/jest": "2.0.1",
     "@tsconfig/node18": "18.2.4",
     "@tsconfig/strictest": "2.0.5",
+    "@types/eslint": "9.6.1",
     "@types/eslint__js": "8.42.3",
     "@types/eslint-config-prettier": "6.11.3",
     "@types/jest": "29.5.12",
