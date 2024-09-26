@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build-unsigned:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: '!inputs.provenance'
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -43,7 +43,7 @@ jobs:
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())
     needs: [build-provenance, build-unsigned]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
