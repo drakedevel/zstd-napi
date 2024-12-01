@@ -3,6 +3,9 @@ module.exports = {
   excludeInternal: true,
   excludePrivate: true,
   excludeProtected: true,
+  headings: {
+    readme: false,
+  },
   includeVersion: true,
   sortEntryPoints: false,
   tsconfig: 'tsconfig.emit.json',
