@@ -17,11 +17,11 @@ jobs:
       image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
     strategy:
       matrix:
-        os: [macos-14, ubuntu-22.04, windows-2022]
+        os: [macos-15, ubuntu-22.04, windows-2025]
     outputs:
-      hash-macos-14: ${{ steps.hash.outputs.hash-macos-14 }}
+      hash-macos-15: ${{ steps.hash.outputs.hash-macos-15 }}
       hash-ubuntu-22.04: ${{ steps.hash.outputs['hash-ubuntu-22.04'] }}
-      hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
+      hash-windows-2025: ${{ steps.hash.outputs.hash-windows-2025 }}
     env:
       JOBS: 3
     steps:
