@@ -14,13 +14,13 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container:
-      image: ${{ matrix.os == 'ubuntu-22.04' && 'debian:10-slim' || null }}
+      image: ${{ matrix.os == 'ubuntu-24.04' && 'debian:10-slim' || null }}
     strategy:
       matrix:
-        os: [macos-14, ubuntu-22.04, windows-2022]
+        os: [macos-14, ubuntu-24.04, windows-2022]
     outputs:
       hash-macos-14: ${{ steps.hash.outputs.hash-macos-14 }}
-      hash-ubuntu-22.04: ${{ steps.hash.outputs['hash-ubuntu-22.04'] }}
+      hash-ubuntu-24.04: ${{ steps.hash.outputs['hash-ubuntu-24.04'] }}
       hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
     env:
       JOBS: 3
@@ -65,7 +65,7 @@ jobs:
   upload-build:
     if: inputs.upload-assets
     needs: [build]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -82,7 +82,7 @@ jobs:
   hashes:
     needs: [build]
     if: inputs.provenance
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       hashes: ${{ steps.combine.outputs.hashes }}
     steps:
@@ -107,7 +107,7 @@ jobs:
   upload-provenance:
     if: inputs.provenance && inputs.upload-assets
     needs: [provenance]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
