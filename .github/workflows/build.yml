@@ -68,5 +68,5 @@ jobs:
         run: ./node_modules/.bin/prettier --check .
       - name: Check C++ is formatted with clang-format
         run: |
-          clang-format-14 -i src/*
+          clang-format-18 -i src/*
           git diff --stat --exit-code src/
