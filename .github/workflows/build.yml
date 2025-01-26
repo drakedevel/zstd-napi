@@ -20,6 +20,9 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           node-version: ${{ matrix.node }}
+      - name: Apply node-gyp patch for Node 14
+        run: sed -i "s/'rU'/'r'/" "$(dirname "$(readlink -f "$(which npm)")")/../node_modules/node-gyp/gyp/pylib/gyp/input.py"
+        if: matrix.node == '14'
       - run: npm run build
         env:
           JOBS: 3
