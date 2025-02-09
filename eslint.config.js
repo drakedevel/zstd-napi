@@ -1,6 +1,5 @@
 const eslint = require('@eslint/js');
 const eslintConfigPrettier = require('eslint-config-prettier');
-// @ts-expect-error: no types available
 const jest = require('eslint-plugin-jest');
 const tsdoc = require('eslint-plugin-tsdoc');
 const globals = require('globals');
