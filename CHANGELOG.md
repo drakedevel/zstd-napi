@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade Zstandard to 1.5.7.
+
 ### Fixed
 
 - From-source builds now work on Windows without requiring POSIX command-line utilities. (#92)

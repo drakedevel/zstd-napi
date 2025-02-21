@@ -72,7 +72,7 @@ Please [file an issue][new-issue] if this library doesn't work on your platform!
 
 ### Zstandard
 
-`zstd-napi`'s native component statically links Zstandard, currently version 1.5.6. Newer versions will be pulled in as they are released.
+`zstd-napi`'s native component statically links Zstandard, currently version 1.5.7. Newer versions will be pulled in as they are released.
 
 ### Security Updates
 
