@@ -103,6 +103,19 @@ jobs:
         env:
           JOBS: 3
       - run: npm ci --ignore-scripts
+      - name: Check for unexpected global dynamic symbols
+        run: |
+          # TODO: Use -U and -W once ubuntu-22.04 is dead
+          if nm -gD --defined-only build/Release/binding.node |
+              grep -E -v 'T _?(napi_register_module|node_api_module_get_api_version)|[VW] '; then
+            echo "Unexpected global dynamic symbol definitions found in binary"
+            exit 1
+          fi
+          if nm -gD build/Release/binding.node | grep ZSTD; then
+            echo "Unexpected global ZSTD symbols found in binary"
+            exit 1
+          fi
+        if: runner.os != 'Windows'
       - run: npm run test
         if: matrix.node != '12.22.0' # Recent Jest can't run on 12.x
 
