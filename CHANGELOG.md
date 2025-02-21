@@ -5,6 +5,7 @@
 ### Fixed
 
 - From-source builds now work on Windows without requiring POSIX command-line utilities. (#92)
+- Native library no longer exposes unnecessary global symbols on GNU/Linux or macOS.
 
 ## [0.0.8] - 2024-04-07
 

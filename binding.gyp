@@ -25,11 +25,11 @@
         # Prevent using external buffers, which would break on Electron
         'NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED',
       ],
+      'cflags+': ['-fvisibility=hidden'],
       'cflags!': ['-fno-exceptions'],
       'cflags_cc!': ['-fno-exceptions'],
       'conditions': [
         ['OS=="mac"', {
-          'cflags+': ['-fvisibility=hidden'],
           'xcode_settings': {
             'CLANG_CXX_LIBRARY': 'libc++',
             'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',

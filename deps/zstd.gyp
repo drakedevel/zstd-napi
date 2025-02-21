@@ -33,7 +33,13 @@
         'zstd/lib/decompress/zstd_decompress.c',
       ],
       'cflags+': ['-fvisibility=hidden'],
-      'defines': ['ZSTD_MULTITHREAD', 'XXH_NAMESPACE=ZSTD_'],
+      'defines': [
+        'XXH_NAMESPACE=ZSTD_',
+        'ZSTDERRORLIB_VISIBLE=',
+        'ZSTDLIB_VISIBLE=',
+        'ZSTD_MULTITHREAD',
+        'ZSTD_NO_TRACE',
+      ],
       'direct_dependent_settings': {
         'include_dirs': ['zstd/lib'],
       },
