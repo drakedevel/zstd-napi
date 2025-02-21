@@ -1,7 +1,16 @@
 {
   "name": "zstd-napi",
   "version": "0.0.8",
-  "description": "zstd bindings with N-API",
+  "description": "Zstandard (zstd) compression library bindings with Node-API",
+  "keywords": [
+    "binding",
+    "compression",
+    "native",
+    "zstandard",
+    "zstd",
+    "Node-API",
+    "N-API"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/drakedevel/zstd-napi.git"

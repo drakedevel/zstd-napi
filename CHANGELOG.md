@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Build macOS prebuilds on macOS 14.
 - Upgrade Zstandard to 1.5.7.
 
 ### Fixed
