@@ -17,16 +17,18 @@
       'ldflags': ['-fplugin=annobin'],
     }],
     ['enable_harden == 1 and OS != "mac"', {
-      # TODO: _FORTIFY_SOURCE=3 on GCC 12+
-      'defines': ['_FORTIFY_SOURCE=2', '_GLIBCXX_ASSERTIONS'],
-      # TODO: -fstrict-flex-arrays=3 on GCC 13+
-      'cflags': ['-fstack-clash-protection', '-fstack-protector-strong'],
+      'defines': ['_FORTIFY_SOURCE=3', '_GLIBCXX_ASSERTIONS'],
+      'cflags': ['-fstrict-flex-arrays=3', '-fstack-clash-protection', '-fstack-protector-strong'],
       'ldflags': ['-Wl,-z,now'],
-      # TODO: -mbranch-protection=standard for arm64 (PAC/BTI)
-      # TODO: -fcf-protection=full for x64 (CET)
-      # Both of these require the distro to ship cri*.o compiled with these
-      # in order for the resulting binary to be protected, and Debian doesn't
-      # support either as of 13
+    }],
+    ['enable_harden == 1 and OS != "mac" and target_arch == "arm64"', {
+      # XXX: Investigate why this doesn't work on AlmaLinux 8, even with GCC 14
+      'cflags': ['-mbranch-protection=standard'],
+      # TODO: -Wl,-z,bti-report=error on Binutils 2.44+
+    }],
+    ['enable_harden == 1 and OS != "mac" and target_arch == "x64"', {
+      'cflags': ['-fcf-protection=full'],
+      'ldflags': ['-Wl,-z,cet-report=error'],
     }],
     ['enable_harden == 1 and OS == "mac"', {
       'xcode_settings': {

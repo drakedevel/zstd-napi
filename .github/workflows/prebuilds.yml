@@ -14,13 +14,14 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container:
-      image: ${{ matrix.os == 'ubuntu-24.04' && 'debian:10-slim' || null }}
+      image: ${{ (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm') && 'almalinux:8-minimal' || null }}
     strategy:
       matrix:
-        os: [macos-14, ubuntu-24.04, windows-2022]
+        os: [macos-14, ubuntu-24.04, ubuntu-24.04-arm, windows-2022]
     outputs:
       hash-macos-14: ${{ steps.hash.outputs.hash-macos-14 }}
       hash-ubuntu-24.04: ${{ steps.hash.outputs['hash-ubuntu-24.04'] }}
+      hash-ubuntu-24.04-arm: ${{ steps.hash.outputs['hash-ubuntu-24.04-arm'] }}
       hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
     env:
       JOBS: 3
@@ -28,26 +29,20 @@ jobs:
       ZSTD_NAPI_ENABLE_LTO: 1
     steps:
       - name: Install system dependencies
-        run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
+        run: microdnf -y install gcc-toolset-14 git jq python3 tar
         if: runner.os == 'Linux'
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
-      - name: Build ${{ (runner.os == 'macOS' && 'arm64') || 'x64' }}
-        run: bash .github/prebuild.sh
-      - name: Build arm cross
-        run: bash .github/prebuild.sh arm
-        if: runner.os == 'Linux'
-        env:
-          CC: arm-linux-gnueabihf-gcc
-          CXX: arm-linux-gnueabihf-g++
-      - name: Build arm64 cross
-        run: bash .github/prebuild.sh arm64
-        if: runner.os == 'Linux'
-        env:
-          CC: aarch64-linux-gnu-gcc
-          CXX: aarch64-linux-gnu-g++
+      - name: Build ${{ ((runner.os == 'macOS' || matrix.os == 'ubuntu-24.04-arm') && 'arm64') || 'x64' }}
+        run: ${{ ((matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm') && 'scl enable gcc-toolset-14 --') || '' }} bash .github/prebuild.sh
+      # - name: Build arm cross
+      #   run: bash .github/prebuild.sh arm
+      #   if: runner.os == 'Linux'
+      #   env:
+      #     CC: arm-linux-gnueabihf-gcc
+      #     CXX: arm-linux-gnueabihf-g++
       - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
         if: runner.os == 'Windows'
