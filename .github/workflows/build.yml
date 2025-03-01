@@ -30,6 +30,11 @@ jobs:
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         with:
           use_oidc: true
+      - name: Submit test results to Codecov
+        if: matrix.node == '' && !cancelled()
+        uses: codecov/test-results-action@v1.0.4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   npm-package:
     uses: ./.github/workflows/npm_package.yml
