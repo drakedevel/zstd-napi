@@ -32,7 +32,7 @@ jobs:
           use_oidc: true
 
   uasan-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container: ghcr.io/drakedevel/node-special:20.16.0-uasan-debug-test2
     steps:
       - run: apt-get update && apt-get -y install build-essential git clang python3
