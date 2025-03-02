@@ -12,16 +12,19 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{
+      (matrix.os == 'linux' && 'ubuntu-24.04') ||
+      (matrix.os == 'macos' && 'macos-14') ||
+      (matrix.os == 'windows' && 'windows-2022') }}
     container:
-      image: ${{ matrix.os == 'ubuntu-24.04' && 'debian:10-slim' || null }}
+      image: ${{ matrix.os == 'linux' && 'debian:10-slim' || null }}
     strategy:
       matrix:
-        os: [macos-14, ubuntu-24.04, windows-2022]
+        os: [linux, macos, windows]
     outputs:
-      hash-macos-14: ${{ steps.hash.outputs.hash-macos-14 }}
-      hash-ubuntu-24.04: ${{ steps.hash.outputs['hash-ubuntu-24.04'] }}
-      hash-windows-2022: ${{ steps.hash.outputs.hash-windows-2022 }}
+      hash-linux: ${{ steps.hash.outputs.hash-linux }}
+      hash-macos: ${{ steps.hash.outputs.hash-macos }}
+      hash-windows: ${{ steps.hash.outputs.hash-windows }}
     env:
       JOBS: 3
     steps:
@@ -32,7 +35,7 @@ jobs:
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
-      - name: Build ${{ (runner.os == 'macOS' && 'arm64') || 'x64' }}
+      - name: Build ${{ (runner.arch == 'ARM64' && 'arm64') || 'x64' }}
         run: bash .github/prebuild.sh
       - name: Build arm cross
         run: bash .github/prebuild.sh arm
