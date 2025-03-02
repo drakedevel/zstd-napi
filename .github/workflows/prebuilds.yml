@@ -38,8 +38,14 @@ jobs:
       JOBS: 3
     steps:
       - name: Install system dependencies
-        run: microdnf -y install gcc gcc-c++ git jq make python3 tar
+        run: microdnf -y install gcc gcc-c++ git jq make python3 tar xz
         if: runner.os == 'Linux'
+      - name: Install arm cross toolchain
+        run: |
+          mkdir -p "${RUNNER_TEMP}/arm-toolchain"
+          curl -fsSL https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz | tar xJ -C "${RUNNER_TEMP}/arm-toolchain" --strip-components=1
+          echo "${RUNNER_TEMP}/arm-toolchain/bin" >> "$GITHUB_PATH"
+        if: runner.os == 'Linux' && runner.arch == 'X64'
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: recursive
@@ -47,12 +53,13 @@ jobs:
       - name: Build ${{ (runner.arch == 'ARM64' && 'arm64') || 'x64' }}
         run: bash .github/prebuild.sh
         if: matrix.cross == ''
-      # - name: Build arm cross
-      #   run: bash .github/prebuild.sh arm
-      #   if: runner.os == 'Linux'
-      #   env:
-      #     CC: arm-linux-gnueabihf-gcc
-      #     CXX: arm-linux-gnueabihf-g++
+      - name: Build arm cross
+        run: bash .github/prebuild.sh arm
+        if: runner.os == 'Linux' && runner.arch == 'X64'
+        env:
+          AR: arm-none-linux-gnueabihf-gcc-ar
+          CC: arm-none-linux-gnueabihf-gcc
+          CXX: arm-none-linux-gnueabihf-g++
       - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
         if: matrix.cross == 'ia32'
