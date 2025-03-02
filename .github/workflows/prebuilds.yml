@@ -21,10 +21,14 @@ jobs:
     strategy:
       matrix:
         os: [linux, macos, windows]
+        cross: ['']
+        include:
+          - { os: windows, cross: ia32 }
     outputs:
       hash-linux: ${{ steps.hash.outputs.hash-linux }}
       hash-macos: ${{ steps.hash.outputs.hash-macos }}
       hash-windows: ${{ steps.hash.outputs.hash-windows }}
+      hash-windows-ia32: ${{ steps.hash.outputs.hash-windows-ia32 }}
     env:
       JOBS: 3
     steps:
@@ -37,6 +41,7 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Build ${{ (runner.arch == 'ARM64' && 'arm64') || 'x64' }}
         run: bash .github/prebuild.sh
+        if: matrix.cross == ''
       - name: Build arm cross
         run: bash .github/prebuild.sh arm
         if: runner.os == 'Linux'
@@ -51,17 +56,17 @@ jobs:
           CXX: aarch64-linux-gnu-g++
       - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
-        if: runner.os == 'Windows'
+        if: matrix.cross == 'ia32'
       - name: Build x64 cross
         run: bash .github/prebuild.sh x64
         if: runner.os == 'macOS'
       - name: Upload prebuilds
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
-          name: prebuilds-${{ matrix.os }}
+          name: prebuilds-${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}
           path: prebuilds/
       - id: hash
-        run: echo "hash-${{ matrix.os }}=$(openssl sha256 -r * | tr '*' ' ' | jq -Rrs @base64)" >> "$GITHUB_OUTPUT"
+        run: echo "hash-${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}=$(openssl sha256 -r * | tr '*' ' ' | jq -Rrs @base64)" >> "$GITHUB_OUTPUT"
         shell: bash
         working-directory: prebuilds
 
