@@ -26,8 +26,16 @@
     ['enable_harden == 1 and OS != "mac"', {
       'defines!': ['_FORTIFY_SOURCE=2'],
       'defines': ['_FORTIFY_SOURCE=3', '_GLIBCXX_ASSERTIONS'],
-      'cflags': ['-fstrict-flex-arrays=3', '-fstack-clash-protection', '-fstack-protector-strong'],
-      'ldflags': ['-Wl,-z,now'],
+      'cflags': [
+        '-fstrict-flex-arrays=3', '-fstack-clash-protection',
+        '-fstack-protector-strong', '-fno-delete-null-pointer-checks',
+        '-fno-strict-overflow', '-fno-strict-aliasing',
+        '-ftrivial-auto-var-init=zero'
+      ],
+      'ldflags': [
+        '-Wl,-z,noexecstack', '-Wl,-z,relro', '-Wl,-z,now',
+        '-Wl,--as-needed', '-Wl,--no-copy-dt-needed-entries'
+      ],
     }],
     ['enable_harden == 1 and OS != "mac" and target_arch == "arm64"', {
       # XXX: Investigate why this doesn't work on AlmaLinux 8, even with GCC 14
@@ -41,7 +49,12 @@
     ['enable_harden == 1 and OS == "mac"', {
       'xcode_settings': {
         # TODO: -fstrict-flex-arrays=3 on Clang 16+
-        'OTHER_CFLAGS': ['-fstack-protector-strong', '-fstrict-flex-arrays=2'],
+        'OTHER_CFLAGS': [
+          '-fstrict-flex-arrays=2', '-fstack-clash-protection',
+          '-fstack-protector-strong', '-fno-delete-null-pointer-checks',
+          '-fno-strict-overflow', '-fno-strict-aliasing',
+          '-ftrivial-auto-var-init=zero'
+        ],
         # TODO: Support PAC when Apple stabilizes arm64e
       },
     }],
