@@ -6,7 +6,7 @@
     'conditions': [
       ['OS!="win"', {
         'enable_annobin': '<!(echo $ZSTD_NAPI_ENABLE_ANNOBIN)',
-        'enable_harden': '<!(echo $ZSTD_NAPI_ENABLE_HARDEN)',
+        'enable_harden': '<!(echo "${ZSTD_NAPI_ENABLE_HARDEN:-0}")',
         'enable_lto': '<!(echo $ZSTD_NAPI_ENABLE_LTO)',
       }],
     ],
@@ -24,24 +24,16 @@
       'ldflags': ['-fplugin=annobin'],
     }],
     ['enable_harden >= 1 and OS != "mac"', {
-      'defines': ['_GLIBCXX_ASSERTIONS'],
+      'defines!': ['_FORTIFY_SOURCE=2'],
+      'defines': ['_FORTIFY_SOURCE=3', '_GLIBCXX_ASSERTIONS'],
       'cflags': [
         '-fstack-clash-protection', '-fstack-protector-strong',
         '-fno-delete-null-pointer-checks', '-fno-strict-overflow',
         '-fno-strict-aliasing',
       ],
-      'ldflags': [
-        '-Wl,-z,noexecstack', '-Wl,-z,relro', '-Wl,-z,now',
-        '-Wl,--as-needed', '-Wl,--no-copy-dt-needed-entries'
-      ],
     }],
     ['enable_harden == 1 and OS != "mac"', {
-      'defines!': ['_FORTIFY_SOURCE=2'],
-      'defines': ['_FORTIFY_SOURCE=3'],
       'cflags': ['-fstrict-flex-arrays=3'],
-    }],
-    ['enable_harden == 2 and OS != "mac"', {
-      'defines': ['_FORTIFY_SOURCE=3'],
     }],
     ['enable_harden == 1 and OS != "mac" and target_arch == "arm64"', {
       # XXX: Investigate why this doesn't work on AlmaLinux 8, even with GCC 14
