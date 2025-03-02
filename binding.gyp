@@ -28,6 +28,10 @@
       'cflags+': ['-fvisibility=hidden'],
       'cflags!': ['-fno-exceptions'],
       'cflags_cc!': ['-fno-exceptions'],
+      'ldflags': [
+        '-Wl,-z,noexecstack', '-Wl,-z,relro', '-Wl,-z,now',
+        '-Wl,--as-needed', '-Wl,--no-copy-dt-needed-entries',
+      ],
       'conditions': [
         ['OS=="mac"', {
           'xcode_settings': {
