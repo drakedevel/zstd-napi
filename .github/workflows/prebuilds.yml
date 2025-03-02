@@ -101,18 +101,17 @@ jobs:
 
   test-build:
     needs: [build]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{
+      (matrix.os == 'linux' && ((matrix.arch == 'x64' && 'ubuntu-24.04') || 'ubuntu-24.04-arm')) ||
+      (matrix.os == 'macos' && ((matrix.arch == 'x64' && 'macos-13') || 'macos-14')) ||
+      (matrix.os == 'windows' && 'windows-2022') }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { os: macos-13, arch: x64 }
-          - { os: macos-14, arch: arm64 }
-          - { os: ubuntu-24.04-arm, arch: arm }
-          - { os: ubuntu-24.04-arm, arch: arm64 }
-          - { os: ubuntu-24.04, arch: x64 }
-          - { os: windows-2022, arch: ia32 }
-          - { os: windows-2022, arch: x64 }
+        os: [linux, macos, windows]
+        arch: [arm64, x64]
+        exclude: [{ os: windows, arch: arm64 }]
+        include: [{ os: linux, arch: arm }, { os: windows, arch: ia32 }]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: ./.github/actions/setup
@@ -120,7 +119,8 @@ jobs:
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
       - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
-          name: prebuilds-${{ (matrix.os == 'macos-13' && 'macos-14') || (matrix.os == 'ubuntu-24.04-arm' && 'ubuntu-24.04') || matrix.os }}
+          name: prebuilds-${{ matrix.os }}${{
+            (matrix.os == 'windows' && matrix.arch == 'ia32' && '-ia32') || '' }}
       - run: tar xf zstd-napi-v*-napi-v8-*-${{ matrix.arch }}.tar.gz
         shell: bash
       # FIXME: Build buster-slim image for latest 18.x
