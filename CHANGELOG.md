@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Build native library with basic hardening flags.
+
 ## [0.0.9] - 2025-02-21
 
 ### Changed
