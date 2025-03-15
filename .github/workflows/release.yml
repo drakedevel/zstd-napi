@@ -65,12 +65,12 @@ jobs:
         with:
           node-version: '18'
           registry-url: https://registry.npmjs.org
-      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@5a775b367a56d5bd118a224a811bba288150a563 # v2.0.0
+      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
         with:
           name: ${{ needs.npm-package.outputs.package-download-name }}
           path: ${{ needs.npm-package.outputs.package-name }}
           sha256: ${{ needs.npm-package.outputs.package-download-sha256 }}
-      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@5a775b367a56d5bd118a224a811bba288150a563 # v2.0.0
+      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
         with:
           name: ${{ needs.npm-package.outputs.provenance-download-name }}
           path: attestations
