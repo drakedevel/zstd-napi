@@ -6,6 +6,10 @@
 
 - Build native library with basic hardening flags.
 
+### Fixed
+
+- From-source builds using the published NPM package work again (broken in 0.0.9). (#135)
+
 ## [0.0.9] - 2025-02-21
 
 ### Changed

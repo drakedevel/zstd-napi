@@ -24,6 +24,7 @@
     "binding.d.ts",
     "binding.gyp",
     "binding.js",
+    "build_flags.gypi",
     "deps",
     "dist",
     "src"
