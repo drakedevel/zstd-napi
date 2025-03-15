@@ -6,6 +6,19 @@ on:
         type: boolean
       upload-assets:
         type: boolean
+    outputs:
+      package-name:
+        value: ${{ jobs.build-provenance.outputs.package-name }}
+      package-download-name:
+        value: ${{ jobs.build-provenance.outputs.package-download-name }}
+      package-download-sha256:
+        value: ${{ jobs.build-provenance.outputs.package-download-sha256 }}
+      provenance-name:
+        value: ${{ jobs.build-provenance.outputs.provenance-name }}
+      provenance-download-name:
+        value: ${{ jobs.build-provenance.outputs.provenance-download-name }}
+      provenance-download-sha256:
+        value: ${{ jobs.build-provenance.outputs.provenance-download-sha256 }}
 
 permissions:
   contents: read

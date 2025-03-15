@@ -63,18 +63,13 @@ jobs:
     steps:
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
-          node-version: '18'
           registry-url: https://registry.npmjs.org
-      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
+      - uses: slsa-framework/slsa-github-generator/actions/nodejs/publish@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
         with:
-          name: ${{ needs.npm-package.outputs.package-download-name }}
-          path: ${{ needs.npm-package.outputs.package-name }}
-          sha256: ${{ needs.npm-package.outputs.package-download-sha256 }}
-      - uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
-        with:
-          name: ${{ needs.npm-package.outputs.provenance-download-name }}
-          path: attestations
-          sha256: ${{ needs.npm-package.outputs.provenance-download-sha256 }}
-      - run: npm publish '${{ needs.npm-package.outputs.package-name }}' --provenance-file='attestations/${{ needs.npm-package.outputs.provenance-download-name }}/${{ needs.npm-package.outputs.provenance-name }}'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          node-auth-token: ${{ secrets.NPM_TOKEN }}
+          package-name: ${{ needs.npm-package.outputs.package-name }}
+          package-download-name: ${{ needs.npm-package.outputs.package-download-name }}
+          package-download-sha256: ${{ needs.npm-package.outputs.package-download-sha256 }}
+          provenance-name: ${{ needs.npm-package.outputs.provenance-name }}
+          provenance-download-name: ${{ needs.npm-package.outputs.provenance-download-name }}
+          provenance-download-sha256: ${{ needs.npm-package.outputs.provenance-download-sha256 }}
