@@ -19,9 +19,7 @@ export function compress(
   data: Uint8Array,
   parameters: CompressParameters = {},
 ) {
-  if (!defaultCompressor) {
-    defaultCompressor = new Compressor();
-  }
+  defaultCompressor ??= new Compressor();
   defaultCompressor.setParameters(parameters);
   return defaultCompressor.compress(data);
 }
@@ -41,9 +39,7 @@ export function decompress(
   data: Uint8Array,
   parameters: DecompressParameters = {},
 ) {
-  if (!defaultDecompressor) {
-    defaultDecompressor = new Decompressor();
-  }
+  defaultDecompressor ??= new Decompressor();
   defaultDecompressor.setParameters(parameters);
   return defaultDecompressor.decompress(data);
 }
