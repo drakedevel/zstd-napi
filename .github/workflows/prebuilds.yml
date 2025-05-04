@@ -25,10 +25,14 @@ jobs:
         include:
           - { os: windows, cross: ia32 }
     outputs:
-      hash-linux: ${{ steps.hash.outputs.hash-linux }}
-      hash-macos: ${{ steps.hash.outputs.hash-macos }}
-      hash-windows: ${{ steps.hash.outputs.hash-windows }}
-      hash-windows-ia32: ${{ steps.hash.outputs.hash-windows-ia32 }}
+      hash-linux: ${{ steps.output.outputs.hash-linux }}
+      hash-macos: ${{ steps.output.outputs.hash-macos }}
+      hash-windows: ${{ steps.output.outputs.hash-windows }}
+      hash-windows-ia32: ${{ steps.output.outputs.hash-windows-ia32 }}
+      id-linux: ${{ steps.output.outputs.id-linux }}
+      id-macos: ${{ steps.output.outputs.id-macos }}
+      id-windows: ${{ steps.output.outputs.id-windows }}
+      id-windows-ia32: ${{ steps.output.outputs.id-windows-ia32 }}
     env:
       JOBS: 3
     steps:
@@ -60,13 +64,17 @@ jobs:
       - name: Build x64 cross
         run: bash .github/prebuild.sh x64
         if: runner.os == 'macOS'
-      - name: Upload prebuilds
+      - id: upload
+        name: Upload prebuilds
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: prebuilds-${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}
           path: prebuilds/
-      - id: hash
-        run: echo "hash-${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}=$(openssl sha256 -r * | tr '*' ' ' | jq -Rrs @base64)" >> "$GITHUB_OUTPUT"
+      - id: output
+        run: |
+          suffix='${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}'
+          echo "hash-${suffix}=$(openssl sha256 -r * | tr '*' ' ' | jq -Rrs @base64)" >> "$GITHUB_OUTPUT"
+          echo "id-${suffix}=${{ steps.upload.outputs.artifact-id }}" >> "$GITHUB_OUTPUT"
         shell: bash
         working-directory: prebuilds
 
@@ -78,9 +86,13 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: artifacts
+        run: echo "ids=$(jq -nr '[env.INPUTS|fromjson|with_entries(select(.key|startswith("id-"))).[]]|join(",")')" >> "$GITHUB_OUTPUT"
+        env:
+          INPUTS: ${{ toJSON(needs.build.outputs) }}
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          pattern: prebuilds-*
+          artifact-ids: ${{ steps.artifacts.outputs.ids }}
           merge-multiple: true
           path: prebuilds
       - run: gh release upload '${{ github.ref_name }}' ./prebuilds/*.tar.gz
@@ -95,9 +107,9 @@ jobs:
       hashes: ${{ steps.combine.outputs.hashes }}
     steps:
       - id: combine
-        run: echo "hashes=$(jq -nr '[env.HASHES|fromjson|.[]|@base64d]|join("")|@base64')" >> "$GITHUB_OUTPUT"
+        run: echo "hashes=$(jq -nr '[env.INPUTS|fromjson|with_entries(select(.key|startswith("hash-")))|.[]|@base64d]|join("")|@base64')" >> "$GITHUB_OUTPUT"
         env:
-          HASHES: ${{ toJSON(needs.build.outputs) }}
+          INPUTS: ${{ toJSON(needs.build.outputs) }}
       - run: echo "${{ steps.combine.outputs.hashes }}"
 
   provenance:
