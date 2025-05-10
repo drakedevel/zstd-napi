@@ -117,7 +117,7 @@ jobs:
           fi
         if: runner.os != 'Windows'
       - run: npm run test
-        if: matrix.node != '12.22.0' # Recent Jest can't run on 12.x
+        if: matrix.node != '12.22.0' && matrix.node != '14.17.0' # Recent Jest can't run on <= 14.x
 
   lint:
     runs-on: ubuntu-24.04
