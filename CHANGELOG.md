@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Import native binary with explicit `.node` file extension to improve bundler compatibility. ([#140])
+
+[#140]: https://github.com/drakedevel/zstd-napi/issues/140
+
 ## [0.0.10] - 2025-03-15
 
 ### Changed
@@ -8,7 +16,9 @@
 
 ### Fixed
 
-- From-source builds using the published NPM package work again (broken in 0.0.9). (#135)
+- From-source builds using the published NPM package work again (broken in 0.0.9). ([#135])
+
+[#135]: https://github.com/drakedevel/zstd-napi/issues/135
 
 ## [0.0.9] - 2025-02-21
 
@@ -19,8 +29,10 @@
 
 ### Fixed
 
-- From-source builds now work on Windows without requiring POSIX command-line utilities. (#92)
+- From-source builds now work on Windows without requiring POSIX command-line utilities. ([#93])
 - Native library no longer exposes unnecessary global symbols on GNU/Linux or macOS.
+
+[#93]: https://github.com/drakedevel/zstd-napi/issues/93
 
 ## [0.0.8] - 2024-04-07
 
