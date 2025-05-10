@@ -15,12 +15,13 @@ jobs:
     runs-on: ${{
       (matrix.os == 'linux' && 'ubuntu-24.04') ||
       (matrix.os == 'macos' && 'macos-14') ||
-      (matrix.os == 'windows' && 'windows-2022') }}
+      (matrix.os == 'windows' && 'windows-2022') ||
+      (matrix.os == 'windows-arm' && 'windows-11-arm') }}
     container:
       image: ${{ matrix.os == 'linux' && 'debian:10-slim' || null }}
     strategy:
       matrix:
-        os: [linux, macos, windows]
+        os: [linux, macos, windows, windows-arm]
         cross: ['']
         include:
           - { os: windows, cross: ia32 }
@@ -28,10 +29,12 @@ jobs:
       hash-linux: ${{ steps.output.outputs.hash-linux }}
       hash-macos: ${{ steps.output.outputs.hash-macos }}
       hash-windows: ${{ steps.output.outputs.hash-windows }}
+      hash-windows-arm: ${{ steps.output.outputs.hash-windows-arm }}
       hash-windows-ia32: ${{ steps.output.outputs.hash-windows-ia32 }}
       id-linux: ${{ steps.output.outputs.id-linux }}
       id-macos: ${{ steps.output.outputs.id-macos }}
       id-windows: ${{ steps.output.outputs.id-windows }}
+      id-windows-arm: ${{ steps.output.outputs.id-windows-arm }}
       id-windows-ia32: ${{ steps.output.outputs.id-windows-ia32 }}
     env:
       JOBS: 3
