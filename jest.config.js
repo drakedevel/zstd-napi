@@ -1,6 +1,6 @@
-const { createDefaultPreset } = require('ts-jest');
-module.exports = {
-  ...createDefaultPreset(),
-  collectCoverageFrom: ['binding.js', 'lib/**/*.{js,ts}'],
+import { createDefaultEsmPreset } from 'ts-jest';
+export default {
+  ...createDefaultEsmPreset(),
+  collectCoverageFrom: ['binding.cjs', 'lib/**/*.{js,ts}'],
   testMatch: ['**/tests/**/*.ts'],
 };

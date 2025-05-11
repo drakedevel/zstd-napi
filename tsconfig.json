@@ -1,9 +1,10 @@
 {
   "extends": ["@tsconfig/node22", "@tsconfig/strictest"],
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts", "**/*.js", ".*.js"],
+  "include": ["**/*.ts", "**/*.cjs", "**/*.js", ".*.js"],
   "exclude": ["coverage", "dist", "docs"]
 }

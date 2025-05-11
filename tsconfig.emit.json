@@ -7,8 +7,9 @@
     "isolatedDeclarations": true,
     "noEmit": false,
     "outDir": "dist",
+    "rewriteRelativeImportExtensions": true,
     "rootDir": "lib",
     "skipLibCheck": false
   },
-  "include": ["binding.d.ts", "lib/**/*.ts"]
+  "include": ["binding.d.cts", "lib/**/*.ts"]
 }

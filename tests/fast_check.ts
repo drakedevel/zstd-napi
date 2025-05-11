@@ -1,14 +1,14 @@
 import { describe, expect } from '@jest/globals';
 import { fc, it } from '@fast-check/jest';
 import { strict as assert } from 'assert';
-import * as events from 'events';
+import events from 'events';
 
 import {
   Compressor,
   CompressStream,
   Decompressor,
   DecompressStream,
-} from '../lib';
+} from '../lib/index.ts';
 
 // Generate some deterministic random data up front to slice from. This is
 // much faster than generating data directly with fast-check, and allows for

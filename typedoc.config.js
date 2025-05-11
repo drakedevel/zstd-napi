@@ -1,5 +1,5 @@
-module.exports = {
-  entryPoints: ['lib', 'binding.d.ts'],
+export default {
+  entryPoints: ['lib', 'binding.d.cts'],
   excludeInternal: true,
   excludePrivate: true,
   excludeProtected: true,

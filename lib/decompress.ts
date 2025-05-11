@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
-import binding = require('../binding');
-import { mapNumber, mapParameters } from './util';
+import binding = require('../binding.cjs');
+import { mapNumber, mapParameters } from './util.ts';
 
 /**
  * Zstandard decompression parameters.
