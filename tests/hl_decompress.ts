@@ -8,14 +8,14 @@ import {
 } from '@jest/globals';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
-import * as binding from '../binding';
+import binding from '../binding.cjs';
 import {
   Decompressor,
   DecompressParameters,
   DecompressStream,
   compress,
   decompress,
-} from '../lib';
+} from '../lib/index.ts';
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;

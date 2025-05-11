@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { mapNumber, mapParameters } from '../lib/util';
+import { mapNumber, mapParameters } from '../lib/util.ts';
 
 describe('mapParameters', () => {
   enum TestParameter {

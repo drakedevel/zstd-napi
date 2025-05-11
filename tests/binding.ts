@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
-import * as events from 'events';
-import * as fs from 'fs';
-import * as path from 'path';
+import events from 'events';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Worker } from 'worker_threads';
-import * as binding from '../binding';
+import binding from '../binding.cjs';
 
 // Minimal dictionary (generated with zstd --train on random hex)
-const minDict = fs.readFileSync(path.join(__dirname, 'data', 'minimal.dct'));
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const minDict = fs.readFileSync(path.join(rootDir, 'data', 'minimal.dct'));
 const minDictId = 598886516;
 
 function hex(data: string): Buffer {
@@ -390,7 +392,7 @@ test('wrapGetDictIDFromFrame works', () => {
 
 test('loading from multiple threads works', async () => {
   async function runInWorker() {
-    const worker = new Worker('./binding.js');
+    const worker = new Worker('./binding.cjs');
     return (await events.once(worker, 'exit'))[0] as number;
   }
 

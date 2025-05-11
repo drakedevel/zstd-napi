@@ -1,17 +1,17 @@
-const eslint = require('@eslint/js');
-const eslintConfigPrettier = require('eslint-config-prettier/flat');
-const jest = require('eslint-plugin-jest');
-const tsdoc = require('eslint-plugin-tsdoc');
-const globals = require('globals');
-const tseslint = require('typescript-eslint');
-module.exports = tseslint.config(
+import eslint from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
+import jest from 'eslint-plugin-jest';
+import tsdoc from 'eslint-plugin-tsdoc';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+export default tseslint.config(
   eslint.configs.recommended,
   {
     extends: [
       tseslint.configs.recommendedTypeChecked,
       tseslint.configs.stylisticTypeChecked,
     ],
-    files: ['**/*.ts'],
+    files: ['**/*.{cts,ts}'],
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -26,17 +26,16 @@ module.exports = tseslint.config(
   {
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'commonjs',
       globals: globals.node,
       parserOptions: {
         project: true,
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
   {
     extends: [jest.configs['flat/style'], jest.configs['flat/recommended']],
-    files: ['tests/**/*.{js,ts}'],
+    files: ['tests/**/*.{cjs,cts,js,ts}'],
     rules: {
       '@typescript-eslint/dot-notation': 'off',
       'jest/expect-expect': ['warn', { assertFunctionNames: ['expect*'] }],
@@ -48,7 +47,7 @@ module.exports = tseslint.config(
     },
   },
   {
-    files: ['**/*.ts'],
+    files: ['**/*.{cts,ts}'],
     plugins: { tsdoc },
     rules: {
       'tsdoc/syntax': 'error',

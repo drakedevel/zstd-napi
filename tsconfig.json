@@ -1,10 +1,10 @@
 {
   "extends": ["@tsconfig/node20", "@tsconfig/strictest"],
   "compilerOptions": {
-    "esModuleInterop": false,
+    "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["**/*.ts", "**/*.js", ".*.js"],
+  "include": ["**/*.ts", "**/*.cjs", "**/*.js", ".*.js"],
   "exclude": ["coverage", "dist", "docs"],
   "types": []
 }
