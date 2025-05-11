@@ -1,5 +1,5 @@
-import { Compressor, CompressParameters } from './compress';
-import { Decompressor, DecompressParameters } from './decompress';
+import { Compressor, CompressParameters } from './compress.ts';
+import { Decompressor, DecompressParameters } from './decompress.ts';
 
 let defaultCompressor: Compressor | undefined;
 let defaultDecompressor: Decompressor | undefined;
