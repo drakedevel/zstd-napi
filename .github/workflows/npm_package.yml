@@ -56,6 +56,32 @@ jobs:
       node-version-file: .node-version
       run-scripts: submodule-update,ci-ignore-scripts
 
+  test-build:
+    if: '!inputs.provenance'
+    needs: [build-unsigned]
+    runs-on: ${{
+      (matrix.os == 'linux' && 'ubuntu-24.04') ||
+      (matrix.os == 'macos' && 'macos-14') ||
+      (matrix.os == 'windows' && 'windows-2022') }}
+    strategy:
+      matrix:
+        os: [linux, macos, windows]
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          artifact-ids: ${{ needs.build-unsigned.outputs.artifact-id }}
+      - run: npm i --build-from-source ./zstd-napi-*.tgz
+        shell: bash
+      - name: Test module can be imported
+        run: |
+          node -e 'assert.equal(typeof require("zstd-napi").compress, "function")'
+          node --input-type=module -e 'import * as zstdNapi from "zstd-napi"; assert.equal(typeof zstdNapi.compress, "function");'
+          node -p 'require("zstd-napi/binding").versionString()'
+          node --input-type=module -e 'import binding from "zstd-napi/binding.js"; console.log(binding.versionString());'
+
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())
     needs: [build-provenance, build-unsigned]
