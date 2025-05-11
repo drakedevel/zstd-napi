@@ -1,17 +1,18 @@
 /* eslint jest/no-done-callback: 0 */
+import { jest } from '@jest/globals';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
-import * as binding from '../binding';
+import binding from '../binding.cjs';
 import {
   Decompressor,
   DecompressParameters,
   DecompressStream,
   compress,
   decompress,
-} from '../lib';
+} from '../lib/index.ts';
 
 const mockBinding: jest.Mocked<typeof binding> =
-  jest.createMockFromModule('../binding');
+  jest.createMockFromModule('../binding.cjs');
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;

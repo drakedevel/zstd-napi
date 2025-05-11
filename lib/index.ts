@@ -16,10 +16,10 @@
  * @module index
  */
 
-export { CompressStream, Compressor } from './compress';
-export type { CompressParameters } from './compress';
+export { CompressStream, Compressor } from './compress.ts';
+export type { CompressParameters } from './compress.ts';
 
-export { DecompressStream, Decompressor } from './decompress';
-export type { DecompressParameters } from './decompress';
+export { DecompressStream, Decompressor } from './decompress.ts';
+export type { DecompressParameters } from './decompress.ts';
 
-export { compress, decompress } from './simple';
+export { compress, decompress } from './simple.ts';
