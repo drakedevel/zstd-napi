@@ -6,14 +6,13 @@ const globals = require('globals');
 const tseslint = require('typescript-eslint');
 module.exports = tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked.map((c) => ({
-    ...c,
+  {
+    extends: [
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+    ],
     files: ['**/*.ts'],
-  })),
-  ...tseslint.configs.stylisticTypeChecked.map((c) => ({
-    ...c,
-    files: ['**/*.ts'],
-  })),
+  },
   eslintConfigPrettier,
   {
     ignores: ['coverage/', 'docs/', 'dist/', 'node_modules/'],
@@ -30,27 +29,18 @@ module.exports = tseslint.config(
     },
   },
   {
+    extends: [jest.configs['flat/style'], jest.configs['flat/recommended']],
     files: ['tests/**/*.{js,ts}'],
-    ...jest.configs['flat/recommended'],
     rules: {
-      ...jest.configs['flat/style'].rules,
-      ...jest.configs['flat/recommended'].rules,
       '@typescript-eslint/ban-ts-comment': [
         'error',
-        {
-          'ts-expect-error': 'allow-with-description',
-        },
+        { 'ts-expect-error': 'allow-with-description' },
       ],
       '@typescript-eslint/dot-notation': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'jest/expect-expect': [
-        'warn',
-        {
-          assertFunctionNames: ['expect*'],
-        },
-      ],
+      'jest/expect-expect': ['warn', { assertFunctionNames: ['expect*'] }],
     },
   },
   {
