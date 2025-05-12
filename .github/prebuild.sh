@@ -11,3 +11,7 @@ for napi_ver in $(jq .binary.napi_versions[] package.json); do
   tar c --format pax --numeric-owner build/Release/{*.node,LICENSE*,NOTICE*} |
     gzip -9 -n > "prebuilds/${template/NAPI_VER/${napi_ver}}"
 done
+if [[ "$(uname -s)" == "Linux" ]]; then
+  echo "Checking symbol versions"
+  node ./ci/check_symvers.js build/Release/binding.node
+fi

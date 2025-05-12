@@ -19,7 +19,7 @@ module.exports = tseslint.config(
   },
   {
     languageOptions: {
-      ecmaVersion: 2018,
+      ecmaVersion: 2022,
       sourceType: 'commonjs',
       globals: globals.node,
       parserOptions: {
