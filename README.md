@@ -64,7 +64,7 @@ Other versions may work, but they aren't regularly tested and may break at any t
 
 All of the native code in this project is fairly portable, so in principle `zstd-napi` should work on any platform supported by both Node.js and Zstandard.
 
-Prebuilds are provided for all platforms with [Tier 1 support][tier-1] in any live version of Node.js. This includes GNU/Linux armv7, arm64, and x64, macOS arm64 and x64, and Windows x64 and x86. GNU/Linux prebuilds are linked against Glibc 2.28, which is the same version required by official Node.js 20+ builds.
+Prebuilds are provided for all platforms with [Tier 1 support][tier-1] in any live version of Node.js. This includes GNU/Linux armv7, arm64, and x64, macOS arm64 and x64, and Windows x64 and x86. GNU/Linux prebuilds are compatible with glibc >= 2.28 and libstdc++ >= 6.0.25, which are the same versions required by official Node.js binaries since version 18.
 
 Please [file an issue][new-issue] if this library doesn't work on your platform!
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Build GNU/Linux prebuilds on Debian 11 (binaries are still compatible with Glibc 2.28).
+
 ## [0.0.11] - 2025-05-11
 
 ### Changed

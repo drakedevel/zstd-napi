@@ -17,7 +17,7 @@ jobs:
       (matrix.os == 'macos' && 'macos-14') ||
       (matrix.os == 'windows' && 'windows-2022') }}
     container:
-      image: ${{ matrix.os == 'linux' && 'debian:10-slim' || null }}
+      image: ${{ matrix.os == 'linux' && 'debian:11-slim' || null }}
     strategy:
       matrix:
         os: [linux, macos, windows]
