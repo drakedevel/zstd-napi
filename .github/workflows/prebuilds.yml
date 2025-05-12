@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ${{
       (matrix.os == 'linux' && 'ubuntu-24.04') ||
-      (matrix.os == 'macos' && 'macos-14') ||
+      (matrix.os == 'macos' && 'macos-15') ||
       (matrix.os == 'windows' && 'windows-2022') }}
     container:
       image: ${{ matrix.os == 'linux' && 'debian:11-slim' || null }}

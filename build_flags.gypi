@@ -45,13 +45,13 @@
     }],
     ['enable_harden == 1 and OS == "mac"', {
       'xcode_settings': {
-        # TODO: -fstrict-flex-arrays=3 on Clang 16+
         'OTHER_CFLAGS': [
           '-fno-delete-null-pointer-checks',
           '-fno-strict-aliasing',
           '-fno-strict-overflow',
+          '-fstack-clash-protection',
           '-fstack-protector-strong',
-          '-fstrict-flex-arrays=2',
+          '-fstrict-flex-arrays=3',
         ],
         # TODO: Support PAC when Apple stabilizes arm64e
       },
