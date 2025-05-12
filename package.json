@@ -1,6 +1,6 @@
 {
   "name": "zstd-napi",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Zstandard (zstd) compression library bindings with Node-API",
   "keywords": [
     "binding",
