@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
-import binding = require('../binding.cjs');
+import * as binding from '../binding.js';
 import { mapNumber, mapParameters } from './util.ts';
 
 /**
