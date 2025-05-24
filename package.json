@@ -22,9 +22,9 @@
   "types": "dist/index.d.ts",
   "files": [
     "NOTICE",
-    "binding.d.cts",
+    "binding.d.ts",
     "binding.gyp",
-    "binding.cjs",
+    "binding.js",
     "build_flags.gypi",
     "deps",
     "dist",

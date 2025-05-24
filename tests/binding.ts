@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
 import events from 'events';
 import fs from 'fs';
+import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Worker } from 'worker_threads';
-import binding from '../binding.cjs';
+import * as binding from '../binding.js';
 
 // Minimal dictionary (generated with zstd --train on random hex)
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
@@ -392,7 +393,7 @@ test('wrapGetDictIDFromFrame works', () => {
 
 test('loading from multiple threads works', async () => {
   async function runInWorker() {
-    const worker = new Worker('./binding.cjs');
+    const worker = new Worker(new URL('../binding.js', import.meta.url));
     return (await events.once(worker, 'exit'))[0] as number;
   }
 
@@ -414,6 +415,10 @@ test('libzstd errors are propagated', () => {
 });
 
 test('binding property descriptors have standard attributes', () => {
+  // TODO: Is this test still useful since we don't expose the raw addon now?
+  const require = createRequire(import.meta.url);
+  const buildType = process.config.target_defaults.default_configuration;
+  const binding: unknown = require(`../build/${buildType}/binding.node`);
   const descs = Object.getOwnPropertyDescriptors(binding);
   expect(Object.values(descs)).toStrictEqual(
     expect.arrayOf({

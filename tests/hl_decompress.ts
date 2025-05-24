@@ -8,7 +8,7 @@ import {
 } from '@jest/globals';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
-import binding from '../binding.cjs';
+import * as binding from '../binding.js';
 import {
   Decompressor,
   DecompressParameters,
