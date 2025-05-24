@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Worker } from 'worker_threads';
-import binding from '../binding.cjs';
+import * as binding from '../binding.js';
 
 // Minimal dictionary (generated with zstd --train on random hex)
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
@@ -363,7 +363,7 @@ test('wrapGetDictIDFromFrame works', () => {
 
 test('loading from multiple threads works', async () => {
   async function runInWorker(): Promise<number> {
-    const worker = new Worker('./binding.cjs');
+    const worker = new Worker(new URL('../binding.js', import.meta.url));
     return (await events.once(worker, 'exit'))[0];
   }
 
