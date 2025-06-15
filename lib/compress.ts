@@ -263,7 +263,7 @@ export class CompressStream extends Transform {
    * a stream write.
    */
   endFrame(callback?: (error?: Error | null) => void): void {
-    this.write(dummyEndBuffer, undefined, callback);
+    this.write(dummyEndBuffer, callback);
   }
 
   /**
@@ -276,7 +276,7 @@ export class CompressStream extends Transform {
    * a stream write.
    */
   flush(callback?: (error?: Error | null) => void): void {
-    this.write(dummyFlushBuffer, undefined, callback);
+    this.write(dummyFlushBuffer, callback);
   }
 
   private doCompress(chunk: Buffer, endType: binding.EndDirective): void {
