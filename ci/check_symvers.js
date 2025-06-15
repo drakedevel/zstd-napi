@@ -1,5 +1,5 @@
 // @ts-nocheck
-const childProcess = require('child_process');
+import childProcess from 'child_process';
 
 // Maximum defined symbol versions in Debian 10 / EL8
 const MAX_VERSIONS = {
