@@ -12,19 +12,19 @@ import {
   decompress,
 } from '../lib/index.ts';
 
-const mockBinding: jest.Mocked<typeof binding> =
-  jest.createMockFromModule('../binding.cjs');
-
 function expectDecompress(input: Buffer, expected: Buffer): void {
   const output = decompress(input);
   expect(output.equals(expected)).toBe(true);
 }
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('Compressor', () => {
   let compressor: Compressor;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     compressor = new Compressor();
   });
 
@@ -75,38 +75,36 @@ describe('Compressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const loadDict = jest.spyOn(compressor['cctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     compressor.loadDictionary(dictBuf);
-    expect(mockBinding.CCtx.prototype.loadDictionary).toHaveBeenCalledWith(
-      dictBuf,
-    );
+    expect(loadDict).toHaveBeenCalledWith(dictBuf);
   });
 
   test('#setParameters resets other parameters', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const reset = jest.spyOn(compressor['cctx'], 'reset');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.setParameters({ compressionLevel: 0 });
-    expect(mockBinding.CCtx.prototype.reset).toHaveBeenCalledWith(
-      binding.ResetDirective.parameters,
-    );
-    expect(mockBinding.CCtx.prototype.setParameter).toHaveBeenCalledWith(
+    expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
+    expect(setParam).toHaveBeenCalledWith(
       binding.CParameter.compressionLevel,
       0,
     );
   });
 
   test('#updateParameters does not reset parameters', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const reset = jest.spyOn(compressor['cctx'], 'reset');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: 0 });
-    expect(mockBinding.CCtx.prototype.reset).not.toHaveBeenCalled();
-    expect(mockBinding.CCtx.prototype.setParameter).toHaveBeenCalled();
+    expect(reset).not.toHaveBeenCalled();
+    expect(setParam).toHaveBeenCalled();
   });
 
   test('#updateParameters maps parameters correctly', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     // Set one parameter of each type
     compressor.updateParameters({
@@ -116,7 +114,6 @@ describe('Compressor', () => {
     });
 
     // Verify types got mapped correctly
-    const setParam = mockBinding.CCtx.prototype.setParameter;
     expect(setParam).toHaveBeenCalledTimes(3);
     expect(setParam).toHaveBeenCalledWith(
       binding.CParameter.compressionLevel,
@@ -133,7 +130,7 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters rejects invalid parameter names/types', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: deliberately passing wrong arguments
@@ -147,14 +144,14 @@ describe('Compressor', () => {
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid type for parameter: compressionLevel"`,
     );
-    expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
+    expect(setParam).not.toHaveBeenCalled();
   });
 
   test('#updateParameters ignores undefined values', () => {
-    compressor['cctx'] = new mockBinding.CCtx();
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: undefined });
-    expect(mockBinding.CCtx.prototype.setParameter).not.toHaveBeenCalled();
+    expect(setParam).not.toHaveBeenCalled();
   });
 });
 
@@ -173,7 +170,6 @@ describe('CompressStream', () => {
   const errorHandler = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
     chunks = [];
     stream = new CompressStream();
     stream.on('data', dataHandler);
@@ -270,10 +266,9 @@ describe('CompressStream', () => {
   });
 
   test('#_transform correctly propagates errors', (done) => {
-    mockBinding.CCtx.prototype.compressStream2.mockImplementationOnce(() => {
+    jest.spyOn(stream['cctx'], 'compressStream2').mockImplementationOnce(() => {
       throw new Error('Simulated error');
     });
-    stream['cctx'] = new mockBinding.CCtx();
 
     const writeCb = jest.fn();
     stream.off('error', errorHandler);
@@ -286,10 +281,9 @@ describe('CompressStream', () => {
   });
 
   test('#_flush correctly propagates errors', (done) => {
-    mockBinding.CCtx.prototype.compressStream2.mockImplementationOnce(() => {
+    jest.spyOn(stream['cctx'], 'compressStream2').mockImplementationOnce(() => {
       throw new Error('Simulated error');
     });
-    stream['cctx'] = new mockBinding.CCtx();
 
     stream.off('error', errorHandler);
     stream.on('error', (err) => {

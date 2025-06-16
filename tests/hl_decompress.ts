@@ -11,14 +11,14 @@ import {
   decompress,
 } from '../lib/index.ts';
 
-const mockBinding: jest.Mocked<typeof binding> =
-  jest.createMockFromModule('../binding.cjs');
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     decompressor = new Decompressor();
   });
 
@@ -68,38 +68,33 @@ describe('Decompressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    decompressor['dctx'] = new mockBinding.DCtx();
+    const loadDict = jest.spyOn(decompressor['dctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     decompressor.loadDictionary(dictBuf);
-    expect(mockBinding.DCtx.prototype.loadDictionary).toHaveBeenCalledWith(
-      dictBuf,
-    );
+    expect(loadDict).toHaveBeenCalledWith(dictBuf);
   });
 
   test('#setParameters resets other parameters', () => {
-    decompressor['dctx'] = new mockBinding.DCtx();
+    const reset = jest.spyOn(decompressor['dctx'], 'reset');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.setParameters({ windowLogMax: 10 });
-    expect(mockBinding.DCtx.prototype.reset).toHaveBeenCalledWith(
-      binding.ResetDirective.parameters,
-    );
-    expect(mockBinding.DCtx.prototype.setParameter).toHaveBeenCalledWith(
-      binding.DParameter.windowLogMax,
-      10,
-    );
+    expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
+    expect(setParam).toHaveBeenCalledWith(binding.DParameter.windowLogMax, 10);
   });
 
   test('#updateParameters does not reset parameters', () => {
-    decompressor['dctx'] = new mockBinding.DCtx();
+    const reset = jest.spyOn(decompressor['dctx'], 'reset');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: 0 });
-    expect(mockBinding.DCtx.prototype.reset).not.toHaveBeenCalled();
-    expect(mockBinding.DCtx.prototype.setParameter).toHaveBeenCalled();
+    expect(reset).not.toHaveBeenCalled();
+    expect(setParam).toHaveBeenCalled();
   });
 
   test('#updateParameters rejects invalid parameter names', () => {
-    decompressor['dctx'] = new mockBinding.DCtx();
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: testing invalid key
@@ -113,14 +108,14 @@ describe('Decompressor', () => {
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid type for parameter: windowLogMax"`,
     );
-    expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
+    expect(setParam).not.toHaveBeenCalled();
   });
 
   test('#updateParameters ignores undefined values', () => {
-    decompressor['dctx'] = new mockBinding.DCtx();
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: undefined });
-    expect(mockBinding.DCtx.prototype.setParameter).not.toHaveBeenCalled();
+    expect(setParam).not.toHaveBeenCalled();
   });
 });
 
@@ -139,7 +134,6 @@ describe('DecompressStream', () => {
   const errorHandler = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
     chunks = [];
     stream = new DecompressStream();
     stream.on('data', dataHandler);
@@ -164,10 +158,11 @@ describe('DecompressStream', () => {
   });
 
   test('#_transform correctly propagates errors', (done) => {
-    mockBinding.DCtx.prototype.decompressStream.mockImplementationOnce(() => {
-      throw new Error('Simulated error');
-    });
-    stream['dctx'] = new mockBinding.DCtx();
+    jest
+      .spyOn(stream['dctx'], 'decompressStream')
+      .mockImplementationOnce(() => {
+        throw new Error('Simulated error');
+      });
 
     const writeCb = jest.fn();
     stream.off('error', errorHandler);
