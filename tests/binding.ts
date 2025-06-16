@@ -1,3 +1,4 @@
+import * as events from 'events';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Worker } from 'worker_threads';
@@ -360,15 +361,12 @@ test('wrapGetDictIDFromFrame works', () => {
 
 test('loading from multiple threads works', async () => {
   async function runInWorker(): Promise<number> {
-    return new Promise((resolve, reject) =>
-      new Worker('require("./binding")', { eval: true })
-        .on('error', reject)
-        .on('exit', resolve),
-    );
+    const worker = new Worker('./binding.js');
+    return (await events.once(worker, 'exit'))[0];
   }
 
-  expect(await runInWorker()).toBe(0);
-  expect(await runInWorker()).toBe(0);
+  await expect(runInWorker()).resolves.toBe(0);
+  await expect(runInWorker()).resolves.toBe(0);
 });
 
 test('passing wrong argument count throws error', () => {
