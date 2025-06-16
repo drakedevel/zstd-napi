@@ -10,15 +10,22 @@ void CCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "CCtx",
       {
-          InstanceMethod<&CCtx::wrapCompress>("compress"),
-          InstanceMethod<&CCtx::wrapCompressUsingDict>("compressUsingDict"),
-          InstanceMethod<&CCtx::wrapCompressUsingCDict>("compressUsingCDict"),
-          InstanceMethod<&CCtx::wrapSetParameter>("setParameter"),
-          InstanceMethod<&CCtx::wrapSetPledgedSrcSize>("setPledgedSrcSize"),
-          InstanceMethod<&CCtx::wrapReset>("reset"),
-          InstanceMethod<&CCtx::wrapCompress2>("compress2"),
-          InstanceMethod<&CCtx::wrapCompressStream2>("compressStream2"),
-          InstanceMethod<&CCtx::wrapLoadDictionary>("loadDictionary"),
+          InstanceMethod<&CCtx::wrapCompress>("compress", napi_default_method),
+          InstanceMethod<&CCtx::wrapCompressUsingDict>("compressUsingDict",
+                                                       napi_default_method),
+          InstanceMethod<&CCtx::wrapCompressUsingCDict>("compressUsingCDict",
+                                                        napi_default_method),
+          InstanceMethod<&CCtx::wrapSetParameter>("setParameter",
+                                                  napi_default_method),
+          InstanceMethod<&CCtx::wrapSetPledgedSrcSize>("setPledgedSrcSize",
+                                                       napi_default_method),
+          InstanceMethod<&CCtx::wrapReset>("reset", napi_default_method),
+          InstanceMethod<&CCtx::wrapCompress2>("compress2",
+                                               napi_default_method),
+          InstanceMethod<&CCtx::wrapCompressStream2>("compressStream2",
+                                                     napi_default_method),
+          InstanceMethod<&CCtx::wrapLoadDictionary>("loadDictionary",
+                                                    napi_default_method),
       });
   exports.Set("CCtx", func);
 }

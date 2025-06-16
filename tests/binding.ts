@@ -47,6 +47,18 @@ function expectDecompress(
   expect(output.subarray(0, len).equals(expected)).toBe(true);
 }
 
+function expectPrototypeProperties(obj: object) {
+  const descs = Object.getOwnPropertyDescriptors(obj);
+  expect(Object.values(descs)).toStrictEqual(
+    expect.arrayOf({
+      value: expect.any(Function),
+      writable: true,
+      enumerable: false,
+      configurable: true,
+    }),
+  );
+}
+
 describe('CCtx', () => {
   let cctx: binding.CCtx;
 
@@ -144,6 +156,10 @@ describe('CCtx', () => {
       cctx.compress2(dst, src),
     );
   });
+
+  test('prototype property descriptors have standard attributes', () => {
+    expectPrototypeProperties(binding.CCtx.prototype);
+  });
 });
 
 describe('CDict', () => {
@@ -156,6 +172,10 @@ describe('CDict', () => {
   test('#getDictID works', () => {
     const cdict = new binding.CDict(minDict, 3);
     expect(cdict.getDictID()).toBe(minDictId);
+  });
+
+  test('prototype property descriptors have standard attributes', () => {
+    expectPrototypeProperties(binding.CDict.prototype);
   });
 });
 
@@ -240,6 +260,10 @@ describe('DCtx', () => {
       dctx.decompress(dst, src),
     );
   });
+
+  test('prototype property descriptors have standard attributes', () => {
+    expectPrototypeProperties(binding.DCtx.prototype);
+  });
 });
 
 describe('DDict', () => {
@@ -252,6 +276,10 @@ describe('DDict', () => {
   test('#getDictID works', () => {
     const ddict = new binding.DDict(minDict);
     expect(ddict.getDictID()).toBe(minDictId);
+  });
+
+  test('prototype property descriptors have standard attributes', () => {
+    expectPrototypeProperties(binding.DDict.prototype);
   });
 });
 
@@ -380,4 +408,16 @@ test('libzstd errors are propagated', () => {
   expect(() => {
     binding.compress(Buffer.alloc(0), Buffer.alloc(0), 3);
   }).toThrowErrorMatchingInlineSnapshot(`"Destination buffer is too small"`);
+});
+
+test('binding property descriptors have standard attributes', () => {
+  const descs = Object.getOwnPropertyDescriptors(binding);
+  expect(Object.values(descs)).toStrictEqual(
+    expect.arrayOf({
+      value: expect.anything(),
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    }),
+  );
 });

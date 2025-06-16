@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Properties defined by the native library now have the same descriptor attributes as ES classes/objects.
+
 ## [0.0.12] - 2025-06-26
 
 ### Changed

@@ -10,14 +10,19 @@ void DCtx::Init(Napi::Env env, Napi::Object exports) {
   Function func = DefineClass(
       env, "DCtx",
       {
-          InstanceMethod<&DCtx::wrapDecompress>("decompress"),
-          InstanceMethod<&DCtx::wrapDecompressStream>("decompressStream"),
-          InstanceMethod<&DCtx::wrapDecompressUsingDict>("decompressUsingDict"),
+          InstanceMethod<&DCtx::wrapDecompress>("decompress",
+                                                napi_default_method),
+          InstanceMethod<&DCtx::wrapDecompressStream>("decompressStream",
+                                                      napi_default_method),
+          InstanceMethod<&DCtx::wrapDecompressUsingDict>("decompressUsingDict",
+                                                         napi_default_method),
           InstanceMethod<&DCtx::wrapDecompressUsingDDict>(
-              "decompressUsingDDict"),
-          InstanceMethod<&DCtx::wrapSetParameter>("setParameter"),
-          InstanceMethod<&DCtx::wrapReset>("reset"),
-          InstanceMethod<&DCtx::wrapLoadDictionary>("loadDictionary"),
+              "decompressUsingDDict", napi_default_method),
+          InstanceMethod<&DCtx::wrapSetParameter>("setParameter",
+                                                  napi_default_method),
+          InstanceMethod<&DCtx::wrapReset>("reset", napi_default_method),
+          InstanceMethod<&DCtx::wrapLoadDictionary>("loadDictionary",
+                                                    napi_default_method),
       });
   exports.Set("DCtx", func);
 }
