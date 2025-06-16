@@ -5,11 +5,11 @@ using namespace Napi;
 const napi_type_tag DDict::typeTag = {0x5947459a9a933efa, 0xe3ce81af92835a95};
 
 void DDict::Init(Napi::Env env, Napi::Object exports) {
-  Function func =
-      DefineClass(env, "DDict",
-                  {
-                      InstanceMethod<&DDict::wrapGetDictID>("getDictID"),
-                  });
+  Function func = DefineClass(env, "DDict",
+                              {
+                                  InstanceMethod<&DDict::wrapGetDictID>(
+                                      "getDictID", napi_default_method),
+                              });
   exports.Set("DDict", func);
 }
 
