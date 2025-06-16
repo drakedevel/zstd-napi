@@ -1,4 +1,3 @@
-/* eslint jest/no-standalone-expect: 0 */
 import { describe, expect } from '@jest/globals';
 import { fc, it } from '@fast-check/jest';
 import { strict as assert } from 'assert';

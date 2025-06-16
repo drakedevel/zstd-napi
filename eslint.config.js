@@ -12,6 +12,12 @@ module.exports = tseslint.config(
       tseslint.configs.stylisticTypeChecked,
     ],
     files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^_' },
+      ],
+    },
   },
   eslintConfigPrettier,
   {
@@ -32,15 +38,13 @@ module.exports = tseslint.config(
     extends: [jest.configs['flat/style'], jest.configs['flat/recommended']],
     files: ['tests/**/*.{js,ts}'],
     rules: {
-      '@typescript-eslint/ban-ts-comment': [
-        'error',
-        { 'ts-expect-error': 'allow-with-description' },
-      ],
       '@typescript-eslint/dot-notation': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off',
-      '@typescript-eslint/unbound-method': 'off',
       'jest/expect-expect': ['warn', { assertFunctionNames: ['expect*'] }],
+      'jest/no-done-callback': 'off',
+      'jest/no-standalone-expect': [
+        'error',
+        { additionalTestBlockFunctions: ['afterEach', 'it.prop'] },
+      ],
     },
   },
   {
