@@ -58,7 +58,7 @@
     "@tsconfig/node20": "20.1.5",
     "@tsconfig/strictest": "2.0.5",
     "@types/eslint-config-prettier": "6.11.3",
-    "@types/jest": "29.5.14",
+    "@types/jest": "30.0.0",
     "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-jest": "28.13.3",
