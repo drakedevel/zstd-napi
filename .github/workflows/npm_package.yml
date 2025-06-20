@@ -85,6 +85,31 @@ jobs:
       - run: npm i --build-from-source ./zstd-napi-*.tgz
         shell: bash
       - run: node -p 'require("zstd-napi/binding").versionString()'
+      - if: matrix.os == 'ubuntu-24.04'
+        run: |
+          # Latest for Node 16 that work with TS 4.5
+          npm i --save-dev @types/node@16.18.65 @tsconfig/node16@1.0.3
+          cat > index.ts <<EOF
+          import * as zstd from "zstd-napi";
+          import * as binding from "zstd-napi/binding";
+          console.log(binding.versionString());
+          console.log(zstd.compress(Buffer.from('hello')));
+          EOF
+          cat > tsconfig.json <<EOF
+          {
+            "extends": "@tsconfig/node16",
+            "compilerOptions": {
+              "esModuleInterop": false,
+              "skipLibCheck": false
+            },
+            "include": ["index.ts"]
+          }
+          EOF
+          for version in 4.5 4.6 4.7 4.8 4.9 5.0 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8; do
+            echo "=== Typescript ${version} ==="
+            npx -y --package=typescript@$version -- tsc -p .
+            node index.js
+          done
 
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())
