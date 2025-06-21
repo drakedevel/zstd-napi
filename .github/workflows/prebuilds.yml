@@ -209,7 +209,7 @@ jobs:
             conditionNames: ['require', 'node', 'default'],
           });
           let basedir = __dirname;
-          let toResolve = 'foo-bar-foo-barb-' + __dirname + '\\\\node_modules\\\\any.js';
+          let toResolve = 'x-' + __dirname + '\\\\node_modules\\\\any.js';
           console.log('resolver.sync', basedir, toResolve);
           console.log(resolver.sync(basedir, toResolve));
 
