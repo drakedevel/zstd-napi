@@ -214,10 +214,7 @@ jobs:
           console.log(resolver.sync(basedir, toResolve));
 
           resolver = resolver.cloneWithOptions({
-            conditionNames: ['require', 'node', 'default', 'node-addons'],
-            modules: ['node_modules'],
-            roots: [__dirname],
-            extensions: ['.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx', '.json', '.node']
+            conditionNames: ['require', 'node', 'default'],
           });
 
           console.log('clearCache')
