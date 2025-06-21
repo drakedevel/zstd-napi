@@ -204,24 +204,12 @@ jobs:
       - run: |
           cat >unrs_repro.js <<EOF
           const {ResolverFactory} = require('unrs-resolver');
-
-          let resolver = new ResolverFactory({
-          });
-          let basedir = __dirname;
-          let toResolve = 'x-' + __dirname + '\\\\node_modules\\\\any.js';
-          console.log('resolver.sync', basedir, toResolve);
-          console.log(resolver.sync(basedir, toResolve));
-
-          resolver = resolver.cloneWithOptions({
-          });
-
-          console.log('clearCache')
+          let resolver = new ResolverFactory({});
+          resolver.sync(__dirname, 'x-' + __dirname + '\\\\node_modules\\\\any.js');
+          resolver = resolver.cloneWithOptions({});
           resolver.clearCache();
-
-          basedir = __dirname + '\\\\node_modules\\\\foo-bar-foo-bar-fo';
-          toResolve = 'foo-bar-fo';
-          console.log('resolver.sync', basedir, toResolve);
-          console.log(resolver.sync(basedir, toResolve));
+          resolver.sync(__dirname + '\\\\node_modules\\\\foo-bar-foo-bar-fo', 'foo-bar-fo');
+          console.log('unexpectedly survived second sync call');
           EOF
 
       - run: node unrs_repro.js
