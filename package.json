@@ -61,7 +61,7 @@
     "@types/jest": "30.0.0",
     "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-jest": "28.13.3",
+    "eslint-plugin-jest": "29.0.0",
     "eslint-plugin-tsdoc": "0.4.0",
     "expect-type": "1.2.1",
     "globals": "16.2.0",
