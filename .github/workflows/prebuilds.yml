@@ -191,7 +191,7 @@ jobs:
       matrix:
         arch: [ia32, x64]
         node: [20, 22]
-        version: [1.7.13, 1.8.0, 1.8.1, 1.9.0, 1.9.1]
+        version: [1.3.3, 1.4.1, 1.5.0, 1.6.6, 1.7.0]
         exclude: [{ arch: ia32, node: 24 }]
     defaults:
       run:
