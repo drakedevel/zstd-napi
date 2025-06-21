@@ -23,18 +23,23 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: ${{ matrix.node }}
-          architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
-      - run: npm install -g pnpm
       - uses: actions/checkout@v4
         with:
           repository: unrs/unrs-resolver
           ref: v1.7.8
           persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
       - run: pnpm install
-      - run: pnpm run build
+      - run: rustup target add i686-pc-windows-msvc
+        if: matrix.arch == 'ia32'
+      - run: pnpm run build -- --target="${RUST_ARCH}-pc-windows-msvc"
+        env:
+          RUST_ARCH: ${{ (matrix.arch == 'ia32' && 'i686') || 'x86_64' }}
       - run: |
           cat >repro.js <<EOF
           const {ResolverFactory} = require('./napi');
