@@ -202,14 +202,13 @@ jobs:
       - run: npm i unrs-resolver@1.9.1
       - run: |
           cat >unrs_repro.js <<EOF
-          const path = require('path');
           const {ResolverFactory} = require('unrs-resolver');
 
           let resolver = new ResolverFactory({
             conditionNames: ['require', 'node', 'default'],
           });
           let basedir = __dirname;
-          let toResolve = 'jest-environment-' + path.resolve('./node_modules/jest-environment-node/build/index.js');
+          let toResolve = 'jest-environment-' + __dirname + '\\\\node_modules\\\\any.js';
           console.log('resolver.sync', basedir, toResolve);
           console.log(resolver.sync(basedir, toResolve));
 
@@ -223,9 +222,10 @@ jobs:
           console.log('clearCache')
           resolver.clearCache();
 
-          basedir = path.resolve('./node_modules/source-map-support');
-          console.log('resolver.sync', basedir, 'source-map');
-          console.log(resolver.sync(basedir, 'source-map'));
+          basedir = __dirname + '\\\\node_modules\\\\source-map-support';
+          toResolve = 'source-map';
+          console.log('resolver.sync', basedir, toResolve);
+          console.log(resolver.sync(basedir, toResolve));
           EOF
 
       - run: node unrs_repro.js
