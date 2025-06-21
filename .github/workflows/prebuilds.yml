@@ -182,3 +182,50 @@ jobs:
       - run: gh release upload '${{ github.ref_name }}' '${{ needs.provenance.outputs.provenance-name }}'
         env:
           GH_TOKEN: ${{ github.token }}
+
+  unrs-win32-debug:
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ia32, x64]
+        node: [20, 22, 24]
+        exclude: [{ arch: ia32, node: 24 }]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+          architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
+      - run: npm i jest
+      - run: |
+          cat >unrs_repro.js <<EOF
+          const path = require('path');
+          const {ResolverFactory} = require('unrs-resolver');
+
+          let resolver = new ResolverFactory({
+            conditionNames: ['require', 'node', 'default'],
+          });
+          let basedir = __dirname;
+          let toResolve = 'jest-environment-' + path.resolve('./node_modules/jest-environment-node/build/index.js');
+          console.log('resolver.sync', basedir, toResolve);
+          console.log(resolver.sync(basedir, toResolve));
+
+          resolver = resolver.cloneWithOptions({
+            conditionNames: ['require', 'node', 'default', 'node-addons'],
+            modules: ['node_modules'],
+            roots: [__dirname],
+            extensions: ['.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx', '.json', '.node']
+          });
+
+          console.log('clearCache')
+          resolver.clearCache();
+
+          basedir = path.resolve('./node_modules/source-map-support');
+          console.log('resolver.sync', basedir, 'source-map');
+          console.log(resolver.sync(basedir, 'source-map'));
+          EOF
+
+      - run: node unrs_repro.js
