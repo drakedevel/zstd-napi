@@ -39,6 +39,9 @@ jobs:
         if: matrix.arch == 'ia32'
       - run: pnpm run build --target="${RUST_ARCH}-pc-windows-msvc"
         env:
+          CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS: 'true'
+          CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS: 'true'
+          CARGO_PROFILE_RELEASE_PANIC: unwind
           RUST_ARCH: ${{ (matrix.arch == 'ia32' && 'i686') || 'x86_64' }}
       - run: |
           cat >repro.js <<EOF
