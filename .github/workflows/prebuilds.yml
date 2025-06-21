@@ -101,6 +101,7 @@ jobs:
 
   test-build:
     needs: [build]
+    if: inputs.provenance
     runs-on: ${{
       (matrix.os == 'linux' && ((matrix.arch == 'x64' && 'ubuntu-24.04') || 'ubuntu-24.04-arm')) ||
       (matrix.os == 'macos' && ((matrix.arch == 'x64' && 'macos-13') || 'macos-14')) ||
