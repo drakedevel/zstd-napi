@@ -199,7 +199,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
-      - run: npm i jest
+      - run: npm i unrs-resolver@1.9.1
       - run: |
           cat >unrs_repro.js <<EOF
           const path = require('path');
