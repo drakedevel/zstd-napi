@@ -220,9 +220,6 @@ jobs:
             extensions: ['.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx', '.json', '.node']
           });
 
-          console.log('clearCache')
-          resolver.clearCache();
-
           basedir = __dirname + '\\\\node_modules\\\\foo-bar-foo-bar-fo';
           toResolve = 'foo-bar-fo';
           console.log('resolver.sync', basedir, toResolve);
