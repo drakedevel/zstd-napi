@@ -219,8 +219,8 @@ jobs:
             extensions: ['.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx', '.json', '.node']
           });
 
-          basedir = __dirname + '\\\\node_modules\\\\source-map-support';
-          toResolve = 'source-map';
+          basedir = __dirname + '\\\\node_modules\\\\any';
+          toResolve = 'any';
           console.log('resolver.sync', basedir, toResolve);
           console.log(resolver.sync(basedir, toResolve));
           EOF
