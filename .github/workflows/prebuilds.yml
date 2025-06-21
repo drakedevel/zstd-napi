@@ -27,10 +27,17 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
-      - run: npm i unrs-resolver@${{ matrix.version }}
+      - run: npm install -g pnpm
+      - uses: actions/checkout@v4
+        with:
+          repository: unrs/unrs-resolver
+          ref: v1.7.8
+          persist-credentials: false
+      - run: pnpm install
+      - run: pnpm run build
       - run: |
-          cat >unrs_repro.js <<EOF
-          const {ResolverFactory} = require('unrs-resolver');
+          cat >repro.js <<EOF
+          const {ResolverFactory} = require('./napi');
           let resolver = new ResolverFactory({});
           resolver.sync(__dirname, 'x-' + __dirname + '\\\\node_modules\\\\any.js');
           resolver = resolver.cloneWithOptions({});
@@ -39,5 +46,5 @@ jobs:
           console.log('unexpectedly survived second sync call');
           EOF
 
-      - run: node unrs_repro.js
-      - run: for i in {0..100}; do node unrs_repro.js; done
+      - run: node repro.js
+      # - run: for i in {0..100}; do node unrs_repro.js; done
