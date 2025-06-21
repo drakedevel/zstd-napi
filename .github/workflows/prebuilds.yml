@@ -206,7 +206,6 @@ jobs:
           const {ResolverFactory} = require('unrs-resolver');
 
           let resolver = new ResolverFactory({
-            conditionNames: ['require', 'node', 'default'],
           });
           let basedir = __dirname;
           let toResolve = 'x-' + __dirname + '\\\\node_modules\\\\any.js';
@@ -214,7 +213,6 @@ jobs:
           console.log(resolver.sync(basedir, toResolve));
 
           resolver = resolver.cloneWithOptions({
-            conditionNames: ['require', 'node', 'default'],
           });
 
           console.log('clearCache')
