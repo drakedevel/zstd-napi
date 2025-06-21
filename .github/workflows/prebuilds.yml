@@ -227,3 +227,4 @@ jobs:
           EOF
 
       - run: node unrs_repro.js
+      - run: for i in {0..100}; do node unrs_repro.js; done
