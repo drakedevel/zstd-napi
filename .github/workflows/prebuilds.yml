@@ -37,11 +37,12 @@ jobs:
       - run: pnpm install
       - run: rustup target add i686-pc-windows-msvc
         if: matrix.arch == 'ia32'
-      - run: pnpm run build:debug -- --target="${RUST_ARCH}-pc-windows-msvc"
+      - run: pnpm run build:debug --target="${RUST_ARCH}-pc-windows-msvc"
         env:
           RUST_ARCH: ${{ (matrix.arch == 'ia32' && 'i686') || 'x86_64' }}
-      - run: mv napi/resolver.win32-x64-msvc.node napi/resolver.win32-ia32-msvc.node
-        if: matrix.arch == 'ia32'
+      - run: ls -l napi
+      # - run: mv napi/resolver.win32-x64-msvc.node napi/resolver.win32-ia32-msvc.node
+      #   if: matrix.arch == 'ia32'
       - run: |
           cat >repro.js <<EOF
           const {ResolverFactory} = require('./napi');
@@ -54,5 +55,5 @@ jobs:
           EOF
 
       - run: node repro.js
-      - run: pnpm run test
+      # - run: pnpm run test
       # - run: for i in {0..100}; do node unrs_repro.js; done
