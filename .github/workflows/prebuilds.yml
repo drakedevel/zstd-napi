@@ -190,7 +190,8 @@ jobs:
       fail-fast: false
       matrix:
         arch: [ia32, x64]
-        node: [20, 22, 24]
+        node: [20, 22]
+        version: [1.7.13, 1.8.0, 1.8.1, 1.9.0, 1.9.1]
         exclude: [{ arch: ia32, node: 24 }]
     defaults:
       run:
@@ -200,7 +201,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
-      - run: npm i unrs-resolver@1.9.1
+      - run: npm i unrs-resolver@${{ matrix.version }}
       - run: |
           cat >unrs_repro.js <<EOF
           const {ResolverFactory} = require('unrs-resolver');
