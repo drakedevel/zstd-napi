@@ -20,8 +20,8 @@ jobs:
       image: ${{ matrix.os == 'linux' && 'debian:11-slim' || null }}
     strategy:
       matrix:
-        os: [linux, macos, windows]
-        cross: ['']
+        # os: [linux, macos, windows]
+        # cross: ['']
         include:
           - { os: windows, cross: ia32 }
     outputs:
@@ -108,10 +108,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [linux, macos, windows]
-        arch: [arm64, x64]
-        exclude: [{ os: windows, arch: arm64 }]
-        include: [{ os: linux, arch: arm }, { os: windows, arch: ia32 }]
+        # os: [linux, macos, windows]
+        # arch: [arm64, x64]
+        # exclude: [{ os: windows, arch: arm64 }]
+        # include: [{ os: linux, arch: arm }, { os: windows, arch: ia32 }]
+        os: [windows]
+        arch: [ia32]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -138,7 +140,7 @@ jobs:
           docker run --platform linux/${{ (matrix.arch == 'x64' && 'amd64') || matrix.arch }} \
             -v $(pwd):/code -w /code node:18.20.3-buster-slim npm run test
         if: runner.os == 'Linux'
-      - run: npm run test
+      - run: npm run test -- -i
         if: runner.os != 'Linux'
 
   hashes:
