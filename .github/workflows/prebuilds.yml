@@ -40,7 +40,8 @@ jobs:
       - run: pnpm run build:debug -- --target="${RUST_ARCH}-pc-windows-msvc"
         env:
           RUST_ARCH: ${{ (matrix.arch == 'ia32' && 'i686') || 'x86_64' }}
-      - run: ls -l napi
+      - run: mv napi/resolver.win32-x64-msvc.node napi/resolver.win32-ia32-msvc.node
+        if: matrix.arch == 'ia32'
       - run: |
           cat >repro.js <<EOF
           const {ResolverFactory} = require('./napi');
