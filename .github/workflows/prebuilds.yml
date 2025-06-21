@@ -33,10 +33,10 @@ jobs:
           const {ResolverFactory} = require('unrs-resolver');
           let resolver = new ResolverFactory({});
           resolver.sync(__dirname, 'x-' + __dirname + '\\\\node_modules\\\\any.js');
-          resolver = resolver.cloneWithOptions({});
-          resolver.clearCache();
-          resolver.sync(__dirname + '\\\\node_modules\\\\foo-bar-foo-bar-fo', 'foo-bar-fo');
-          console.log('unexpectedly survived second sync call');
+          let resolver2 = resolver.cloneWithOptions({});
+          resolver2.clearCache();
+          resolver2.sync(__dirname + '\\\\node_modules\\\\foo-bar-foo-bar-fo', 'foo-bar-fo');
+          console.error('unexpectedly survived second sync call');
           EOF
 
       - run: node unrs_repro.js
