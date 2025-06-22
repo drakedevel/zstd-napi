@@ -37,6 +37,7 @@ jobs:
       - run: pnpm install
       - run: rustup target add i686-pc-windows-msvc
         if: matrix.arch == 'ia32'
+      - run: sed -i '/^default =/d' Cargo.toml
       - run: pnpm run build --target="${RUST_ARCH}-pc-windows-msvc"
         env:
           CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS: 'true'
