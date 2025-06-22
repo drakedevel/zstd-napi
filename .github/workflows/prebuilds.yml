@@ -35,9 +35,9 @@ jobs:
           cache: pnpm
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
       - run: pnpm install
+      - run: sed -i 's/default/minimal/' rust-toolchain.toml
       - run: rustup target add i686-pc-windows-msvc
         if: matrix.arch == 'ia32'
-      - run: sed -i '/^default =/d' Cargo.toml
       - run: pnpm run build --target="${RUST_ARCH}-pc-windows-msvc"
         env:
           CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS: 'true'
