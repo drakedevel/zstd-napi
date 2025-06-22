@@ -137,7 +137,7 @@ jobs:
             +                for entry in paths.iter() {
             +                    println!("TRACE:{}: entry {:?} (arc={:?}) hash={} path={:?} ({:?}) equiv={}", self.ts(), entry as *const FsCachedPath, entry.0.as_ref() as *const CachedPathImpl, entry.hash, entry.path, entry.path.as_ref() as *const Path, entry.equivalent(&cached_path));
             +                }
-            +                panic!("Inserted record couldn't be retrieved!");
+            +                // panic!("Inserted record couldn't be retrieved!");
             +            }
             +        }
             +        println!("TRACE:{}: exit pin", self.ts());
