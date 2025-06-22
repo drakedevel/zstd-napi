@@ -39,6 +39,47 @@ jobs:
       - run: rustup target add i686-pc-windows-msvc
         if: matrix.arch == 'ia32'
       - run: |
+          mkdir src/bin
+          base64 -d <<@EOF | zstd -d > src/bin/cache_repro.rs
+          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
+          @EOF
+      - run: cargo run --release --bin cache_repro
+      - run: |
           patch -p1 <<EOF
           diff --git a/src/fs_cache.rs b/src/fs_cache.rs
           index aadddf7..0a97ad0 100644
