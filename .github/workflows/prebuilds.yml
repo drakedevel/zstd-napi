@@ -38,6 +38,60 @@ jobs:
       - run: sed -i 's/default/minimal/' rust-toolchain.toml
       - run: rustup target add i686-pc-windows-msvc
         if: matrix.arch == 'ia32'
+      - run: |
+          patch -p1 <<EOF
+          diff --git a/src/lib.rs b/src/lib.rs
+          index 91ab331..82f9a74 100644
+          --- a/src/lib.rs
+          +++ b/src/lib.rs
+          @@ -277,6 +277,7 @@ impl<C: Cache<Cp = FsCachedPath>> ResolverGeneric<C> {
+                   specifier: &str,
+                   ctx: &mut Ctx,
+               ) -> Result<Resolution<C>, ResolveError> {
+          +        println!("resolve_impl({path:?}, {specifier:?}, {ctx:#?})");
+                   ctx.with_fully_specified(self.options.fully_specified);
+
+                   let cached_path = if self.options.symlinks {
+          @@ -284,24 +285,37 @@ impl<C: Cache<Cp = FsCachedPath>> ResolverGeneric<C> {
+                   } else {
+                       path.to_path_buf()
+                   };
+          +        println!("A cached_path={cached_path:?}");
+
+                   let cached_path = self.cache.value(&cached_path);
+          -        let cached_path = self.require(&cached_path, specifier, ctx)?;
+          +        println!("B");
+          +        let cached_path = match self.require(&cached_path, specifier, ctx) {
+          +            Ok(v) => v,
+          +            Err(e) => {
+          +                println!("C failed with {e:?}");
+          +                return Err(e);
+          +            }
+          +        };
+          +        println!("C");
+
+                   let path = if self.options.symlinks {
+                       self.load_realpath(&cached_path)?
+                   } else {
+                       cached_path.to_path_buf()
+                   };
+          +        println!("D path={path:?}");
+
+                   // enhanced-resolve: restrictions
+                   self.check_restrictions(&path)?;
+          +        println!("E");
+                   let package_json =
+                       cached_path.find_package_json(&self.options, self.cache.as_ref(), ctx)?;
+          +        println!("F package_json is_some={}", package_json.is_some());
+                   if let Some((_, package_json)) = &package_json {
+                       // path must be inside the package.
+                       debug_assert!(path.starts_with(package_json.directory()));
+                   }
+          +        println!("G");
+                   Ok(Resolution {
+                       path,
+                       query: ctx.query.take(),
+          EOF
       - run: pnpm run build --target="${RUST_ARCH}-pc-windows-msvc"
         env:
           CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS: 'true'
