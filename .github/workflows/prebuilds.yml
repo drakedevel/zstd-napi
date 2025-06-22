@@ -47,7 +47,7 @@ jobs:
         env:
           PATCH_BODY: |
             diff --git a/src/fs_cache.rs b/src/fs_cache.rs
-            index aadddf7..b7d3d79 100644
+            index aadddf7..41b0e8d 100644
             --- a/src/fs_cache.rs
             +++ b/src/fs_cache.rs
             @@ -24,6 +24,7 @@ use crate::{
@@ -96,7 +96,7 @@ jobs:
                      self.paths.pin().clear();
                      self.tsconfigs.pin().clear();
                  }
-            @@ -62,16 +81,42 @@ impl<Fs: FileSystem> Cache for FsCache<Fs> {
+            @@ -62,16 +81,43 @@ impl<Fs: FileSystem> Cache for FsCache<Fs> {
                          hasher.finish()
                      };
                      let paths = self.paths.pin();
@@ -109,7 +109,7 @@ jobs:
                      }
             +        println!("TRACE:{}: -> miss", self.ts());
             +        for entry in paths.iter() {
-            +            println!("TRACE:{}: entry hash={} path={:?} ({:?})", self.ts(), entry.hash, entry.path, entry.path.as_ref() as *const Path);
+            +            println!("TRACE:{}: entry {:?} (arc={:?}) hash={} path={:?} ({:?})", self.ts(), entry as *const FsCachedPath, entry.0.as_ref() as *const CachedPathImpl, entry.hash, entry.path, entry.path.as_ref() as *const Path);
             +        }
                      let parent = path.parent().map(|p| self.value(p));
                      let cached_path = FsCachedPath(Arc::new(CachedPathImpl::new(
@@ -118,11 +118,12 @@ jobs:
                          parent,
                      )));
             -        paths.insert(cached_path.clone());
+            +        let to_insert = cached_path.clone();
             +        println!(
-            +            "TRACE:{}: insert(FsCachedPath {{ hash: {}, path: {:?}, .. }})",
-            +            self.ts(), cached_path.hash, cached_path.path,
+            +            "TRACE:{}: insert(FsCachedPath {{ hash: {}, path: {:?}, ({:?}) .. }} arc {:?})",
+            +            self.ts(), to_insert.hash, to_insert.path, to_insert.path.as_ref() as *const Path, to_insert.0.as_ref() as *const CachedPathImpl
             +        );
-            +        let insert_res = paths.insert(cached_path.clone());
+            +        let insert_res = paths.insert(to_insert);
             +        println!("TRACE:{}: -> inserted={insert_res}", self.ts());
             +        if insert_res {
             +            assert!(BorrowedCachedPath { hash, path }.equivalent(&cached_path));
@@ -131,7 +132,7 @@ jobs:
             +            if bugged {
             +                println!("TRACE:{}: BUGGED", self.ts());
             +                for entry in paths.iter() {
-            +                    println!("TRACE:{}: entry hash={} path={:?} ({:?}) equiv={}", self.ts(), entry.hash, entry.path, entry.path.as_ref() as *const Path, entry.equivalent(&cached_path));
+            +                    println!("TRACE:{}: entry {:?} (arc={:?}) hash={} path={:?} ({:?}) equiv={}", self.ts(), entry as *const FsCachedPath, entry.0.as_ref() as *const CachedPathImpl, entry.hash, entry.path, entry.path.as_ref() as *const Path, entry.equivalent(&cached_path));
             +                }
             +                panic!("Inserted record couldn't be retrieved!");
             +            }
@@ -140,7 +141,7 @@ jobs:
                      cached_path
                  }
 
-            @@ -208,6 +253,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
+            @@ -208,6 +254,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
                              .hasher(BuildHasherDefault::default())
                              .resize_mode(papaya::ResizeMode::Blocking)
                              .build(),
@@ -148,7 +149,7 @@ jobs:
                      }
                  }
 
-            @@ -215,6 +261,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
+            @@ -215,6 +262,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
                  ///
                  /// <https://github.com/parcel-bundler/parcel/blob/4d27ec8b8bd1792f536811fef86e74a31fa0e704/crates/parcel-resolver/src/cache.rs#L232>
                  fn canonicalize_impl(&self, path: &FsCachedPath) -> Result<FsCachedPath, ResolveError> {
@@ -156,7 +157,7 @@ jobs:
                      // Check if this thread is already canonicalizing. If so, we have found a circular symlink.
                      // If a different thread is canonicalizing, OnceLock will queue this thread to wait for the result.
                      let tid = THREAD_ID.with(|t| *t);
-            @@ -222,59 +269,68 @@ impl<Fs: FileSystem> FsCache<Fs> {
+            @@ -222,59 +270,68 @@ impl<Fs: FileSystem> FsCache<Fs> {
                          return Err(io::Error::new(io::ErrorKind::NotFound, "Circular symlink").into());
                      }
 
@@ -274,7 +275,7 @@ jobs:
                  }
              }
 
-            @@ -475,6 +531,7 @@ impl PartialEq for FsCachedPath {
+            @@ -475,6 +532,7 @@ impl PartialEq for FsCachedPath {
 
              impl Eq for FsCachedPath {}
 
@@ -318,7 +319,6 @@ jobs:
 
                      let path = if self.options.symlinks {
                          self.load_realpath(&cached_path)?
-
 
       - run: pnpm run build --target="${RUST_ARCH}-pc-windows-msvc"
         env:
