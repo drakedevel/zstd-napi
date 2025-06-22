@@ -41,18 +41,32 @@ jobs:
       - run: |
           patch -p1 <<EOF
           diff --git a/src/fs_cache.rs b/src/fs_cache.rs
-          index aadddf7..e2e4a86 100644
+          index aadddf7..05a2eed 100644
           --- a/src/fs_cache.rs
           +++ b/src/fs_cache.rs
-          @@ -62,6 +62,7 @@ impl<Fs: FileSystem> Cache for FsCache<Fs> {
+          @@ -62,16 +62,21 @@ impl<Fs: FileSystem> Cache for FsCache<Fs> {
                        hasher.finish()
                    };
                    let paths = self.paths.pin();
           +        println!("performing lookup hash={hash} path={path:?}");
                    if let Some(entry) = paths.get(&BorrowedCachedPath { hash, path }) {
+          +            println!("-> hit");
                        return entry.clone();
                    }
-          @@ -215,6 +216,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
+          +        println!("-> miss");
+                   let parent = path.parent().map(|p| self.value(p));
+                   let cached_path = FsCachedPath(Arc::new(CachedPathImpl::new(
+                       hash,
+                       path.to_path_buf().into_boxed_path(),
+                       parent,
+                   )));
+          +        println!("-> inserting new value");
+                   paths.insert(cached_path.clone());
+          +        println!("-> insert returned");
+                   cached_path
+               }
+
+          @@ -215,6 +220,7 @@ impl<Fs: FileSystem> FsCache<Fs> {
                ///
                /// <https://github.com/parcel-bundler/parcel/blob/4d27ec8b8bd1792f536811fef86e74a31fa0e704/crates/parcel-resolver/src/cache.rs#L232>
                fn canonicalize_impl(&self, path: &FsCachedPath) -> Result<FsCachedPath, ResolveError> {
@@ -60,7 +74,7 @@ jobs:
                    // Check if this thread is already canonicalizing. If so, we have found a circular symlink.
                    // If a different thread is canonicalizing, OnceLock will queue this thread to wait for the result.
                    let tid = THREAD_ID.with(|t| *t);
-          @@ -222,20 +224,28 @@ impl<Fs: FileSystem> FsCache<Fs> {
+          @@ -222,20 +228,28 @@ impl<Fs: FileSystem> FsCache<Fs> {
                        return Err(io::Error::new(io::ErrorKind::NotFound, "Circular symlink").into());
                    }
 
@@ -91,7 +105,7 @@ jobs:
                                            match self.fs.read_link(normalized.path()) {
                                                Ok(link) => {
                                                    if link.is_absolute() {
-          @@ -264,6 +274,8 @@ impl<Fs: FileSystem> FsCache<Fs> {
+          @@ -264,6 +278,8 @@ impl<Fs: FileSystem> FsCache<Fs> {
                                                }
                                                Err(e) => return Err(e),
                                            }
@@ -100,7 +114,7 @@ jobs:
                                        }
 
                                        Ok(normalized)
-          @@ -273,8 +285,11 @@ impl<Fs: FileSystem> FsCache<Fs> {
+          @@ -273,8 +289,11 @@ impl<Fs: FileSystem> FsCache<Fs> {
 
                            path.canonicalizing.store(0, Ordering::Release);
                            res
