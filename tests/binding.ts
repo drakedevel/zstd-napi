@@ -312,7 +312,7 @@ test('defaultCLevel works', () => {
 });
 
 function expectBounds(bounds: binding.Bounds): void {
-  expect(bounds).toMatchObject({
+  expect({ ...bounds }).toMatchObject({
     lowerBound: expect.any(Number),
     upperBound: expect.any(Number),
   });
