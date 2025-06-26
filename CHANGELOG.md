@@ -6,6 +6,12 @@
 
 - Build GNU/Linux prebuilds on Debian 11 (binaries are still compatible with Glibc 2.28).
 
+### Fixed
+
+- Fixed native extension import path when using Bun. ([#148])
+
+[#148]: https://github.com/drakedevel/zstd-napi/issues/148
+
 ## [0.0.11] - 2025-05-11
 
 ### Changed
