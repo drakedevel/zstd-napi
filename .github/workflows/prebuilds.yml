@@ -121,6 +121,10 @@ jobs:
           architecture: ${{ (matrix.arch == 'ia32' && 'x86') || null }}
       - run: npm ci --ignore-scripts
         if: matrix.os != 'linux' || matrix.arch != 'arm'
+      # Install older Jest on 32-bit Windows to work around crash bug
+      # TODO: Remove after unrs-resolver release with papaya fix
+      - run: npm i jest@29.7.0
+        if: matrix.os == 'windows' && matrix.arch == 'ia32'
       # FIXME: Dedupe with below docker command
       - run: |
           docker run --platform linux/${{ (matrix.arch == 'x64' && 'amd64') || matrix.arch }} \
