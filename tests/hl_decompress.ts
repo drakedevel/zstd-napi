@@ -1,4 +1,12 @@
 /* eslint jest/no-done-callback: 0 */
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
 import * as binding from '../binding';

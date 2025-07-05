@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { mapNumber, mapParameters } from '../lib/util';
 
 describe('mapParameters', () => {

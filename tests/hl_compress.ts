@@ -1,4 +1,12 @@
 /* eslint jest/no-done-callback: 0 */
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from '@jest/globals';
 import { strict as assert } from 'assert';
 import { randomBytes } from 'crypto';
 import { expectTypeOf } from 'expect-type';
@@ -292,7 +300,7 @@ describe('CompressStream', () => {
 
     stream.off('error', errorHandler);
     stream.on('error', (err) => {
-      expect(err).toMatchObject(new Error('Simulated error'));
+      expect(err).toMatchObject({ message: 'Simulated error' });
       return done();
     });
 
