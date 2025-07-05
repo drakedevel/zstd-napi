@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "allowJs": false,
+    "checkJs": false,
     "declaration": true,
+    "isolatedDeclarations": true,
     "noEmit": false,
     "outDir": "dist",
     "skipLibCheck": false

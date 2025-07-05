@@ -18,7 +18,7 @@ let defaultDecompressor: Decompressor | undefined;
 export function compress(
   data: Uint8Array,
   parameters: CompressParameters = {},
-) {
+): Buffer {
   defaultCompressor ??= new Compressor();
   defaultCompressor.setParameters(parameters);
   return defaultCompressor.compress(data);
@@ -38,7 +38,7 @@ export function compress(
 export function decompress(
   data: Uint8Array,
   parameters: DecompressParameters = {},
-) {
+): Buffer {
   defaultDecompressor ??= new Decompressor();
   defaultDecompressor.setParameters(parameters);
   return defaultDecompressor.decompress(data);
