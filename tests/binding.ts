@@ -50,14 +50,14 @@ function expectDecompress(
 
 function expectPrototypeProperties(obj: object) {
   const descs = Object.getOwnPropertyDescriptors(obj);
-  expect(Object.values(descs)).toStrictEqual(
-    expect.arrayOf({
+  for (const desc of Object.values(descs)) {
+    expect(desc).toStrictEqual({
       value: expect.any(Function),
       writable: true,
       enumerable: false,
       configurable: true,
-    }),
-  );
+    });
+  }
 }
 
 describe('CCtx', () => {
@@ -413,12 +413,12 @@ test('libzstd errors are propagated', () => {
 
 test('binding property descriptors have standard attributes', () => {
   const descs = Object.getOwnPropertyDescriptors(binding);
-  expect(Object.values(descs)).toStrictEqual(
-    expect.arrayOf({
+  for (const desc of Object.values(descs)) {
+    expect(desc).toStrictEqual({
       value: expect.anything(),
       writable: true,
       enumerable: true,
       configurable: true,
-    }),
-  );
+    });
+  }
 });
