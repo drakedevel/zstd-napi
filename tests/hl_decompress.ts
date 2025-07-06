@@ -17,6 +17,10 @@ import {
   decompress,
 } from '../lib';
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('Decompressor', () => {
   let decompressor: Decompressor;
 
@@ -70,7 +74,7 @@ describe('Decompressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    using loadDict = jest.spyOn(decompressor['dctx'], 'loadDictionary');
+    const loadDict = jest.spyOn(decompressor['dctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     decompressor.loadDictionary(dictBuf);
@@ -78,8 +82,8 @@ describe('Decompressor', () => {
   });
 
   test('#setParameters resets other parameters', () => {
-    using reset = jest.spyOn(decompressor['dctx'], 'reset');
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    const reset = jest.spyOn(decompressor['dctx'], 'reset');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.setParameters({ windowLogMax: 10 });
     expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
@@ -87,8 +91,8 @@ describe('Decompressor', () => {
   });
 
   test('#updateParameters does not reset parameters', () => {
-    using reset = jest.spyOn(decompressor['dctx'], 'reset');
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    const reset = jest.spyOn(decompressor['dctx'], 'reset');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: 0 });
     expect(reset).not.toHaveBeenCalled();
@@ -96,7 +100,7 @@ describe('Decompressor', () => {
   });
 
   test('#updateParameters rejects invalid parameter names', () => {
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: testing invalid key
@@ -114,7 +118,7 @@ describe('Decompressor', () => {
   });
 
   test('#updateParameters ignores undefined values', () => {
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    const setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(setParam).not.toHaveBeenCalled();
@@ -158,7 +162,7 @@ describe('DecompressStream', () => {
   });
 
   test('#_transform correctly propagates errors', (done) => {
-    using _decompress = jest
+    jest
       .spyOn(stream['dctx'], 'decompressStream')
       .mockImplementationOnce(() => {
         throw new Error('Simulated error');

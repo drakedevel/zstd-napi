@@ -23,6 +23,10 @@ function expectDecompress(input: Buffer, expected: Buffer): void {
   expect(output.equals(expected)).toBe(true);
 }
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('Compressor', () => {
   let compressor: Compressor;
 
@@ -77,7 +81,7 @@ describe('Compressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    using loadDict = jest.spyOn(compressor['cctx'], 'loadDictionary');
+    const loadDict = jest.spyOn(compressor['cctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     compressor.loadDictionary(dictBuf);
@@ -85,8 +89,8 @@ describe('Compressor', () => {
   });
 
   test('#setParameters resets other parameters', () => {
-    using reset = jest.spyOn(compressor['cctx'], 'reset');
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    const reset = jest.spyOn(compressor['cctx'], 'reset');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.setParameters({ compressionLevel: 0 });
     expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
@@ -97,8 +101,8 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters does not reset parameters', () => {
-    using reset = jest.spyOn(compressor['cctx'], 'reset');
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    const reset = jest.spyOn(compressor['cctx'], 'reset');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: 0 });
     expect(reset).not.toHaveBeenCalled();
@@ -106,7 +110,7 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters maps parameters correctly', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     // Set one parameter of each type
     compressor.updateParameters({
@@ -132,7 +136,7 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters rejects invalid parameter names/types', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: deliberately passing wrong arguments
@@ -150,7 +154,7 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters ignores undefined values', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    const setParam = jest.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: undefined });
     expect(setParam).not.toHaveBeenCalled();
@@ -266,11 +270,9 @@ describe('CompressStream', () => {
   });
 
   test('#_transform correctly propagates errors', (done) => {
-    using _compress = jest
-      .spyOn(stream['cctx'], 'compressStream2')
-      .mockImplementationOnce(() => {
-        throw new Error('Simulated error');
-      });
+    jest.spyOn(stream['cctx'], 'compressStream2').mockImplementationOnce(() => {
+      throw new Error('Simulated error');
+    });
 
     const writeCb = jest.fn();
     stream.off('error', errorHandler);
@@ -283,11 +285,9 @@ describe('CompressStream', () => {
   });
 
   test('#_flush correctly propagates errors', (done) => {
-    using _compress = jest
-      .spyOn(stream['cctx'], 'compressStream2')
-      .mockImplementationOnce(() => {
-        throw new Error('Simulated error');
-      });
+    jest.spyOn(stream['cctx'], 'compressStream2').mockImplementationOnce(() => {
+      throw new Error('Simulated error');
+    });
 
     stream.off('error', errorHandler);
     stream.on('error', (err) => {
