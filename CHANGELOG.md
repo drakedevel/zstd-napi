@@ -5,6 +5,8 @@
 ### Changed
 
 - Properties defined by the native library now have the same descriptor attributes as ES classes/objects.
+- Build macOS prebuilds on macOS 15.
+- Build Windows prebuilds on Windows Server 2025.
 
 ## [0.0.12] - 2025-06-26
 
