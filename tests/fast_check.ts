@@ -1,6 +1,6 @@
-import { describe, expect } from '@jest/globals';
-import { fc, it } from '@fast-check/jest';
+import { fc, it } from '@fast-check/vitest';
 import { strict as assert } from 'assert';
+import { describe, expect } from 'vitest';
 import events from 'events';
 
 import {

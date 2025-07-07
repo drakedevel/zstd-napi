@@ -1,6 +1,6 @@
 import eslint from '@eslint/js';
+import vitest from '@vitest/eslint-plugin';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
-import jest from 'eslint-plugin-jest';
 import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -34,16 +34,12 @@ export default tseslint.config(
     },
   },
   {
-    extends: [jest.configs['flat/style'], jest.configs['flat/recommended']],
+    extends: [vitest.configs.recommended],
     files: ['tests/**/*.{cjs,cts,js,ts}'],
     rules: {
       '@typescript-eslint/dot-notation': 'off',
-      'jest/expect-expect': ['warn', { assertFunctionNames: ['expect*'] }],
-      'jest/no-done-callback': 'off',
-      'jest/no-standalone-expect': [
-        'error',
-        { additionalTestBlockFunctions: ['afterEach', 'it.prop'] },
-      ],
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      'vitest/expect-expect': ['error', { assertFunctionNames: ['expect*'] }],
     },
   },
   {

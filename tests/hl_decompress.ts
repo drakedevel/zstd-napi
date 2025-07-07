@@ -3,11 +3,12 @@ import {
   beforeEach,
   describe,
   expect,
-  jest,
+  expectTypeOf,
   test,
-} from '@jest/globals';
+  vi,
+} from 'vitest';
 import { randomBytes } from 'crypto';
-import { expectTypeOf } from 'expect-type';
+import { promisify } from 'util';
 import * as binding from '../binding.js';
 import {
   Decompressor,
@@ -16,6 +17,11 @@ import {
   compress,
   decompress,
 } from '../lib/index.ts';
+
+function testCb(name: string, fn: (done: (err?: unknown) => void) => void) {
+  // eslint-disable-next-line vitest/expect-expect, vitest/valid-title -- wrapper function
+  test(name, () => promisify(fn)());
+}
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;
@@ -70,7 +76,7 @@ describe('Decompressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    using loadDict = jest.spyOn(decompressor['dctx'], 'loadDictionary');
+    using loadDict = vi.spyOn(decompressor['dctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     decompressor.loadDictionary(dictBuf);
@@ -78,8 +84,8 @@ describe('Decompressor', () => {
   });
 
   test('#setParameters resets other parameters', () => {
-    using reset = jest.spyOn(decompressor['dctx'], 'reset');
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    using reset = vi.spyOn(decompressor['dctx'], 'reset');
+    using setParam = vi.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.setParameters({ windowLogMax: 10 });
     expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
@@ -87,8 +93,8 @@ describe('Decompressor', () => {
   });
 
   test('#updateParameters does not reset parameters', () => {
-    using reset = jest.spyOn(decompressor['dctx'], 'reset');
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    using reset = vi.spyOn(decompressor['dctx'], 'reset');
+    using setParam = vi.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: 0 });
     expect(reset).not.toHaveBeenCalled();
@@ -96,25 +102,25 @@ describe('Decompressor', () => {
   });
 
   test('#updateParameters rejects invalid parameter names', () => {
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    using setParam = vi.spyOn(decompressor['dctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: testing invalid key
       decompressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid parameter name: invalidName"`,
+      `[RangeError: Invalid parameter name: invalidName]`,
     );
     expect(() => {
       // @ts-expect-error: testing invalid value type
       decompressor.updateParameters({ windowLogMax: 'invalid' });
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid type for parameter: windowLogMax"`,
+      `[TypeError: Invalid type for parameter: windowLogMax]`,
     );
     expect(setParam).not.toHaveBeenCalled();
   });
 
   test('#updateParameters ignores undefined values', () => {
-    using setParam = jest.spyOn(decompressor['dctx'], 'setParameter');
+    using setParam = vi.spyOn(decompressor['dctx'], 'setParameter');
 
     decompressor.updateParameters({ windowLogMax: undefined });
     expect(setParam).not.toHaveBeenCalled();
@@ -132,8 +138,8 @@ describe('DecompressParameters', () => {
 describe('DecompressStream', () => {
   let stream: DecompressStream;
   let chunks: Buffer[];
-  const dataHandler = jest.fn((chunk: Buffer) => chunks.push(chunk));
-  const errorHandler = jest.fn();
+  const dataHandler = vi.fn((chunk: Buffer) => chunks.push(chunk));
+  const errorHandler = vi.fn();
 
   beforeEach(() => {
     chunks = [];
@@ -146,7 +152,7 @@ describe('DecompressStream', () => {
     expect(errorHandler).not.toHaveBeenCalled();
   });
 
-  test('basic functionality works', (done) => {
+  testCb('basic functionality works', (done) => {
     const original = Buffer.from('hello');
 
     stream.on('end', () => {
@@ -157,14 +163,14 @@ describe('DecompressStream', () => {
     stream.end(compress(original));
   });
 
-  test('#_transform correctly propagates errors', (done) => {
-    using _decompress = jest
+  testCb('#_transform correctly propagates errors', (done) => {
+    using _decompress = vi
       .spyOn(stream['dctx'], 'decompressStream')
       .mockImplementationOnce(() => {
         throw new Error('Simulated error');
       });
 
-    const writeCb = jest.fn();
+    const writeCb = vi.fn();
     stream.off('error', errorHandler);
     stream.on('error', (err) => {
       expect(err).toMatchObject({ message: 'Simulated error' });
@@ -174,7 +180,7 @@ describe('DecompressStream', () => {
     stream.write('', writeCb);
   });
 
-  test('#_flush fails if in the middle of a frame', (done) => {
+  testCb('#_flush fails if in the middle of a frame', (done) => {
     const input = compress(Buffer.from('hello'));
 
     stream.off('error', errorHandler);
@@ -188,7 +194,7 @@ describe('DecompressStream', () => {
     stream.end(input.subarray(0, input.length - 1));
   });
 
-  test('flushes complete frames eagerly', (done) => {
+  testCb('flushes complete frames eagerly', (done) => {
     const orig1 = Buffer.from('hello');
     const orig2 = Buffer.from(' world');
     const original = Buffer.concat([orig1, orig2]);
@@ -202,7 +208,7 @@ describe('DecompressStream', () => {
     });
   });
 
-  test('handles multiple frames in single write', (done) => {
+  testCb('handles multiple frames in single write', (done) => {
     const orig1 = Buffer.from('hello');
     const orig2 = Buffer.from(' world');
     const original = Buffer.concat([orig1, orig2]);
@@ -214,7 +220,7 @@ describe('DecompressStream', () => {
     stream.end(Buffer.concat([compress(orig1), compress(orig2)]));
   });
 
-  test('handles output that exactly matches buffer size', (done) => {
+  testCb('handles output that exactly matches buffer size', (done) => {
     const original = randomBytes(binding.dStreamOutSize());
 
     stream.on('end', () => {
@@ -229,7 +235,7 @@ describe('DecompressStream', () => {
     });
   });
 
-  test('handles output larger than buffer size', (done) => {
+  testCb('handles output larger than buffer size', (done) => {
     const original = randomBytes(binding.dStreamOutSize() + 1);
 
     stream.on('end', () => {

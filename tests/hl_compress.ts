@@ -1,14 +1,15 @@
+import { strict as assert } from 'assert';
+import { randomBytes } from 'crypto';
+import { promisify } from 'util';
 import {
   afterEach,
   beforeEach,
   describe,
   expect,
-  jest,
+  expectTypeOf,
   test,
-} from '@jest/globals';
-import { strict as assert } from 'assert';
-import { randomBytes } from 'crypto';
-import { expectTypeOf } from 'expect-type';
+  vi,
+} from 'vitest';
 import * as binding from '../binding.js';
 import {
   Compressor,
@@ -21,6 +22,11 @@ import {
 function expectDecompress(input: Buffer, expected: Buffer): void {
   const output = decompress(input);
   expect(output.equals(expected)).toBe(true);
+}
+
+function testCb(name: string, fn: (done: (err?: unknown) => void) => void) {
+  // eslint-disable-next-line vitest/expect-expect, vitest/valid-title -- wrapper function
+  test(name, () => promisify(fn)());
 }
 
 describe('Compressor', () => {
@@ -77,7 +83,7 @@ describe('Compressor', () => {
   });
 
   test('#loadDictionary works', () => {
-    using loadDict = jest.spyOn(compressor['cctx'], 'loadDictionary');
+    using loadDict = vi.spyOn(compressor['cctx'], 'loadDictionary');
 
     const dictBuf = Buffer.alloc(0);
     compressor.loadDictionary(dictBuf);
@@ -85,8 +91,8 @@ describe('Compressor', () => {
   });
 
   test('#setParameters resets other parameters', () => {
-    using reset = jest.spyOn(compressor['cctx'], 'reset');
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    using reset = vi.spyOn(compressor['cctx'], 'reset');
+    using setParam = vi.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.setParameters({ compressionLevel: 0 });
     expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
@@ -97,8 +103,8 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters does not reset parameters', () => {
-    using reset = jest.spyOn(compressor['cctx'], 'reset');
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    using reset = vi.spyOn(compressor['cctx'], 'reset');
+    using setParam = vi.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: 0 });
     expect(reset).not.toHaveBeenCalled();
@@ -106,7 +112,7 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters maps parameters correctly', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    using setParam = vi.spyOn(compressor['cctx'], 'setParameter');
 
     // Set one parameter of each type
     compressor.updateParameters({
@@ -132,25 +138,25 @@ describe('Compressor', () => {
   });
 
   test('#updateParameters rejects invalid parameter names/types', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    using setParam = vi.spyOn(compressor['cctx'], 'setParameter');
 
     expect(() => {
       // @ts-expect-error: deliberately passing wrong arguments
       compressor.updateParameters({ invalidName: 42 });
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid parameter name: invalidName"`,
+      `[RangeError: Invalid parameter name: invalidName]`,
     );
     expect(() => {
       // @ts-expect-error: deliberately passing wrong arguments
       compressor.updateParameters({ compressionLevel: 'invalid' });
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid type for parameter: compressionLevel"`,
+      `[TypeError: Invalid type for parameter: compressionLevel]`,
     );
     expect(setParam).not.toHaveBeenCalled();
   });
 
   test('#updateParameters ignores undefined values', () => {
-    using setParam = jest.spyOn(compressor['cctx'], 'setParameter');
+    using setParam = vi.spyOn(compressor['cctx'], 'setParameter');
 
     compressor.updateParameters({ compressionLevel: undefined });
     expect(setParam).not.toHaveBeenCalled();
@@ -168,8 +174,8 @@ describe('CompressParameters', () => {
 describe('CompressStream', () => {
   let stream: CompressStream;
   let chunks: Buffer[];
-  const dataHandler = jest.fn((chunk: Buffer) => chunks.push(chunk));
-  const errorHandler = jest.fn();
+  const dataHandler = vi.fn((chunk: Buffer) => chunks.push(chunk));
+  const errorHandler = vi.fn();
 
   beforeEach(() => {
     chunks = [];
@@ -182,7 +188,7 @@ describe('CompressStream', () => {
     expect(errorHandler).not.toHaveBeenCalled();
   });
 
-  test('basic functionality works', (done) => {
+  testCb('basic functionality works', (done) => {
     stream.on('end', () => {
       expectDecompress(Buffer.concat(chunks), Buffer.from('hello'));
       return done();
@@ -191,7 +197,7 @@ describe('CompressStream', () => {
     stream.end('hello');
   });
 
-  test('#endFrame ends the frame at the correct point', (done) => {
+  testCb('#endFrame ends the frame at the correct point', (done) => {
     stream.on('end', () => {
       const result = Buffer.concat(chunks);
 
@@ -215,7 +221,7 @@ describe('CompressStream', () => {
     stream.end('world');
   });
 
-  test('#endFrame flushes', (done) => {
+  testCb('#endFrame flushes', (done) => {
     stream.write('hello', () => {
       // Verify nothing is written until we call flush
       expect(chunks).toHaveLength(0);
@@ -236,7 +242,7 @@ describe('CompressStream', () => {
     });
   });
 
-  test('#flush flushes but does not end frame', (done) => {
+  testCb('#flush flushes but does not end frame', (done) => {
     stream.on('end', () => {
       const result = Buffer.concat(chunks);
 
@@ -265,14 +271,14 @@ describe('CompressStream', () => {
     });
   });
 
-  test('#_transform correctly propagates errors', (done) => {
-    using _compress = jest
+  testCb('#_transform correctly propagates errors', (done) => {
+    using _compress = vi
       .spyOn(stream['cctx'], 'compressStream2')
       .mockImplementationOnce(() => {
         throw new Error('Simulated error');
       });
 
-    const writeCb = jest.fn();
+    const writeCb = vi.fn();
     stream.off('error', errorHandler);
     stream.on('error', (err) => {
       expect(err).toMatchObject({ message: 'Simulated error' });
@@ -282,8 +288,8 @@ describe('CompressStream', () => {
     stream.write('', writeCb);
   });
 
-  test('#_flush correctly propagates errors', (done) => {
-    using _compress = jest
+  testCb('#_flush correctly propagates errors', (done) => {
+    using _compress = vi
       .spyOn(stream['cctx'], 'compressStream2')
       .mockImplementationOnce(() => {
         throw new Error('Simulated error');
@@ -298,7 +304,7 @@ describe('CompressStream', () => {
     stream.end();
   });
 
-  test('handles input larger than buffer size', (done) => {
+  testCb('handles input larger than buffer size', (done) => {
     // Generate incompressible input that's larger than the buffer
     const input = randomBytes(binding.cStreamInSize() * 2 + 1);
 
