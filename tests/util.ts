@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { mapNumber, mapParameters } from '../lib/util.ts';
 
 describe('mapParameters', () => {
@@ -7,7 +7,7 @@ describe('mapParameters', () => {
   }
   const goodMapper = { paramOne: mapNumber };
 
-  // eslint-disable-next-line jest/expect-expect -- type-only tests
+  // eslint-disable-next-line vitest/expect-expect -- type-only tests
   it('should reject mismatched mapper objects', () => {
     mapParameters(TestParameter, goodMapper, {});
 

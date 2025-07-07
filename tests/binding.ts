@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, test } from '@jest/globals';
 import events from 'events';
 import fs from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { fileURLToPath } from 'url';
 import { Worker } from 'worker_threads';
 import * as binding from '../binding.js';
@@ -53,14 +53,14 @@ function expectDecompress(
 
 function expectPrototypeProperties(obj: object) {
   const descs = Object.getOwnPropertyDescriptors(obj);
-  expect(Object.values(descs)).toStrictEqual(
-    expect.arrayOf({
+  for (const desc of Object.values(descs)) {
+    expect(desc).toStrictEqual({
       value: expect.any(Function),
       writable: true,
       enumerable: false,
       configurable: true,
-    }),
-  );
+    });
+  }
 }
 
 describe('CCtx', () => {
@@ -94,7 +94,9 @@ describe('CCtx', () => {
       const ddict = new binding.DDict(minDict);
       // @ts-expect-error: testing invalid value
       cctx.compressUsingCDict(Buffer.alloc(0), Buffer.alloc(0), ddict);
-    }).toThrowErrorMatchingInlineSnapshot(`"Native object tag mismatch"`);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `[TypeError: Native object tag mismatch]`,
+    );
   });
 
   test('#setPledgedSrcSize works', () => {
@@ -104,7 +106,7 @@ describe('CCtx', () => {
     cctx.compressStream2(dstBuf, srcBuf, binding.EndDirective.continue);
     expect(() => {
       cctx.compressStream2(dstBuf, Buffer.alloc(0), binding.EndDirective.end);
-    }).toThrowErrorMatchingInlineSnapshot(`"Src size is incorrect"`);
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Src size is incorrect]`);
   });
 
   test('#reset works', () => {
@@ -233,7 +235,9 @@ describe('DCtx', () => {
       const cdict = new binding.CDict(minDict, 3);
       // @ts-expect-error: testing invalid value
       dctx.decompressUsingDDict(Buffer.alloc(0), Buffer.alloc(0), cdict);
-    }).toThrowErrorMatchingInlineSnapshot(`"Native object tag mismatch"`);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `[TypeError: Native object tag mismatch]`,
+    );
   });
 
   test('#setParameter works', () => {
@@ -243,7 +247,7 @@ describe('DCtx', () => {
     );
     expect(() => {
       dctx.setParameter(binding.DParameter.windowLogMax, upperBound + 1);
-    }).toThrowErrorMatchingInlineSnapshot(`"Parameter is out of bound"`);
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Parameter is out of bound]`);
   });
 
   test('#reset works', () => {
@@ -317,7 +321,9 @@ describe('getFrameContentSize', () => {
   test('throws error when frame is corrupt', () => {
     expect(() => {
       binding.getFrameContentSize(minEmptyFrame.subarray(0, 4));
-    }).toThrowErrorMatchingInlineSnapshot(`"Could not parse Zstandard header"`);
+    }).toThrowErrorMatchingInlineSnapshot(
+      `[Error: Could not parse Zstandard header]`,
+    );
   });
 });
 
@@ -405,13 +411,17 @@ test('passing wrong argument count throws error', () => {
   expect(() => {
     // @ts-expect-error: deliberately passing wrong arguments
     binding.compressBound();
-  }).toThrowErrorMatchingInlineSnapshot(`"Expected 1 arguments, got 0"`);
+  }).toThrowErrorMatchingInlineSnapshot(
+    `[TypeError: Expected 1 arguments, got 0]`,
+  );
 });
 
 test('libzstd errors are propagated', () => {
   expect(() => {
     binding.compress(Buffer.alloc(0), Buffer.alloc(0), 3);
-  }).toThrowErrorMatchingInlineSnapshot(`"Destination buffer is too small"`);
+  }).toThrowErrorMatchingInlineSnapshot(
+    `[Error: Destination buffer is too small]`,
+  );
 });
 
 test('binding property descriptors have standard attributes', () => {
@@ -420,12 +430,12 @@ test('binding property descriptors have standard attributes', () => {
   const buildType = process.config.target_defaults.default_configuration;
   const binding: unknown = require(`../build/${buildType}/binding.node`);
   const descs = Object.getOwnPropertyDescriptors(binding);
-  expect(Object.values(descs)).toStrictEqual(
-    expect.arrayOf({
+  for (const desc of Object.values(descs)) {
+    expect(desc).toStrictEqual({
       value: expect.anything(),
       writable: true,
       enumerable: true,
       configurable: true,
-    }),
-  );
+    });
+  }
 });
