@@ -126,10 +126,9 @@ jobs:
           docker run --platform linux/${{ (matrix.arch == 'x64' && 'amd64') || matrix.arch }} \
             -v $(pwd):/code -w /code node:18.20.3-buster-slim npm ci --ignore-scripts
         if: matrix.os == 'linux' && matrix.arch == 'arm'
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           artifact-ids: ${{ needs.build.outputs[format('id-{0}{1}', matrix.os, (matrix.os == 'windows' && matrix.arch == 'ia32' && '-ia32') || '')] }}
-          merge-multiple: true # There's only one artifact, but otherwise it winds up in a subdirectory
       - run: tar xf zstd-napi-v*-napi-v8-*-${{ matrix.arch }}.tar.gz
         shell: bash
       # FIXME: Build buster-slim image for latest 18.x
