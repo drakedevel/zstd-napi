@@ -61,6 +61,7 @@ jobs:
           AR: arm-linux-gnueabihf-gcc-ar
           CC: arm-linux-gnueabihf-gcc
           CXX: arm-linux-gnueabihf-g++
+          NM: arm-linux-gnueabihf-nm
       - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
         if: matrix.cross == 'ia32'

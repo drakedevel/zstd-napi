@@ -20,13 +20,14 @@ function cmpVersion(v1, v2) {
 
 function main() {
   const nmArgs = ['-uD', '--with-symbol-versions', '--', process.argv[2]];
-  const nmOut = childProcess.execFileSync('nm', nmArgs, { encoding: 'utf8' });
+  const nmBin = process.env.NM ?? 'nm';
+  const nmOut = childProcess.execFileSync(nmBin, nmArgs, { encoding: 'utf8' });
   let count = 0;
   let ok = true;
   for (const symLine of nmOut.split('\n')) {
     // TODO: Use nm -j option in Debian 12+
     const sym = symLine.split(' ').at(-1);
-    if (!sym.includes('@')) {
+    if (!sym.includes('@') || sym.endsWith('@Base')) {
       continue;
     }
     count++;
