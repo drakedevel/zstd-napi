@@ -73,7 +73,7 @@ jobs:
           sha256: ${{ needs.build-provenance.outputs.package-download-sha256 }}
 
       - if: '!inputs.provenance'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           artifact-ids: ${{ needs.build-unsigned.outputs.artifact-id }}
           merge-multiple: true # There's only one artifact, but otherwise it winds up in a subdirectory
