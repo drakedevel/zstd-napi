@@ -1,5 +1,5 @@
 const eslint = require('@eslint/js');
-const eslintConfigPrettier = require('eslint-config-prettier');
+const eslintConfigPrettier = require('eslint-config-prettier/flat');
 const jest = require('eslint-plugin-jest');
 const tsdoc = require('eslint-plugin-tsdoc');
 const globals = require('globals');
