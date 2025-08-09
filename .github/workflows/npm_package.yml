@@ -62,7 +62,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-14, ubuntu-24.04, windows-2022]
+        os: [macos-15, ubuntu-24.04, windows-2025]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -78,10 +78,9 @@ jobs:
           path: ${{ needs.build-provenance.outputs.package-name }}
           sha256: ${{ needs.build-provenance.outputs.package-download-sha256 }}
       - if: '!inputs.provenance'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           artifact-ids: ${{ needs.build-unsigned.outputs.artifact-id }}
-          merge-multiple: true # There's only one artifact, but otherwise it winds up in a subdirectory
       - run: npm i --build-from-source ./zstd-napi-*.tgz
         shell: bash
       - run: node -p 'require("zstd-napi/binding").versionString()'
@@ -110,6 +109,16 @@ jobs:
             npx -y --package=typescript@$version -- tsc -p .
             node index.js
           done
+          # TS 5.9+ requires newer @types/node version
+          npm i --save-dev @types/node@16.18.126
+          for version in 5.9; do
+            echo "=== Typescript ${version} ==="
+            npx -y --package=typescript@$version -- tsc -p .
+            node index.js
+          done
+          echo "=== Typescript 7.x preview ==="
+          npx -y --package=@typescript/native-preview@latest -- tsc -p .
+          node index.js
 
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())
