@@ -51,10 +51,12 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/setup
       - run: |
-          for version in 5.2 5.3 5.4 5.5 5.6 5.7 5.8; do
+          for version in 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9; do
             echo "=== Typescript ${version} ==="
             npx -y --package=typescript@$version -- tsc -p .
           done
+          echo "=== Typescript 7.x preview ==="
+          npx -y --package=@typescript/native-preview@latest -- tsc -p .
 
   lint:
     runs-on: ubuntu-24.04
