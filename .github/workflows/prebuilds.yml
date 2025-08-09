@@ -42,7 +42,7 @@ jobs:
       JOBS: 3
     steps:
       - name: Install system dependencies
-        run: microdnf -y install gcc gcc-c++ git jq make python3 tar xz
+        run: microdnf -y install gcc gcc-c++ git jq make python38 tar xz
         if: runner.os == 'Linux' && matrix.cross == ''
       - name: Install system dependencies
         run: apt-get update && apt-get -y install g++-arm-linux-gnueabihf git jq make python3
