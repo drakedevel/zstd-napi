@@ -39,7 +39,7 @@ jobs:
       - name: Install system dependencies
         run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
         if: runner.os == 'Linux'
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           submodules: recursive
       - uses: ./.github/actions/setup
@@ -85,7 +85,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - id: artifacts
         run: echo "ids=$(jq -nr '[env.INPUTS|fromjson|with_entries(select(.key|startswith("id-"))).[]]|join(",")')" >> "$GITHUB_OUTPUT"
         env:
@@ -131,7 +131,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: ${{ needs.provenance.outputs.provenance-name }}
