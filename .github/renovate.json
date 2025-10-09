@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:js-lib", "config:best-practices", "npm:unpublishSafe"],
+  "extends": [
+    "config:js-lib",
+    "config:best-practices",
+    "security:minimumReleaseAgeNpm"
+  ],
   "assignAutomerge": true,
   "packageRules": [
     {
