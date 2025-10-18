@@ -75,5 +75,10 @@
   },
   "engines": {
     "node": "^12.22.0 || ^14.17.0 || ^15.12.0 || >=16"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm"
+    }
   }
 }

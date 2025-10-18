@@ -9,6 +9,5 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         node-version-file: ${{ (inputs.node-version == '' && '.node-version') || null }}
-        cache: npm
     - run: npm ci --ignore-scripts
       shell: bash
