@@ -51,8 +51,8 @@ All live Node.js verisons are supported on a first-class basis. Per the [release
 | Node.js Version |   Support   |
 | --------------- | :---------: |
 | 25 (Current)    |     ✅      |
-| 24 (Current)    |     ✅      |
-| 22 (Active LTS) |     ✅      |
+| 24 (Active LTS) |     ✅      |
+| 22 (Maint. LTS) |     ✅      |
 | 20 (Maint. LTS) |     ✅      |
 | 16, 18          | best-effort |
 
