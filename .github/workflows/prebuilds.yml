@@ -81,7 +81,7 @@ jobs:
   upload-build:
     if: inputs.upload-assets
     needs: [build]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     permissions:
       contents: write
     steps:
@@ -102,7 +102,7 @@ jobs:
   hashes:
     needs: [build]
     if: inputs.provenance
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     outputs:
       hashes: ${{ steps.combine.outputs.hashes }}
     steps:
@@ -127,7 +127,7 @@ jobs:
   upload-provenance:
     if: inputs.provenance && inputs.upload-assets
     needs: [provenance]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     permissions:
       contents: write
     steps:

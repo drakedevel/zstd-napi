@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   build-unsigned:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     if: '!inputs.provenance'
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
@@ -59,7 +59,7 @@ jobs:
   upload:
     if: inputs.upload-assets && !(failure() || cancelled())
     needs: [build-provenance, build-unsigned]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     permissions:
       contents: write
     steps:
