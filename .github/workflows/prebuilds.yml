@@ -66,7 +66,7 @@ jobs:
         if: runner.os == 'macOS'
       - id: upload
         name: Upload prebuilds
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: prebuilds-${{ matrix.os }}${{ matrix.cross != '' && '-' || '' }}${{ matrix.cross }}
           path: prebuilds/
@@ -90,7 +90,7 @@ jobs:
         run: echo "ids=$(jq -nr '[env.INPUTS|fromjson|with_entries(select(.key|startswith("id-"))).[]]|join(",")')" >> "$GITHUB_OUTPUT"
         env:
           INPUTS: ${{ toJSON(needs.build.outputs) }}
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           artifact-ids: ${{ steps.artifacts.outputs.ids }}
           merge-multiple: true
@@ -132,7 +132,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: ${{ needs.provenance.outputs.provenance-name }}
       - run: gh release upload '${{ github.ref_name }}' '${{ needs.provenance.outputs.provenance-name }}'
