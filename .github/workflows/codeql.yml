@@ -39,7 +39,7 @@ jobs:
           make -C build -j3 Release/obj.target/deps/zstd.a
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@16140ae1a102900babc80a33c44059580f687047 # v4.30.9
+        uses: github/codeql-action/init@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
         with:
           languages: ${{ matrix.language }}
           queries: security-extended,security-and-quality
@@ -51,6 +51,6 @@ jobs:
           JOBS: 3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@16140ae1a102900babc80a33c44059580f687047 # v4.30.9
+        uses: github/codeql-action/analyze@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
         with:
           category: '/language:${{matrix.language}}'
