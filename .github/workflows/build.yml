@@ -93,7 +93,7 @@ jobs:
       - run: sudo apt-get -y install python3-setuptools
         if: (matrix.node == '15.12.0' || matrix.node == '16') && runner.os == 'Linux'
       - run: pip3 install --break-system-packages setuptools
-        if: (matrix.node == '15.12.0' || matrix.node == '16') && runner.os == 'macOS'
+        if: (matrix.node == '15.12.0' || matrix.node == '16') && runner.os != 'Linux'
       - run: npm ci --prod --ignore-scripts
       - run: npm run build
         env:
