@@ -16,7 +16,7 @@ import {
 const dataPool: Buffer = (() => {
   const arrLen = (1024 * 1024) / 4;
   const [arr] = fc.sample(
-    fc.uint32Array({ minLength: arrLen, maxLength: arrLen }).noBias(),
+    fc.noBias(fc.uint32Array({ minLength: arrLen, maxLength: arrLen })),
     { numRuns: 1, seed: 0 },
   );
   assert(arr);
@@ -25,8 +25,7 @@ const dataPool: Buffer = (() => {
 
 function arbSubarray(pool: Buffer) {
   return fc
-    .nat(pool.length - 1)
-    .noBias()
+    .noBias(fc.nat(pool.length - 1))
     .chain((start) =>
       fc
         .nat(pool.length - start)
