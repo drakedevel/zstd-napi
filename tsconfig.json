@@ -1,10 +1,9 @@
 {
   "extends": ["@tsconfig/node22", "@tsconfig/strictest"],
   "compilerOptions": {
-    "esModuleInterop": false,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node"]
   },
   "include": ["**/*.ts", "**/*.js", ".*.js"],
-  "exclude": ["coverage", "dist", "docs"],
-  "types": []
+  "exclude": ["coverage", "dist", "docs"]
 }

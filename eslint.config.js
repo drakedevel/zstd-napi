@@ -13,6 +13,10 @@ module.exports = tseslint.config(
     ],
     files: ['**/*.ts'],
     rules: {
+      '@typescript-eslint/no-require-imports': [
+        'error',
+        { allowAsImport: true },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { varsIgnorePattern: '^_' },

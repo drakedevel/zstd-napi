@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { Transform, TransformCallback } from 'stream';
 
-import * as binding from '../binding';
+import binding = require('../binding');
 import { mapBoolean, mapEnum, mapNumber, mapParameters } from './util';
 
 /**
