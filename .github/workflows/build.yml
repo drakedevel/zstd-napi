@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup
       - run: |
-          for version in 5.7 5.8 5.9; do
+          for version in 5.7 5.8 5.9 6.0; do
             echo "=== Typescript ${version} ==="
             npx -y --package=typescript@$version -- tsc -p .
           done
