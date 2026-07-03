@@ -2,12 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Strategy.btultra2` enum member.
+
 ### Changed
 
 - Properties defined by the native library now have the same descriptor attributes as ES classes/objects.
 - Build macOS prebuilds on macOS 15.
 - Build Windows prebuilds on Windows Server 2025.
 - Generate types with a configuration that is compatible with TypeScript 7.
+
+### Fixed
+
+- Fixed a crash in the native binding when passed a JS object with a `valueOf` function that invalidates the buffer of another parameter.
 
 ## [0.0.12] - 2025-06-26
 
