@@ -16,8 +16,8 @@ void DDict::Init(Napi::Env env, Napi::Object exports) {
 DDict::DDict(const Napi::CallbackInfo& info) : ObjectWrapHelper<DDict>(info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 1);
-  Uint8Array dictBuf = info[0].As<Uint8Array>();
 
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
   ddict.reset(ZSTD_createDDict(dictBuf.Data(), dictBuf.ByteLength()));
   if (!ddict)
     throw Error::New(env, "Failed to create DDict");

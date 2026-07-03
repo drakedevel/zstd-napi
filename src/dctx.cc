@@ -35,9 +35,9 @@ DCtx::DCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<DCtx>(info) {
 Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 2);
+
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
-
   size_t result =
       ZSTD_decompressDCtx(dctx.get(), dstBuf.Data(), dstBuf.ByteLength(),
                           srcBuf.Data(), srcBuf.ByteLength());
@@ -48,9 +48,9 @@ Napi::Value DCtx::wrapDecompress(const Napi::CallbackInfo& info) {
 Napi::Value DCtx::wrapDecompressStream(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 2);
+
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
-
   ZSTD_outBuffer zstdOut = makeZstdOutBuffer(dstBuf);
   ZSTD_inBuffer zstdIn = makeZstdInBuffer(srcBuf);
   size_t ret = ZSTD_decompressStream(dctx.get(), &zstdOut, &zstdIn);
@@ -61,10 +61,10 @@ Napi::Value DCtx::wrapDecompressStream(const Napi::CallbackInfo& info) {
 Napi::Value DCtx::wrapDecompressUsingDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 3);
+
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
   Uint8Array dictBuf = info[2].As<Uint8Array>();
-
   size_t result = ZSTD_decompress_usingDict(
       dctx.get(), dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
       srcBuf.ByteLength(), dictBuf.Data(), dictBuf.ByteLength());
@@ -75,10 +75,10 @@ Napi::Value DCtx::wrapDecompressUsingDict(const Napi::CallbackInfo& info) {
 Napi::Value DCtx::wrapDecompressUsingDDict(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 3);
-  Uint8Array dstBuf = info[0].As<Uint8Array>();
-  Uint8Array srcBuf = info[1].As<Uint8Array>();
   DDict* ddictObj = DDict::Unwrap(info[2].As<Object>());
 
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
   size_t result = ZSTD_decompress_usingDDict(
       dctx.get(), dstBuf.Data(), dstBuf.ByteLength(), srcBuf.Data(),
       srcBuf.ByteLength(), ddictObj->ddict.get());
@@ -112,8 +112,8 @@ void DCtx::wrapReset(const Napi::CallbackInfo& info) {
 void DCtx::wrapLoadDictionary(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   checkArgCount(info, 1);
-  Uint8Array dictBuf = info[0].As<Uint8Array>();
 
+  Uint8Array dictBuf = info[0].As<Uint8Array>();
   size_t result = ZSTD_DCtx_loadDictionary(dctx.get(), dictBuf.Data(),
                                            dictBuf.ByteLength());
   adjustMemory(env);

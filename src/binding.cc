@@ -24,10 +24,10 @@ Value wrapVersionString(const CallbackInfo& info) {
 Value wrapCompress(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 3);
-  Uint8Array dstBuf = info[0].As<Uint8Array>();
-  Uint8Array srcBuf = info[1].As<Uint8Array>();
   int32_t level = info[2].ToNumber();
 
+  Uint8Array dstBuf = info[0].As<Uint8Array>();
+  Uint8Array srcBuf = info[1].As<Uint8Array>();
   size_t result = ZSTD_compress(dstBuf.Data(), dstBuf.ByteLength(),
                                 srcBuf.Data(), srcBuf.ByteLength(), level);
   return convertZstdResult(env, result);
@@ -36,9 +36,9 @@ Value wrapCompress(const CallbackInfo& info) {
 Value wrapDecompress(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 2);
+
   Uint8Array dstBuf = info[0].As<Uint8Array>();
   Uint8Array srcBuf = info[1].As<Uint8Array>();
-
   size_t result = ZSTD_decompress(dstBuf.Data(), dstBuf.ByteLength(),
                                   srcBuf.Data(), srcBuf.ByteLength());
   return convertZstdResult(env, result);
@@ -47,8 +47,8 @@ Value wrapDecompress(const CallbackInfo& info) {
 Value wrapGetFrameContentSize(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 1);
-  Uint8Array frameBuf = info[0].As<Uint8Array>();
 
+  Uint8Array frameBuf = info[0].As<Uint8Array>();
   unsigned long long size =
       ZSTD_getFrameContentSize(frameBuf.Data(), frameBuf.ByteLength());
   if (size == ZSTD_CONTENTSIZE_UNKNOWN)
@@ -61,8 +61,8 @@ Value wrapGetFrameContentSize(const CallbackInfo& info) {
 Value wrapFindFrameCompressedSize(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 1);
-  Uint8Array frameBuf = info[0].As<Uint8Array>();
 
+  Uint8Array frameBuf = info[0].As<Uint8Array>();
   return convertZstdResult(env, ZSTD_findFrameCompressedSize(
                                     frameBuf.Data(), frameBuf.ByteLength()));
 }
@@ -138,6 +138,7 @@ Value wrapDStreamOutSize(const CallbackInfo& info) {
 Value wrapGetDictIDFromDict(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 1);
+
   Uint8Array dictBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromDict(dictBuf.Data(), dictBuf.ByteLength()));
@@ -146,6 +147,7 @@ Value wrapGetDictIDFromDict(const CallbackInfo& info) {
 Value wrapGetDictIDFromFrame(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 1);
+
   Uint8Array frameBuf = info[0].As<Uint8Array>();
   return Number::New(
       env, ZSTD_getDictID_fromFrame(frameBuf.Data(), frameBuf.ByteLength()));
