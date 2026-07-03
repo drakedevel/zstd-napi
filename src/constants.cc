@@ -33,6 +33,7 @@ void createEnums(Env env, Object exports) {
   E(btlazy2);
   E(btopt);
   E(btultra);
+  E(btultra2);
 #undef E
   exports["Strategy"] = strategy;
 

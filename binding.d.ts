@@ -134,6 +134,7 @@ export enum Strategy {
   btlazy2,
   btopt,
   btultra,
+  btultra2,
 }
 
 /**
