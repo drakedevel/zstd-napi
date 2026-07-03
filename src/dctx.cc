@@ -29,6 +29,8 @@ void DCtx::Init(Napi::Env env, Napi::Object exports) {
 
 DCtx::DCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<DCtx>(info) {
   dctx.reset(ZSTD_createDCtx());
+  if (!dctx)
+    throw Error::New(info.Env(), "Failed to create DCtx");
   adjustMemory(info.Env());
 }
 

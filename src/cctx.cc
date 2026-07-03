@@ -32,6 +32,8 @@ void CCtx::Init(Napi::Env env, Napi::Object exports) {
 
 CCtx::CCtx(const Napi::CallbackInfo& info) : ObjectWrapHelper<CCtx>(info) {
   cctx.reset(ZSTD_createCCtx());
+  if (!cctx)
+    throw Error::New(info.Env(), "Failed to create CCtx");
   adjustMemory(info.Env());
 }
 
