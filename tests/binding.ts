@@ -324,8 +324,16 @@ test('findFrameCompressedSize works', () => {
   );
 });
 
-test('compressBound works', () => {
-  expect(binding.compressBound(0)).toBeGreaterThanOrEqual(minEmptyFrame.length);
+describe('compressBound', () => {
+  test('works on normal values', () => {
+    const bound = binding.compressBound(0);
+    expect(bound).toBeGreaterThanOrEqual(minEmptyFrame.length);
+  });
+  test('propagates errors from API', () => {
+    expect(() => {
+      binding.compressBound(-1);
+    }).toThrowErrorMatchingInlineSnapshot(`"Src size is incorrect"`);
+  });
 });
 
 test('minCLevel works', () => {

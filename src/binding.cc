@@ -72,8 +72,7 @@ Value wrapCompressBound(const CallbackInfo& info) {
   Env env = info.Env();
   checkArgCount(info, 1);
   int64_t size = info[0].ToNumber();
-
-  return Number::New(env, ZSTD_compressBound(size));
+  return convertZstdResult(env, ZSTD_compressBound(size));
 }
 
 Value wrapMinCLevel(const CallbackInfo& info) {
