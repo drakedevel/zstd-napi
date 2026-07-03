@@ -11,7 +11,7 @@
 static inline void checkArgCount(const Napi::CallbackInfo& info, size_t count) {
   if (info.Length() != count) {
     char errMsg[128];
-    snprintf(errMsg, sizeof(errMsg), "Expected %zd arguments, got %zd", count,
+    snprintf(errMsg, sizeof(errMsg), "Expected %zu arguments, got %zu", count,
              info.Length());
     throw Napi::TypeError::New(info.Env(), errMsg);
   }
