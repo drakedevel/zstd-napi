@@ -80,6 +80,10 @@ jobs:
           - { os: macos-14, node: 15.12.0 }
           - { os: macos-15, node: 15.12.0 }
           - { os: macos-26, node: 15.12.0 }
+          # Need node-gyp 12+ for VS2026 support
+          - { os: windows-2025, node: 15.12.0 }
+          - { os: windows-2025, node: '16' }
+          - { os: windows-2025, node: '18' }
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -95,6 +99,8 @@ jobs:
       - run: pip3 install --break-system-packages setuptools
         if: (matrix.node == '15.12.0' || matrix.node == '16') && runner.os != 'Linux'
       - run: npm ci --prod --ignore-scripts
+      - run: npm i --no-save node-gyp@${{ (matrix.node == '20' && '12') || '13' }}
+        if: runner.os == 'Windows' && (matrix.node == '26' || (matrix.os == 'windows-2025' && matrix.node != '24'))
       - run: npm run build
         env:
           JOBS: 3
