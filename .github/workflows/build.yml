@@ -68,10 +68,14 @@ jobs:
           - macos-15
           - macos-15-intel
           - macos-26
+          - macos-26-intel
           - ubuntu-22.04
           - ubuntu-22.04-arm
           - ubuntu-24.04
           - ubuntu-24.04-arm
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
+          - windows-11-arm
           - windows-2022
           - windows-2025
         node: [15.12.0, 16, 18, 20, 22, 24, 26]
