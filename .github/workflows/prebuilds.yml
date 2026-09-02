@@ -17,13 +17,14 @@ jobs:
       (matrix.os == 'macos' && 'macos-15') ||
       (matrix.os == 'windows' && 'windows-2025') }}
     container:
-      image: ${{ matrix.os == 'linux' && 'debian:11-slim' || null }}
+      image: ${{ matrix.os == 'linux' && (matrix.cross == 'riscv64' && 'debian:12-slim' || 'debian:11-slim') || null }}
     strategy:
       matrix:
         os: [linux, macos, windows]
         cross: ['']
         include:
           - { os: windows, cross: ia32 }
+          - { os: linux, cross: riscv64 }
     outputs:
       hash-linux: ${{ steps.output.outputs.hash-linux }}
       hash-macos: ${{ steps.output.outputs.hash-macos }}
@@ -33,11 +34,13 @@ jobs:
       id-macos: ${{ steps.output.outputs.id-macos }}
       id-windows: ${{ steps.output.outputs.id-windows }}
       id-windows-ia32: ${{ steps.output.outputs.id-windows-ia32 }}
+      hash-linux-riscv64: ${{ steps.output.outputs.hash-linux-riscv64 }}
+      id-linux-riscv64: ${{ steps.output.outputs.id-linux-riscv64 }}
     env:
       JOBS: 3
     steps:
       - name: Install system dependencies
-        run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
+        run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3 ${{ matrix.cross == 'riscv64' && 'g++-riscv64-linux-gnu' || '' }}
         if: runner.os == 'Linux'
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -48,16 +51,23 @@ jobs:
         if: matrix.cross == ''
       - name: Build arm cross
         run: bash .github/prebuild.sh arm
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && matrix.cross == ''
         env:
           CC: arm-linux-gnueabihf-gcc
           CXX: arm-linux-gnueabihf-g++
       - name: Build arm64 cross
         run: bash .github/prebuild.sh arm64
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && matrix.cross == ''
         env:
           CC: aarch64-linux-gnu-gcc
           CXX: aarch64-linux-gnu-g++
+      - name: Build riscv64 cross
+        run: bash .github/prebuild.sh riscv64
+        if: matrix.cross == 'riscv64'
+        env:
+          CC: riscv64-linux-gnu-gcc
+          CXX: riscv64-linux-gnu-g++
+          ZSTD_NAPI_SKIP_SYMVERS: '1'
       - name: Build ia32 cross
         run: bash .github/prebuild.sh ia32
         if: matrix.cross == 'ia32'
