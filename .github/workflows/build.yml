@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         node: [18, 20, '', 24, 26]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       id-token: write
     steps:
@@ -46,7 +46,7 @@ jobs:
       id-token: write
 
   other-ts-versions:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup
@@ -59,7 +59,7 @@ jobs:
           npx -y --package=@typescript/native-preview@latest -- tsc -p .
 
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup
