@@ -162,7 +162,6 @@ export class DecompressStream extends Transform {
   private dctx = new binding.DCtx();
   private inFrame = false;
 
-  // TODO: Allow user to specify a dictionary
   /**
    * Create a new streaming decompressor with the specified parameters.
    *
@@ -172,6 +171,37 @@ export class DecompressStream extends Transform {
     // TODO: autoDestroy doesn't really work on Transform, we should consider
     // calling .destroy ourselves when necessary.
     super({ autoDestroy: true });
+    updateDCtxParameters(this.dctx, parameters);
+  }
+
+  /**
+   * Load a compression dictionary from the provided buffer.
+   *
+   * The loaded dictionary will be used for all future decompressions
+   * until removed or replaced. Passing an empty buffer to this function will
+   * remove a previously loaded dictionary.
+   */
+  loadDictionary(data: Uint8Array): void {
+    this.dctx.loadDictionary(data);
+  }
+
+  /**
+   * Reset the decompressor state to only the provided parameters.
+   *
+   * Any loaded dictionary will be cleared, and any parameters not specified
+   * will be reset to their default values.
+   */
+  setParameters(parameters: DecompressParameters): void {
+    this.dctx.reset(binding.ResetDirective.parameters);
+    this.updateParameters(parameters);
+  }
+
+  /**
+   * Modify decompression parameters.
+   *
+   * Parameters not specified will be left at their current values.
+   */
+  updateParameters(parameters: DecompressParameters): void {
     updateDCtxParameters(this.dctx, parameters);
   }
 

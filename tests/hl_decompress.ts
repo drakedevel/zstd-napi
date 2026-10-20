@@ -7,6 +7,8 @@ import {
   test,
 } from '@jest/globals';
 import { randomBytes } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { expectTypeOf } from 'expect-type';
 import * as binding from '../binding';
 import {
@@ -16,6 +18,17 @@ import {
   compress,
   decompress,
 } from '../lib';
+
+// Minimal dictionary (generated with zstd --train on random hex)
+const minDict = fs.readFileSync(path.join(__dirname, 'data', 'minimal.dct'));
+
+function hex(data: string): Buffer {
+  return Buffer.from(data, 'hex');
+}
+
+// Frame with content 'abc123' repeated five times
+const abcDictFrame = hex('28b52ffd237448b2231e650000306162633132330100014b11');
+const abcFrameContent = Buffer.from('abc123abc123abc123abc123abc123');
 
 describe('Decompressor', () => {
   let decompressor: Decompressor;
@@ -242,6 +255,44 @@ describe('DecompressStream', () => {
       expect(chunks).toHaveLength(2);
       stream.end();
     });
+  });
+
+  test('#loadDictionary works', () => {
+    using loadDict = jest.spyOn(stream['dctx'], 'loadDictionary');
+
+    const dictBuf = Buffer.alloc(0);
+    stream.loadDictionary(dictBuf);
+    expect(loadDict).toHaveBeenCalledWith(dictBuf);
+  });
+
+  test('#setParameters works', () => {
+    using reset = jest.spyOn(stream['dctx'], 'reset');
+    using setParam = jest.spyOn(stream['dctx'], 'setParameter');
+
+    stream.setParameters({ windowLogMax: 10 });
+    expect(reset).toHaveBeenCalledWith(binding.ResetDirective.parameters);
+    expect(setParam).toHaveBeenCalledWith(binding.DParameter.windowLogMax, 10);
+  });
+
+  test('#updateParameters works', () => {
+    using reset = jest.spyOn(stream['dctx'], 'reset');
+    using setParam = jest.spyOn(stream['dctx'], 'setParameter');
+
+    stream.updateParameters({ windowLogMax: 15 });
+    expect(reset).not.toHaveBeenCalled();
+    expect(setParam).toHaveBeenCalledWith(binding.DParameter.windowLogMax, 15);
+  });
+
+  test('dictionary decompression works', (done) => {
+    stream.loadDictionary(minDict);
+
+    stream.on('end', () => {
+      const result = Buffer.concat(chunks);
+      expect(result.equals(abcFrameContent)).toBe(true);
+      return done();
+    });
+
+    stream.end(abcDictFrame);
   });
 });
 
