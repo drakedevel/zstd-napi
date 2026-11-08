@@ -37,7 +37,7 @@ jobs:
       JOBS: 3
     steps:
       - name: Install system dependencies
-        run: apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
+        run: sed -i 's,deb.debian.org,archive.debian.org,' /etc/apt/sources.list && apt-get update && apt-get -y install g++ g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git jq make python3
         if: runner.os == 'Linux'
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
